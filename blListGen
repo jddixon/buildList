@@ -1,0 +1,150 @@
+#!/usr/bin/python
+#
+# ~/dev/py/buildList/blListGen
+
+import os, sys
+from argparse   import ArgumentParser
+from buildList   import *
+
+def makeListing(args):
+
+    # this is here because assignment of args.keyFile to None fails
+    if args.keyFile and args.keyFile != "":
+        keyFile = args.keyFile
+    else:
+        keyFile = None
+    
+    # this is here because assignment of args.keyFile to None fails
+    if args.uDir and args.uDir != "":
+        uDir = args.uDir
+    else:
+        uDir = None
+
+    listFile    = args.listFile
+    rootDir     = args.rootDir
+    testing     = args.testing
+    title       = args.title
+    uDir        = args.uDir
+    verbose     = args.verbose
+
+    # XXX STUB XX
+
+def main():
+    """
+    Expect a command like
+        blListGen [options] 
+
+    """
+
+    # program defaults ----------------------------------------------
+
+    # parse the command line ----------------------------------------
+    
+    DESC = 'list the named bucket in s3'
+    parser = ArgumentParser(description=DESC)
+
+    parser.add_argument('-b', '--listFile', 
+        help='root directory for build list')
+    
+    parser.add_argument('-j', '--justShow', action='store_true',
+        help='show options and exit')
+
+    parser.add_argument('-k', '--keyFile',
+        help='path to RSA private key if signing')
+
+    parser.add_argument('-r', '--rootDir',
+        help='root directory for build list (REQUIRED)')
+
+    parser.add_argument('-T', '--testing', action='store_true',
+        help='this is a test run')
+
+    parser.add_argument('-t', '--title', 
+        help='title for build list')
+
+    parser.add_argument('-u', '--uDir', 
+        help='path to uDir (relative to tmp/ if testing)')
+
+    parser.add_argument('-v', '--verbose', action='store_true',
+        help='be chatty')
+
+    args = parser.parse_args()
+
+    # fixups --------------------------------------------------------
+    if args.testing and args.rootDir:
+        if args.rootDir[0] == '/':
+            args.rootDir = args.rootDir[1:]
+        args.rootDir = os.path.join('tmp', args.rootDir)
+
+    # sanity checks -------------------------------------------------
+    if not args.justShow and not args.rootDir or args.rootDir == '':
+        print "no root directory specified, cannot continue"
+        sys.exit(1)
+
+    if not args.justShow and not os.path.isdir(args.rootDir):
+        print "root directory %s does not exist, cannot continue" % args.rootDir
+        sys.exit(1)
+
+    # fixups --------------------------------------------------------
+
+    # uDir ------------------------------------------------
+    if args.testing and args.uDir:
+        if args.uDir[0] == '/':
+            args.uDir = args.uDir[1:]
+        args.uDir = os.path.join('tmp', args.uDir)
+
+    # title -----------------------------------------------
+    if not args.title or args.title == '':
+        junk, sep, base = args.rootDir.rpartition('/')
+        args.title = base
+    else:
+        # this can contain spaces and other undesirable characters
+        base = args.title
+
+    # listFile --------------------------------------------
+    if not args.listFile or args.listFile == '':
+        args.listFile = base + ".bld"
+
+    if args.testing:
+        if args.listFile[0] == '/':
+            args.listFile = args.listFile[1:]
+        args.listFile = os.path.join('tmp', args.listFile)
+
+    # private key file ------------------------------------
+    if args.keyFile:
+        if args.keyFile == '':
+            args.keyFile = None
+        else:
+            if args.testing:
+                if args.keyFile[0] == '/':
+                    args.keyFile = args.keyFile[1:]
+                args.keyFile = os.path.join('tmp', args.keyFile)
+            if not args.justShow and not os.path.isfile(args.keyFile):
+                print "key file %s does not exist, cannot continue" % args.keyFile
+                sys.exit(1)
+    
+    # complete setup ------------------------------------------------
+    appName = 'blListGen %s' % __version__
+
+    # maybe show options and such -----------------------------------
+    if args.verbose or args.justShow:
+        print "%s %s" % (appName, __version_date__)
+
+    if args.verbose or args.justShow:
+        print 'keyFile      = ' + str(args.keyFile)
+        print 'listFile     = ' + str(args.listFile)
+        print 'rootDir      = ' + str(args.rootDir)
+        print 'testing      = ' + str(args.testing)
+        print 'title        = ' + str(args.title)
+        print 'uDir         = ' + str(args.uDir)
+        print 'verbose      = ' + str(args.verbose)
+
+    if args.justShow:
+        sys.exit(0)
+
+    # do what's required --------------------------------------------
+    makeListing(args)
+
+        
+if __name__ == '__main__':
+    main()
+

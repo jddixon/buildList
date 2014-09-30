@@ -16,6 +16,6 @@ setup ( name         = 'buildList',
         py_modules   = [ ],
         packages     = ['buildList'], 
         # following could be in scripts/ subdir
-        scripts      = [ ],          # front end module(s)
+        scripts      = ['blCheck', 'blListGen', 'blSrcGen', ],
         # MISSING url
         )
