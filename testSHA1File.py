@@ -43,7 +43,7 @@ class TestTimestamp (unittest.TestCase):
 
         fileB64Hash = base64SHA1File(pathToFile)
 
-        #self.assertEquals(b64Hash, fileB64Hash)
+        self.assertEquals(b64Hash, fileB64Hash)
 
 
 if __name__ == '__main__':

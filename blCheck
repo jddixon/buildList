@@ -2,11 +2,40 @@
 #
 # ~/dev/py/buildList/blListGen
 
-import os, sys
+import hashlib, os, sys
 from argparse   import ArgumentParser
-from buildList   import *
+from buildList  import *
 
-def makeListing(args):
+def readLine(f):
+    line = f.readline()
+    # DEBUG
+    print line
+    # END
+
+def readLineUpdating(f, digest):
+    line = f.readline()
+    # DEBUG
+    print line
+    # END
+    digest.update(line)
+    f.write (line + CRLF)
+
+# XXX This is WRONG
+def walkDir(f, digest, dirPath):
+    files = os.listdir(dirPath)
+    files.sort()
+    for file in files:
+        pathToFile = os.path.join(dirPath, file)
+        if os.path.isfile(pathToFile):
+            b64Hash = base64SHA1File(pathToFile)
+            line = b64Hash + ' ' + pathToFile
+            writeLineUpdating(f, digest, line)
+        elif os.path.isdir(pathToFile):
+            walkDir(f, digest, pathToFile)
+        else:
+            print "can't handle %s" % pathToFile
+
+def checkListing(args):
 
     # this is here because assignment of args.keyFile to None fails
     if args.keyFile and args.keyFile != "":
@@ -14,18 +43,37 @@ def makeListing(args):
     else:
         keyFile = None
     
-    # this is here because assignment of args.keyFile to None fails
+    # this is here because assignment of args.rootDir to None fails
+    if args.rootDir and args.rootDir != "":
+        rootDir = args.rootDir
+    else:
+        rootDir = None
+
+    # this is here because assignment of args.uDir to None fails
     if args.uDir and args.uDir != "":
         uDir = args.uDir
     else:
         uDir = None
 
     listFile    = args.listFile
-    rootDir     = args.rootDir
     testing     = args.testing
-    title       = args.title
-    uDir        = args.uDir
     verbose     = args.verbose
+  
+    digest = hashlib.new('sha1')
+
+    # XXX This reads the file but is nonsensical in the context; 
+    # we need a simple parser.
+    with open(listFile, "rU") as f:
+        line = f.readline()
+        while line:
+            lenLine = len(line)
+            if line.endswith(CRLF):
+                line = line[:lenLine-2]
+            elif line.endswith(LF):
+                line = line[:lenLine-1]
+            # XXX otherwise we have an error
+            print line
+            line = f.readline()
 
     # XXX STUB XX
 
@@ -40,7 +88,7 @@ def main():
 
     # parse the command line ----------------------------------------
     
-    DESC = 'list the named bucket in s3'
+    DESC = 'verify integrity of build list, optionally agains root dir and uDir"'
     parser = ArgumentParser(description=DESC)
 
     parser.add_argument('-b', '--listFile', 
@@ -53,13 +101,10 @@ def main():
         help='path to RSA private key if signing')
 
     parser.add_argument('-r', '--rootDir',
-        help='root directory for build list (REQUIRED)')
+        help='root directory for build list')
 
     parser.add_argument('-T', '--testing', action='store_true',
         help='this is a test run')
-
-    parser.add_argument('-t', '--title', 
-        help='title for build list')
 
     parser.add_argument('-u', '--uDir', 
         help='path to uDir (relative to tmp/ if testing)')
@@ -70,47 +115,33 @@ def main():
     args = parser.parse_args()
 
     # fixups --------------------------------------------------------
+    if args.testing and args.listFile:
+        if args.listFile[0] == '/':
+            args.listFile = args.listFile[1:]
+        args.listFile = os.path.join('tmp', args.listFile)
+
+    # sanity checks -------------------------------------------------
+    if not args.justShow and not args.listFile or args.listFile == '':
+        print "no list file specified, cannot continue"
+        sys.exit(1)
+
+    if not args.justShow and not os.path.isfile(args.listFile):
+        print "list file %s does not exist, cannot continue" % args.listFile
+        sys.exit(1)
+
+    # fixups --------------------------------------------------------
+
+    # rootDir --------------------------------------------
+    if not args.rootDir or args.rootDir == '':
+        args.rootDir = None
+
     if args.testing and args.rootDir:
         if args.rootDir[0] == '/':
             args.rootDir = args.rootDir[1:]
         args.rootDir = os.path.join('tmp', args.rootDir)
 
-    # sanity checks -------------------------------------------------
-    if not args.justShow and not args.rootDir or args.rootDir == '':
-        print "no root directory specified, cannot continue"
-        sys.exit(1)
-
-    if not args.justShow and not os.path.isdir(args.rootDir):
+    if not args.justShow and args.rootDir and not os.path.isdir(args.rootDir):
         print "root directory %s does not exist, cannot continue" % args.rootDir
-        sys.exit(1)
-
-    # fixups --------------------------------------------------------
-
-    # uDir ------------------------------------------------
-    if args.testing and args.uDir:
-        if args.uDir[0] == '/':
-            args.uDir = args.uDir[1:]
-        args.uDir = os.path.join('tmp', args.uDir)
-
-    # title -----------------------------------------------
-    if not args.title or args.title == '':
-        junk, sep, base = args.rootDir.rpartition('/')
-        args.title = base
-    else:
-        # this can contain spaces and other undesirable characters
-        base = args.title
-
-    # listFile --------------------------------------------
-    if not args.listFile or args.listFile == '':
-        args.listFile = base + ".bld"
-
-    if args.testing:
-        if args.listFile[0] == '/':
-            args.listFile = args.listFile[1:]
-        args.listFile = os.path.join('tmp', args.listFile)
-
-    if not args.justShow and not os.path.isfile(args.listFile):
-        print "list file %s does not exist, cannot continue" % args.listFile
         sys.exit(1)
     
     # private key file ------------------------------------
@@ -138,7 +169,6 @@ def main():
         print 'listFile     = ' + str(args.listFile)
         print 'rootDir      = ' + str(args.rootDir)
         print 'testing      = ' + str(args.testing)
-        print 'title        = ' + str(args.title)
         print 'uDir         = ' + str(args.uDir)
         print 'verbose      = ' + str(args.verbose)
 
@@ -146,7 +176,7 @@ def main():
         sys.exit(0)
 
     # do what's required --------------------------------------------
-    makeListing(args)
+    checkListing(args)
 
         
 if __name__ == '__main__':

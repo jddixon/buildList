@@ -5,7 +5,7 @@ import base64, calendar, hashlib, time
 __all__ = ['__version__', '__version_date__',
             # OTHER EXPORTED CONSTANTS
             'BLOCK_SIZE', 'CONTENT_END', 'CONTENT_START',
-            'CRLF',
+            'CRLF', 'LF',
             # FUNCTIONS
             'base64SHA1File',
             'parseTimestamp', 'timestamp', 'timestampNow', 
@@ -16,8 +16,9 @@ __version_date__ = '2014-09-30'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
-CONTENT_START   = '# START CONTENT '
-CRLF            = "\r\n"
+CONTENT_START   = '# START CONTENT #'
+CRLF            = '\r\n'
+LF              = '\n'
 
 
 # TIMESTAMP FUNCTIONS -----------------------------------------------

@@ -40,7 +40,7 @@ def main():
 
     # parse the command line ----------------------------------------
     
-    DESC = 'list the named bucket in s3'
+    DESC = 'given a build list and uDir, regeneerate the root directory'
     parser = ArgumentParser(description=DESC)
 
     parser.add_argument('-b', '--listFile', 
