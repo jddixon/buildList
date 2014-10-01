@@ -1,5 +1,9 @@
 ~/dev/py/buildList/CHANGES
 
+0.1.1
+    2014-09-30
+        * blCheck, blListGen, blSrcGen, __init__, testSHA1File,
+            testTimestamp                                           SLOC  393
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24

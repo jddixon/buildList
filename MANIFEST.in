@@ -1,7 +1,8 @@
 # see http://docs.python.org/distutils/sourcedist.html
 
 include netDistrib.conf
-include CHANGES README TODO
+include CHANGES MANIFEST.in README TODO
+include blCheck blListGen blSrcGen
 recursive-include buildList *.py
 global-exclude junk* .*swp 
 prune   .svn
