@@ -2,9 +2,14 @@
 #
 # ~/dev/py/buildList/blListGen
 
-import hashlib, os, sys
+import base64, hashlib, os, sys
 from argparse   import ArgumentParser
 from buildList  import *
+
+def IntegrityCheckFailure(Exception):
+    pass
+def ParseFailed(Exception):
+    pass
 
 def readLine(f):
     line = f.readline()
@@ -35,6 +40,7 @@ def walkDir(f, digest, dirPath):
         else:
             print "can't handle %s" % pathToFile
 
+# MAIN --------------------------------------------------------------
 def checkListing(args):
 
     # this is here because assignment of args.keyFile to None fails
@@ -59,23 +65,30 @@ def checkListing(args):
     testing     = args.testing
     verbose     = args.verbose
   
-    digest = hashlib.new('sha1')
+    digest  = hashlib.new('sha1')
+    b64Hash = None
 
-    # XXX This reads the file but is nonsensical in the context; 
-    # we need a simple parser.
     with open(listFile, "rU") as f:
+        expectTitle(f, digest)
+        expectTimestamp(f, digest)
+        # XXX PUB KEY NOT HANDLED
+        expectStr(f, CONTENT_START)
+        while acceptContentLine(f, digest, CONTENT_END, rootDir, uDir):
+            pass
+        b64Hash = expectListLine(f, "missing hash or dig sig")
+        # DEBUG
+        print "B64-ENCODED HASH: %s" % b64Hash
+        # END
         line = f.readline()
-        while line:
-            lenLine = len(line)
-            if line.endswith(CRLF):
-                line = line[:lenLine-2]
-            elif line.endswith(LF):
-                line = line[:lenLine-1]
-            # XXX otherwise we have an error
-            print line
-            line = f.readline()
+        if line:
+            errMsg = "extra line at end of buildList: '%s'" % line
+            raise ParseFailure(errMsg)
+    actualB64Hash = base64.standard_b64encode(digest.digest())
+    if b64Hash != actualB64Hash:
+        errMsg = "calculated hash %s does not match hash in build list %s" % (
+                actualB64Hash, b64Hash)
 
-    # XXX STUB XX
+        raise IntegrityCheckFailure(errMsg)
 
 def main():
     """
