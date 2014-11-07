@@ -1,7 +1,6 @@
 build
 .committed
 CVS
-dist
 *.egg-info
 junk*
 MANIFEST
@@ -13,3 +12,4 @@ MANIFEST
 tmp
 .wrapped
 *ZZZ
+.sharedev
