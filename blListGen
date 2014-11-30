@@ -84,7 +84,7 @@ def main():
 
     # parse the command line ----------------------------------------
     
-    DESC = 'generate build list for directory, optinally populating uDir'
+    DESC = 'generate build list for directory, optionally populating uDir'
     parser = ArgumentParser(description=DESC)
 
     parser.add_argument('-b', '--listFile', 

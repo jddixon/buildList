@@ -1,5 +1,5 @@
 ~/dev/py/buildList/TODO
 
 2014-10-01
-    * implement blListGen code to hand -u option and copy input 
+    * implement blListGen code to handle -u option and copy input 
         to uDir
