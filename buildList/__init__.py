@@ -18,8 +18,8 @@ __all__ = ['__version__', '__version_date__',
             'expectTitle',
           ]
 
-__version__      = '0.1.3'
-__version_date__ = '2014-10-02'
+__version__      = '0.2.0'
+__version_date__ = '2014-12-15'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
@@ -89,7 +89,7 @@ def expectListLine(f, errMsg):
 def expectTitle(f, digest):
     line = expectListLine(f, "missing title")
     # DEBUG
-    print "TITLE: %s" % line
+    print("TITLE: %s" % line)
     # END
     digest.update(line)
 
@@ -97,7 +97,7 @@ def expectTimestamp(f, digest):
     line = expectListLine(f, "missing timestamp")
     t = parseTimestamp(line)        # can raise ValueError
     # DEBUG
-    print "TIMESTAMP: %s" % line
+    print("TIMESTAMP: %s" % line)
     # END
     digest.update(line)
 
@@ -107,7 +107,7 @@ def expectStr(f, str):
     if line != str:
         raise ParseFailure('expected ' + str)
     # DEBUG
-    print "STR: %s" % str
+    print("STR: %s" % str)
     # END
 
 def acceptContentLine(f, digest, str, rootDir, uDir):
@@ -125,7 +125,7 @@ def acceptContentLine(f, digest, str, rootDir, uDir):
     line = acceptListLine(f)        # may raise ParseFailed
     if line == str:
         # DEBUG
-        print "STR: " + line
+        print("STR: " + line)
         # END
         return False
     
@@ -135,7 +135,7 @@ def acceptContentLine(f, digest, str, rootDir, uDir):
         errMsg = "bad content line: '%s'" % line
         raise ParseFailure(errMsg)
     # DEBUG
-    print "CONTENT: %s" % line
+    print("CONTENT: %s" % line)
     # END
     digest.update(line)
     b64Hash = parts[0]

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # testRandomDir.py
 
@@ -26,7 +26,7 @@ class TestRandomDir (unittest.TestCase):
         blkCount = 1 + self.rng.nextInt16(3)     # so 1 to 3
         # last block will usually be only partically populated
         maxLen = BLOCK_SIZE * (blkCount - 1) + self.rng.nextInt16(BLOCK_SIZE)
-        print "MAX FILE BLOCKS %d, MAX FILE LEN %d\n" % (blkCount, maxLen)
+        print("MAX FILE BLOCKS %d, MAX FILE LEN %d\n" % (blkCount, maxLen))
         minLen = 1
 
         # we want the diretory name to be unique
@@ -34,9 +34,9 @@ class TestRandomDir (unittest.TestCase):
         while os.path.exists(pathToDir):
             pathToDir = os.path.join('tmp', self.rng.nextFileName(8))
 
-        print "SCRATCH DIRECTORY: %s" % pathToDir
-        print "  DEPTH %d, WIDTH %d, MAXLEN %d, MINLEN %d\n" % (
-                depth, width, maxLen, minLen)
+        print("SCRATCH DIRECTORY: %s" % pathToDir)
+        print("  DEPTH %d, WIDTH %d, MAXLEN %d, MINLEN %d\n" % (
+                depth, width, maxLen, minLen))
 
         self.rng.nextDataDir(pathToDir, depth, width, maxLen, minLen)
 

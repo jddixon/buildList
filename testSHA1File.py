@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 # testTimestamp.py
 
@@ -27,7 +27,7 @@ class TestTimestamp (unittest.TestCase):
         # last block will usually be only partically populated
         byteCount = BLOCK_SIZE * (blkCount - 1) + self.rng.nextInt16(BLOCK_SIZE)
       
-        print "BLOCK COUNT %d, BYTE COUNT %d\n" % (blkCount, byteCount)
+        print("BLOCK COUNT %d, BYTE COUNT %d\n" % (blkCount, byteCount))
 
         data = bytearray(byteCount)     # that many null bytes
         self.rng.nextBytes(data)             # fill with random data
