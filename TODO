@@ -1,5 +1,17 @@
 ~/dev/py/buildList/TODO
 
+2015-04-12
+    * for interoperability tests need 
+        - a read-only directory example/
+        - a valid buildList example/buildList.dat, 
+        - a directory tree example/data/ 
+        - an appropriate example/uDir/
+        - and a node with its ID, ck/ckPriv, and sk/skPriv serialized 
+            under example/.xlattice/
+        - make sure buildList lines are CR-LF terminated
+    * bin/bootStrap script creates all of this
+    * everything under example/ is read-only if at all possible
+
 2014-10-01
     * implement blListGen code to handle -u option and copy input 
         to uDir

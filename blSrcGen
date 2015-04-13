@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 # ~/dev/py/buildList/blListGen
 
@@ -40,7 +40,7 @@ def main():
 
     # parse the command line ----------------------------------------
     
-    DESC = 'given a build list and uDir, regeneerate the root directory'
+    DESC = 'given a build list and uDir, regenerate the root directory'
     parser = ArgumentParser(description=DESC)
 
     parser.add_argument('-b', '--listFile', 
@@ -69,6 +69,12 @@ def main():
 
     args = parser.parse_args()
 
+    # sanity checks -------------------------------------------------
+    if args.rootDir == None or args.rootDir == '':
+        print("you must specify a root directory")
+        parser.print_help()
+        sys.exit(1)
+
     # fixups --------------------------------------------------------
     if args.testing and args.rootDir:
         if args.rootDir[0] == '/':
@@ -78,7 +84,7 @@ def main():
     # sanity checks -------------------------------------------------
     if not args.justShow and os.path.exists(args.rootDir):
         if not os.path.isdir(args.rootDir):
-            print "rootDir %s is not a directory, cannot continue" % args.rootDir
+            print("rootDir %s is not a directory, cannot continue" % args.rootDir)
             sys.exit(1)
 
     # fixups --------------------------------------------------------
@@ -107,7 +113,7 @@ def main():
         args.listFile = os.path.join('tmp', args.listFile)
 
     if not args.justShow and not os.path.isfile(args.listFile):
-        print "list file %s does not exist, cannot continue" % args.listFile
+        print("list file %s does not exist, cannot continue" % args.listFile)
         sys.exit(1)
 
     # private key file ------------------------------------
@@ -120,7 +126,7 @@ def main():
                     args.keyFile = args.keyFile[1:]
                 args.keyFile = os.path.join('tmp', args.keyFile)
             if not args.justShow and not os.path.isfile(args.keyFile):
-                print "key file %s does not exist, cannot continue" % args.keyFile
+                print("key file %s does not exist, cannot continue" % args.keyFile)
                 sys.exit(1)
     
     # complete setup ------------------------------------------------
@@ -128,16 +134,16 @@ def main():
 
     # maybe show options and such -----------------------------------
     if args.verbose or args.justShow:
-        print "%s %s" % (appName, __version_date__)
+        print("%s %s" % (appName, __version_date__))
 
     if args.verbose or args.justShow:
-        print 'keyFile      = ' + str(args.keyFile)
-        print 'listFile     = ' + str(args.listFile)
-        print 'rootDir      = ' + str(args.rootDir)
-        print 'testing      = ' + str(args.testing)
-        print 'title        = ' + str(args.title)
-        print 'uDir         = ' + str(args.uDir)
-        print 'verbose      = ' + str(args.verbose)
+        print('keyFile      = ' + str(args.keyFile))
+        print('listFile     = ' + str(args.listFile))
+        print('rootDir      = ' + str(args.rootDir))
+        print('testing      = ' + str(args.testing))
+        print('title        = ' + str(args.title))
+        print('uDir         = ' + str(args.uDir))
+        print('verbose      = ' + str(args.verbose))
 
     if args.justShow:
         sys.exit(0)

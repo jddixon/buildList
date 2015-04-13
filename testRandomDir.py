@@ -29,7 +29,7 @@ class TestRandomDir (unittest.TestCase):
         print("MAX FILE BLOCKS %d, MAX FILE LEN %d\n" % (blkCount, maxLen))
         minLen = 1
 
-        # we want the diretory name to be unique
+        # we want the directory name to be unique
         pathToDir = os.path.join('tmp', self.rng.nextFileName(8))
         while os.path.exists(pathToDir):
             pathToDir = os.path.join('tmp', self.rng.nextFileName(8))
@@ -51,7 +51,7 @@ class TestRandomDir (unittest.TestCase):
         #with open(pathToFile, 'wb') as f:
         #    f.write(data)
         #fileB64Hash = base64SHA1File(pathToFile)
-        #self.assertEquals(b64Hash, fileB64Hash)
+        #self.assertEqual(b64Hash, fileB64Hash)
 
 
 if __name__ == '__main__':

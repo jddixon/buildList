@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 #
 # ~/dev/py/buildList/blListGen
 
@@ -8,13 +8,13 @@ from buildList  import *
 
 def writeLine(f, line):
     # DEBUG
-    print line
+    print(line)
     # END
     f.write (line + CRLF)
 
 def writeLineUpdating(f, digest, line):
     # DEBUG
-    print line
+    print(line)
     # END
     digest.update(line)
     f.write (line + CRLF)
@@ -31,7 +31,7 @@ def walkDir(f, digest, dirPath):
         elif os.path.isdir(pathToFile):
             walkDir(f, digest, pathToFile)
         else:
-            print "can't handle %s" % pathToFile
+            print("can't handle %s" % pathToFile)
 
 def makeListing(args):
 
@@ -59,14 +59,14 @@ def makeListing(args):
         writeLineUpdating(f, digest, title)
         writeLineUpdating(f, digest, timestampNow())
         if keyFile:
-            print "*** no support for dig sig yet ***"
+            print("*** no support for dig sig yet ***")
             # XXX PUBKEY STUB XXX
         writeLine(f, CONTENT_START)
         walkDir(f, digest, rootDir)
         writeLine(f, CONTENT_END)
         if keyFile:
             # XXX DIGSIG STUB XX
-            print "*** no support for dig sig yet ***"
+            print("*** no support for dig sig yet ***")
         else:
             hash = digest.digest()
             b64Hash = base64.standard_b64encode(hash)
@@ -120,12 +120,14 @@ def main():
         args.rootDir = os.path.join('tmp', args.rootDir)
 
     # sanity checks -------------------------------------------------
-    if not args.justShow and not args.rootDir or args.rootDir == '':
-        print "no root directory specified, cannot continue"
+    if (not args.rootDir) or (args.rootDir == ''):
+        print("no root directory specified, cannot continue")
+        parser.print_help()
         sys.exit(1)
 
     if not args.justShow and not os.path.isdir(args.rootDir):
-        print "root directory %s does not exist, cannot continue" % args.rootDir
+        print("root directory %s does not exist, cannot continue" % args.rootDir)
+        parser.print_help()
         sys.exit(1)
 
     # fixups --------------------------------------------------------
@@ -163,7 +165,7 @@ def main():
                     args.keyFile = args.keyFile[1:]
                 args.keyFile = os.path.join('tmp', args.keyFile)
             if not args.justShow and not os.path.isfile(args.keyFile):
-                print "key file %s does not exist, cannot continue" % args.keyFile
+                print("key file %s does not exist, cannot continue" % args.keyFile)
                 sys.exit(1)
     
     # complete setup ------------------------------------------------
@@ -171,16 +173,16 @@ def main():
 
     # maybe show options and such -----------------------------------
     if args.verbose or args.justShow:
-        print "%s %s" % (appName, __version_date__)
+        print("%s %s" % (appName, __version_date__))
 
     if args.verbose or args.justShow:
-        print 'keyFile      = ' + str(args.keyFile)
-        print 'listFile     = ' + str(args.listFile)
-        print 'rootDir      = ' + str(args.rootDir)
-        print 'testing      = ' + str(args.testing)
-        print 'title        = ' + str(args.title)
-        print 'uDir         = ' + str(args.uDir)
-        print 'verbose      = ' + str(args.verbose)
+        print('keyFile      = ' + str(args.keyFile))
+        print('listFile     = ' + str(args.listFile))
+        print('rootDir      = ' + str(args.rootDir))
+        print('testing      = ' + str(args.testing))
+        print('title        = ' + str(args.title))
+        print('uDir         = ' + str(args.uDir))
+        print('verbose      = ' + str(args.verbose))
 
     if args.justShow:
         sys.exit(0)

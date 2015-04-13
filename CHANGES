@@ -1,5 +1,10 @@
 ~/dev/py/buildList/CHANGES
 
+0.2.1
+    2015-04-12
+        * convert blCheck, blListGen, blSrcGen to Python3
+        * improve their initial sanity checks
+        * improve specs                                             SLOC  564
 0.2.0
     2014-12-15
         * convert to Python3                                        SLOC  551

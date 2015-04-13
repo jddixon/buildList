@@ -27,13 +27,13 @@ class TestTimestamp (unittest.TestCase):
         strNow      = timestamp(gmtNow)
         nowAgain    = parseTimestamp(strNow)
         strAgain    = timestamp(nowAgain)
-        self.assertEquals(strNow, strAgain)
+        self.assertEqual(strNow, strAgain)
 
     def testParser(self):
         DOC_TIME    = "2004-11-18 20:03:34"
         fromEpoch   = parseTimestamp(DOC_TIME)      # seconds from epoch
         fromAsStr   = timestamp(fromEpoch)
-        self.assertEquals(fromAsStr, DOC_TIME)
+        self.assertEqual(fromAsStr, DOC_TIME)
 
     def testNow(self):
         structNow   = time.gmtime()                 # struct_time
