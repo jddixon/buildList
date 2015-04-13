@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+0.2.2
+    2015-04-13
+        * blBootstrap sketch                                        SLOC  705
 0.2.1
     2015-04-12
         * convert blCheck, blListGen, blSrcGen to Python3

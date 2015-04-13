@@ -146,15 +146,17 @@ def main():
     # fixups --------------------------------------------------------
 
     # rootDir --------------------------------------------
-    if not args.rootDir or args.rootDir == '':
-        args.rootDir = None
+    if (not args.rootDir) or (args.rootDir == ''):
+        print("no root directory specified, cannot continue")
+        parser.print_help()
+        sys.exit(1)
 
     if args.testing and args.rootDir:
         if args.rootDir[0] == '/':
             args.rootDir = args.rootDir[1:]
         args.rootDir = os.path.join('tmp', args.rootDir)
 
-    if not args.justShow and args.rootDir and not os.path.isdir(args.rootDir):
+    if (not args.justShow) and (not os.path.isdir(args.rootDir)):
         print("root directory %s does not exist, cannot continue" % args.rootDir)
         sys.exit(1)
     

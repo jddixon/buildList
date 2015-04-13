@@ -1,6 +1,8 @@
 ~/dev/py/buildList/TODO
 
 2015-04-12
+    * recheck sanity checks in blCheck/ListGen/SrcGen                   * DONE
+    * move their doIt code into buildList/__init__.py
     * for interoperability tests need 
         - a read-only directory example/
         - a valid buildList example/buildList.dat, 

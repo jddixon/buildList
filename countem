@@ -1,4 +1,4 @@
 cd /home/jdd/dev/py/buildList
 rm -rf build
 pySloc -v bash:countem MANIFEST.in  \
-    py:blCheck py:blListGen py:blSrcGen
+   py:blBootstrap py:blCheck py:blListGen py:blSrcGen

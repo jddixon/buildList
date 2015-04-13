@@ -1,0 +1,177 @@
+#!/usr/bin/python3
+#
+# ~/dev/py/buildList/blBootstrap
+
+import base64, hashlib, os, shutil, sys
+from argparse   import ArgumentParser
+from buildList  import *
+
+from rnglib import *
+
+def makedir_p(path, mode):
+    try:
+        os.makedirs(path, mode)
+    except OSError as e:
+        if e.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else:
+            raise
+
+def doIt(args):
+    dataDir      = args.dataDir
+    exDir        = args.exDir
+    force        = args.force
+    listFile     = args.listFile
+    nodeDir      = args.nodeDir
+    testing      = args.testing
+    title        = args.title
+    uDir         = args.uDir
+    verbose      = args.verbose
+
+    if os.path.exists(exDir):
+        print("deleting existing directory %s" % exDir)
+        shutil.rmtree(exDir)
+    
+    for d in [dataDir, nodeDir, uDir]:
+        makedir_p(d, 0o755)
+
+    pass
+
+def main():
+    """
+    Expect a command like
+        blBootstrap [options]
+
+    This program creates a directory tree like
+
+        example/
+            .xlattice
+                nodeConfig
+            dataDir/
+                data1
+                subDir1/
+                    data1-1
+                    data1-2     # empty
+                data2
+                subdir2/
+                subdir3/
+                    data3-1
+                subdir4/
+                    subdir4-1
+                        subdir4-1-1
+                            data4-1-1-1
+            example.bld
+            uDir/
+                00
+                ...
+                ff
+                tmp/
+
+    nodeConfig is a document in a standard form containing the name of
+    the node; a nodeID (a unique 160- or 256-bit number); two RSA key pairs
+    (one for digital signatures and one for encoding data); and the path
+    to the root of the local file system (that part of the file
+    system belonging to the node -- example/ in this case).
+
+    The information under example/dataDir is more or less random test data.
+
+    example.bld is a build list for dataDir.  The build list contains
+    the public part of the RSA key used to sign the list, its title,
+    and a UTC timestamp, the time at which the list was signed.  The
+    body of the list is an indented list of the files under dataDir/,
+    with a line for each file, each line containing the SHA content
+    hash of the document and its title.  The build list ends with a
+    digital signature over the earlier part of the document.  In this
+    example, the RSA private key used in signing the document in
+    contained in nodeConfig.
+
+    uDir/ contains the same set of files as under dataDir/, but
+    instead of being organized by name it is organized by content
+    key, by the SHA1 hash of the file.
+
+    The data under example/ is sufficient to verify the correctness of
+    the build list and the 1-to-1 relationship between the files under
+    example/datadir/ and those under example/uDir/
+
+    """
+
+    # parse the command line ----------------------------------------
+
+    DESC = 'generate a sample data tree, write a build list, and create a corresponding content-keyed store'
+
+    parser = ArgumentParser(description=DESC)
+
+    parser.add_argument('-e', '--exDir', default='example',
+        help='example directory, defaults to example/')
+
+    parser.add_argument('-f', '--force', action='store_true',
+        help='overwrite any existing example/ directory')
+
+    parser.add_argument('-j', '--justShow', action='store_true',
+        help='show options and exit')
+
+    parser.add_argument('-T', '--testing', action='store_true',
+        help='this is a test run')
+
+    parser.add_argument('-v', '--verbose', action='store_true',
+        help='be chatty')
+
+    args = parser.parse_args()
+
+    # fixups --------------------------------------------------------
+    if args.testing and args.exDir:
+        if args.exDir[0] == '/':
+            args.exDir = args.exDir[1:]
+        args.exDir = os.path.join('tmp', args.exDir)
+
+    # sanity checks -------------------------------------------------
+    if args.exDir[0] == '/':
+        print("example dir must not be absolute path")
+        parser.print_usage()
+        sys.exit(1)
+    if args.exDir[0] == '.':
+        print("example dir name must not begin with dot ('.')")
+        parser.print_usage()
+        sys.exit(1)
+
+    if (not args.force) and os.path.exists(args.exDir):
+        print("example directory %s exists but force (-f) not specified" % args.exDir)
+        parser.print_usage()
+        sys.exit(1)
+
+    # fixups --------------------------------------------------------
+    if args.testing:
+        args.exDir = os.path.join('test', args.exDir)
+    args.dataDir = os.path.join(args.exDir, 'dataDir')
+    args.listFile= os.path.join(args.exDir, 'example.bld')
+    args.nodeDir = os.path.join(args.exDir, '.xlattice')    # note leading dot
+    args.title   = 'sample build list'
+    args.uDir    = os.path.join(args.exDir, 'uDir')
+
+    # complete setup ------------------------------------------------
+    appName = 'blBootstrap %s' % __version__
+
+    # maybe show options and such -----------------------------------
+    if args.verbose or args.justShow:
+        print("%s %s" % (appName, __version_date__))
+
+    if args.verbose or args.justShow:
+        print('dataDir      = ' + str(args.dataDir))
+        print('exDir        = ' + str(args.exDir))
+        print('force        = ' + str(args.force))
+        print('listFile     = ' + str(args.listFile))
+        print('nodeDir      = ' + str(args.nodeDir))
+        print('testing      = ' + str(args.testing))
+        print('title        = ' + str(args.title))
+        print('uDir         = ' + str(args.uDir))
+        print('verbose      = ' + str(args.verbose))
+
+    if args.justShow:
+        sys.exit(0)
+
+    # do what's required --------------------------------------------
+    doIt(args)
+
+if __name__ == '__main__':
+    main()
+
