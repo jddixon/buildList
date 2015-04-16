@@ -6,7 +6,7 @@ import base64, hashlib, os, shutil, sys
 from argparse   import ArgumentParser
 from buildList  import *
 
-from rnglib import *
+import rnglib
 
 def makedir_p(path, mode):
     try:
@@ -31,11 +31,38 @@ def doIt(args):
     if os.path.exists(exDir):
         print("deleting existing directory %s" % exDir)
         shutil.rmtree(exDir)
-    
+   
+    subDir1     = os.path.join(dataDir, 'subDir1')
+    subDir2     = os.path.join(dataDir, 'subDir2')
+    subDir3     = os.path.join(dataDir, 'subDir3')
+    subDir4     = os.path.join(dataDir, 'subDir4')
+    subDir41    = os.path.join(subDir4, 'subDir41')
+    subDir411   = os.path.join(subDir41, 'subDir411')
+
     for d in [dataDir, nodeDir, uDir]:
         makedir_p(d, 0o755)
+    for d in [subDir1, subDir2, subDir3, subDir4]:
+        makedir_p(d, 0o755)
+    makedir_p(subDir41, 0o755)
+    makedir_p(subDir411, 0o755)
+    
+    # files to be populaed with random data
+    rng         = rnglib.SimpleRNG()
+    data1       = os.path.join(dataDir, 'data1')
+    data11      = os.path.join(subDir1, 'data11')
+    data12      = os.path.join(subDir1, 'data12')
+    data2       = os.path.join(dataDir, 'data2')
+    data31      = os.path.join(subDir3, 'data31')
+    data4111    = os.path.join(subDir411, 'data31')
+   
+    for path in [data1, data11, data12, data2, data31, data4111]:
+        count = 16 + rng.nextInt16(2048)
+        data = bytearray(count)
+        rng.nextBytes(data)
+        with open(path, 'wb') as f:
+            f.write(data)
 
-    pass
+    # XXX WORKING HERE 
 
 def main():
     """
@@ -45,21 +72,21 @@ def main():
     This program creates a directory tree like
 
         example/
-            .xlattice
-                nodeConfig
+            node                # was .xlattice
+                ckPriv          # serialized how ?
             dataDir/
                 data1
                 subDir1/
-                    data1-1
-                    data1-2     # empty
+                    data11
+                    data12      # empty
                 data2
-                subdir2/
-                subdir3/
-                    data3-1
-                subdir4/
-                    subdir4-1
-                        subdir4-1-1
-                            data4-1-1-1
+                subDir2/
+                subDir3/
+                    data31
+                subDir4/
+                    subDir41
+                        subDir411
+                            data4111
             example.bld
             uDir/
                 00
@@ -144,7 +171,7 @@ def main():
         args.exDir = os.path.join('test', args.exDir)
     args.dataDir = os.path.join(args.exDir, 'dataDir')
     args.listFile= os.path.join(args.exDir, 'example.bld')
-    args.nodeDir = os.path.join(args.exDir, '.xlattice')    # note leading dot
+    args.nodeDir = os.path.join(args.exDir, 'node')
     args.title   = 'sample build list'
     args.uDir    = os.path.join(args.exDir, 'uDir')
 

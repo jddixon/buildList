@@ -2,7 +2,7 @@
 
 include netDistrib.conf
 include CHANGES MANIFEST.in README TODO
-include blCheck blListGen blSrcGen
+include blBootstrap blCheck blListGen blSrcGen
 recursive-include buildList *.py
 global-exclude junk* .*swp 
 prune   .svn

@@ -18,8 +18,8 @@ __all__ = ['__version__', '__version_date__',
             'expectTitle',
           ]
 
-__version__      = '0.2.2'
-__version_date__ = '2015-04-13'
+__version__      = '0.2.3'
+__version_date__ = '2015-04-16'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
