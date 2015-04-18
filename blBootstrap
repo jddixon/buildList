@@ -4,6 +4,7 @@
 
 import base64, hashlib, os, shutil, sys
 from argparse   import ArgumentParser
+from Crypto.PublicKey import RSA
 from buildList  import *
 
 import rnglib
@@ -55,13 +56,18 @@ def doIt(args):
     data31      = os.path.join(subDir3, 'data31')
     data4111    = os.path.join(subDir411, 'data31')
    
-    for path in [data1, data11, data12, data2, data31, data4111]:
+    for path in [data1, data11, data2, data31, data4111]:
         count = 16 + rng.nextInt16(2048)
         data = bytearray(count)
         rng.nextBytes(data)
         with open(path, 'wb') as f:
             f.write(data)
 
+    ckPriv = RSA.generate(1024)    # should be >= 2048, but this is just testing
+    pathToKey = os.path.join(nodeDir, "ckPriv.pem")
+    with open(pathToKey, 'wb') as f:
+        f.write(ckPriv.exportKey('PEM'))
+    ck = ckPriv.publickey()
     # XXX WORKING HERE 
 
 def main():
@@ -94,13 +100,13 @@ def main():
                 ff
                 tmp/
 
-    nodeConfig is a document in a standard form containing the name of
-    the node; a nodeID (a unique 160- or 256-bit number); two RSA key pairs
-    (one for digital signatures and one for encoding data); and the path
-    to the root of the local file system (that part of the file
-    system belonging to the node -- example/ in this case).
+    ckPriv is the RSA private key used to sign the example.bld
+    build list.
 
-    The information under example/dataDir is more or less random test data.
+    The information under example/dataDir is a small directory tree.
+    The data* are data files containing quasi-random data.  Both the
+    file length and the contents are random.  data12 is an empty file.
+    Subdirectory subDir2 is an empty subdirectory.
 
     example.bld is a build list for dataDir.  The build list contains
     the public part of the RSA key used to sign the list, its title,

@@ -1,5 +1,9 @@
 ~/dev/py/buildList/CHANGES
 
+0.2.4
+    2015-04-17
+        * example/ data files populated
+        * generate RSA key, write to example/node/                  SLOC  733
 0.2.3
     2015-04-16
         * blBootstrap builds example/                               SLOC  727

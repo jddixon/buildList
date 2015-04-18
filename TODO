@@ -1,8 +1,8 @@
 ~/dev/py/buildList/TODO
 
 2015-04-15
-    * data12 should be empty but is being filled with random data
-    * need node/ckPriv with serialized RSA private key
+    * data12 should be empty but is being filled with random data       * FIXED
+    * need node/ckPriv with serialized RSA private key                  * DONE
     * need a build list, example.bld
     * need udir/ populated
 
