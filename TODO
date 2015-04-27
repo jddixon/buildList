@@ -1,5 +1,8 @@
 ~/dev/py/buildList/TODO
 
+2015-04-27
+    * data12 is missing (should be present but an empty file)           * FIXED
+
 2015-04-15
     * data12 should be empty but is being filled with random data       * FIXED
     * need node/ckPriv with serialized RSA private key                  * DONE

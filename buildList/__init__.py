@@ -1,6 +1,6 @@
 # buildList/__init__.py
 
-import base64, calendar, hashlib, time
+import base64, calendar, hashlib, os, time
 
 __all__ = ['__version__', '__version_date__',
             # OTHER EXPORTED CONSTANTS
@@ -8,7 +8,7 @@ __all__ = ['__version__', '__version_date__',
             'CRLF', 'LF',
             # FUNCTIONS
             'base64SHA1File',
-            'parseTimestamp', 'timestamp', 'timestampNow', 
+            'parseTimestamp', 'timestamp', 'timestampNow', 'touch',
             # PARSER FUNCTIONS
             'IntegrityCheckFailure', 'ParseFailed',
             'acceptContentLine',
@@ -16,10 +16,12 @@ __all__ = ['__version__', '__version_date__',
             'expectStr', 
             'expectTimestamp',
             'expectTitle',
+            # CLASSES
+            'BuildList',
           ]
 
-__version__      = '0.2.4'
-__version_date__ = '2015-04-17'
+__version__      = '0.2.5'
+__version_date__ = '2015-04-27'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
@@ -27,6 +29,9 @@ CONTENT_START   = '# START CONTENT #'
 CRLF            = '\r\n'
 LF              = '\n'
 
+def touch(fname, times=None):
+    with open(fname, 'a'):
+        os.utime(fname, times)
 
 # TIMESTAMP FUNCTIONS -----------------------------------------------
 

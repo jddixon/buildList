@@ -1,5 +1,9 @@
 ~/dev/py/buildList/CHANGES
 
+0.2.5
+    2015-04-27
+        * add touch(), create data12                                SLOC  738
+        * elaborate README/index.md                                 SLOC  739
 0.2.4
     2015-04-17
         * example/ data files populated

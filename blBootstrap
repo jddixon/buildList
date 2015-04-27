@@ -51,11 +51,10 @@ def doIt(args):
     rng         = rnglib.SimpleRNG()
     data1       = os.path.join(dataDir, 'data1')
     data11      = os.path.join(subDir1, 'data11')
-    data12      = os.path.join(subDir1, 'data12')
     data2       = os.path.join(dataDir, 'data2')
     data31      = os.path.join(subDir3, 'data31')
     data4111    = os.path.join(subDir411, 'data31')
-   
+  
     for path in [data1, data11, data2, data31, data4111]:
         count = 16 + rng.nextInt16(2048)
         data = bytearray(count)
@@ -63,12 +62,20 @@ def doIt(args):
         with open(path, 'wb') as f:
             f.write(data)
 
+    # empty file(s)
+    data12      = os.path.join(subDir1, 'data12')
+    for path in [data12]:
+        touch(path)
+
     ckPriv = RSA.generate(1024)    # should be >= 2048, but this is just testing
     pathToKey = os.path.join(nodeDir, "ckPriv.pem")
     with open(pathToKey, 'wb') as f:
         f.write(ckPriv.exportKey('PEM'))
     ck = ckPriv.publickey()
+    
     # XXX WORKING HERE 
+
+    # 
 
 def main():
     """
@@ -79,7 +86,7 @@ def main():
 
         example/
             node                # was .xlattice
-                ckPriv          # serialized how ?
+                ckPriv          # PEM serialization
             dataDir/
                 data1
                 subDir1/
@@ -93,7 +100,7 @@ def main():
                     subDir41
                         subDir411
                             data4111
-            example.bld
+            dataDir.bld
             uDir/
                 00
                 ...
@@ -108,7 +115,7 @@ def main():
     file length and the contents are random.  data12 is an empty file.
     Subdirectory subDir2 is an empty subdirectory.
 
-    example.bld is a build list for dataDir.  The build list contains
+    dataDir.bld is a build list for dataDir.  The build list contains
     the public part of the RSA key used to sign the list, its title,
     and a UTC timestamp, the time at which the list was signed.  The
     body of the list is an indented list of the files under dataDir/,
@@ -116,7 +123,7 @@ def main():
     hash of the document and its title.  The build list ends with a
     digital signature over the earlier part of the document.  In this
     example, the RSA private key used in signing the document in
-    contained in nodeConfig.
+    contained in node/ckPriv.
 
     uDir/ contains the same set of files as under dataDir/, but
     instead of being organized by name it is organized by content
