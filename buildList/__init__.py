@@ -20,8 +20,8 @@ __all__ = ['__version__', '__version_date__',
             'BuildList',
           ]
 
-__version__      = '0.2.5'
-__version_date__ = '2015-04-27'
+__version__      = '0.2.6'
+__version_date__ = '2015-04-28'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
@@ -150,3 +150,6 @@ def acceptContentLine(f, digest, str, rootDir, uDir):
     # XXX NO CHECK AGAINST uDir
 
     return True
+
+class BuildList(object):
+    pass

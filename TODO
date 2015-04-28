@@ -2,6 +2,17 @@
 
 2015-04-27
     * data12 is missing (should be present but an empty file)           * FIXED
+    * public key should be wrapped in a standard way in the 
+        serialization
+    * consider omitting CRLF and content delimiter lines when 
+        calculating the digital signature
+
+    * class BuildList should extend SignedList
+    * BuildList should be sorted by path to file, which should
+        always be relative 
+        - sort guarantees file uniqueness
+        - forbid '/' as a leading character
+        - forbid internal './' and '../' sequences
 
 2015-04-15
     * data12 should be empty but is being filled with random data       * FIXED

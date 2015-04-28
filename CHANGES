@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+0.2.6
+    2015-04-28
+        * add testRSA.py                                            SLOC  790
 0.2.5
     2015-04-27
         * add touch(), create data12                                SLOC  738

@@ -1,3 +1,4 @@
 ./testRandomDir.py
+./testRSA.py
 ./testSHA1File.py
 ./testTimestamp.py
