@@ -20,13 +20,13 @@ __all__ = ['__version__', '__version_date__',
             'BuildList',
           ]
 
-__version__      = '0.2.6'
-__version_date__ = '2015-04-28'
+__version__      = '0.2.7'
+__version_date__ = '2015-05-01'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
 CONTENT_START   = '# START CONTENT #'
-CRLF            = '\r\n'
+CRLF            = '\r\n'.encode('utf-8')
 LF              = '\n'
 
 def touch(fname, times=None):

@@ -4,20 +4,43 @@
 
 import base64, hashlib, os, sys
 from argparse   import ArgumentParser
+from Crypto.PublicKey import RSA
+from Crypto.Hash      import SHA    # presumably 1
+from Crypto.Signature import PKCS1_PSS
+
 from buildList  import *
+
+def writeData(f, line):
+    # DEBUG
+    print(line)
+    # END
+    f.write (line)
+    f.write(CRLF)
+
+def writeDataUpdating(f, digest, line):
+    # DEBUG
+    print(line)
+    # END
+    digest.update(line)
+    f.write (line)
+    f.write(CRLF)
 
 def writeLine(f, line):
     # DEBUG
     print(line)
     # END
-    f.write (line + CRLF)
+    line = line.encode('utf-8')
+    f.write (line)
+    f.write(CRLF)
 
 def writeLineUpdating(f, digest, line):
     # DEBUG
     print(line)
     # END
+    line = line.encode('utf-8')
     digest.update(line)
-    f.write (line + CRLF)
+    f.write (line)
+    f.write(CRLF)
 
 def walkDir(f, digest, dirPath):
     files = os.listdir(dirPath)
@@ -48,6 +71,7 @@ def makeListing(args):
         uDir = None
 
     listFile    = args.listFile
+    now         = args.now
     rootDir     = args.rootDir
     testing     = args.testing
     title       = args.title
@@ -55,9 +79,9 @@ def makeListing(args):
   
     digest = hashlib.new('sha1')
 
-    with open(listFile, "w") as f:
-        writeLineUpdating(f, digest, title)
-        writeLineUpdating(f, digest, timestampNow())
+    with open(listFile, "wb") as f:
+        writeLineUpdating(f, digest, title.encode('utf-8'))
+        writeLineUpdating(f, digest, now.encode('utf-8'))
         if keyFile:
             print("*** no support for dig sig yet ***")
             # XXX PUBKEY STUB XXX
@@ -82,13 +106,15 @@ def main():
 
     # program defaults ----------------------------------------------
 
+    now = timestampNow()
+
     # parse the command line ----------------------------------------
     
     DESC = 'generate build list for directory, optionally populating uDir'
     parser = ArgumentParser(description=DESC)
 
     parser.add_argument('-b', '--listFile', 
-        help='root directory for build list')
+        help='path to build list')
     
     parser.add_argument('-j', '--justShow', action='store_true',
         help='show options and exit')
@@ -114,6 +140,7 @@ def main():
     args = parser.parse_args()
 
     # fixups --------------------------------------------------------
+    args.now = now
     if args.testing and args.rootDir:
         if args.rootDir[0] == '/':
             args.rootDir = args.rootDir[1:]
@@ -170,14 +197,17 @@ def main():
     
     # complete setup ------------------------------------------------
     appName = 'blListGen %s' % __version__
+    args.title = str(args.title)
 
     # maybe show options and such -----------------------------------
     if args.verbose or args.justShow:
         print("%s %s" % (appName, __version_date__))
 
     if args.verbose or args.justShow:
+        print('justShow     = ' + str(args.justShow))
         print('keyFile      = ' + str(args.keyFile))
         print('listFile     = ' + str(args.listFile))
+        print('timestamp    = ' + str(args.now))
         print('rootDir      = ' + str(args.rootDir))
         print('testing      = ' + str(args.testing))
         print('title        = ' + str(args.title))

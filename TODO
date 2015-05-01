@@ -1,5 +1,8 @@
 ~/dev/py/buildList/TODO
 
+2015-04-29
+    * FIXME: old makeListing code doesnt' work because of casual 
+        intermixing of strings and bytearrays
 2015-04-27
     * data12 is missing (should be present but an empty file)           * FIXED
     * public key should be wrapped in a standard way in the 

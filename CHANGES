@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+0.2.7
+    2015-05-01
+        * test dig sig                                              SLOC  820 
 0.2.6
     2015-04-28
         * add testRSA.py                                            SLOC  790

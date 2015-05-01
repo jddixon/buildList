@@ -1,0 +1,7 @@
+cd ~/dev/py/buildList
+
+./blListGen -b example/dataDir.bld      \
+            -k example/node/ckPriv.pem  \
+            -r example/dataDir          \
+            -u example/uDir             \
+            -v
