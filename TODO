@@ -1,5 +1,11 @@
 ~/dev/py/buildList/TODO
 
+2015-05-03
+    * BuildList.__init__() needs sanity checks on parameters
+2015-05-02
+    * timestamp should be a 64-bit signed value representing seconds
+        from the Epoch (nanoseconds?)
+
 2015-04-29
     * FIXME: old makeListing code doesnt' work because of casual 
         intermixing of strings and bytearrays

@@ -1,6 +1,10 @@
 # buildList/__init__.py
 
 import base64, calendar, hashlib, os, time
+from Crypto.PublicKey import RSA
+from Crypto.Hash      import SHA    # presumably 1
+from Crypto.Signature import PKCS1_PSS
+from merkletree import MerkleTree
 
 __all__ = ['__version__', '__version_date__',
             # OTHER EXPORTED CONSTANTS
@@ -20,8 +24,8 @@ __all__ = ['__version__', '__version_date__',
             'BuildList',
           ]
 
-__version__      = '0.2.7'
-__version_date__ = '2015-05-01'
+__version__      = '0.2.8'
+__version_date__ = '2015-05-03'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
@@ -152,4 +156,57 @@ def acceptContentLine(f, digest, str, rootDir, uDir):
     return True
 
 class BuildList(object):
-    pass
+    """
+    A BuildList has a title, an RSA public key, and some content, which
+    is a MerkleTree, an indented list of files and directories and their
+    associated content hashes.  The BuildList optionally has a timestamp
+    and a digital signature.  It is signed using the RSA private key 
+    associated with the RSA public key.  Signing the BuildList updates 
+    the timestamp.  The BuildList has a verify() method which 
+    mathematically verifies that the digital signature is compatible 
+    with the title, timestamp, content lines, and the BuildList's RSA
+    public key.
+    """
+    def __init__(self, title, dirPath, ck, usingSHA1=False, exRE=None):
+        self._pubKey    = ck
+        if (not ck) or (type(ck) != RSA._RSAobj) :
+            raise "ck is nil or not a valid RSA public key"
+        self._title     = title
+        self._when      = 0         # seconds from the Epoch; a 64-bit value
+        self._path      = dirPath   # a relative path containing no . or ..
+        if (not dirPath) or (not os.path.isdir(dirPath)):
+            raise "%s does not exist or is not a directory" % dirPath
+        self._usingSHA1 = usingSHA1
+
+        self._tree = MerkleTree.createFromFileSystem(dirPath, 
+            # accept default deltaIndent
+            usingSHA1=usingSHA1, exRE=exRE)
+
+    def sign(ckPriv):
+        """ ckPriv is the RSA private key used for siging the BuildList """
+        now = time.gmtime()     # the GMT/UTC time of the signature
+
+        # Verify that the public key (ck) is the public part of ckPriv, 
+        # the private RSA key.
+        # XXX STUB XXX
+
+        # set the time in the data structure
+        # XXX STUB XXX
+
+        # Sign the list using SHA1 and RSA.  What we are signing is the
+        # in-memory binary data structure.
+
+        # signing sets self._signature and self._when
+
+        # XXX STUB XXX
+
+
+    def verify():
+
+        # if self._signature is not set, return False
+
+        # otherwise, return True if self._signature is set and it is
+        # consistent as an RSA-SHA1 with the public key on the 
+        # document and the SHA1 hash of the serialized document, taking
+        # the hash over the fields in standard order (pubkey, title, 
+        # timestamp, and content lines).
