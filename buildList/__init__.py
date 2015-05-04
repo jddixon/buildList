@@ -2,7 +2,7 @@
 
 import base64, calendar, hashlib, os, time
 from Crypto.PublicKey import RSA
-from Crypto.Hash      import SHA    # presumably 1
+from Crypto.Hash      import SHA, SHA256
 from Crypto.Signature import PKCS1_PSS
 from merkletree import MerkleTree
 
@@ -16,16 +16,16 @@ __all__ = ['__version__', '__version_date__',
             # PARSER FUNCTIONS
             'IntegrityCheckFailure', 'ParseFailed',
             'acceptContentLine',
-            'acceptListLine', 'expectListLine', 
-            'expectStr', 
+            'acceptListLine', 'expectListLine',
+            'expectStr',
             'expectTimestamp',
             'expectTitle',
             # CLASSES
             'BuildList',
           ]
 
-__version__      = '0.2.8'
-__version_date__ = '2015-05-03'
+__version__      = '0.2.9'
+__version_date__ = '2015-05-04'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
@@ -120,14 +120,14 @@ def expectStr(f, str):
     # END
 
 def acceptContentLine(f, digest, str, rootDir, uDir):
-    """ 
+    """
     Accept either a content line or a delimiter (str).  Anything else
     raises an exception.  Returns True if content line matched, False
-    if delimiter detected; otherwise raises a ParseFailed.  
-    
-    NOT IMPLEMENTED: If rootDir is not None, compares the content hash 
-    with that of the file at the relative path.  
-    
+    if delimiter detected; otherwise raises a ParseFailed.
+
+    NOT IMPLEMENTED: If rootDir is not None, compares the content hash
+    with that of the file at the relative path.
+
     NOT IMPLEMENTED: If uDir is not None, verifies that the content key
     matches that of a file present in uDir.
     """
@@ -137,7 +137,7 @@ def acceptContentLine(f, digest, str, rootDir, uDir):
         print("STR: " + line)
         # END
         return False
-    
+
     # Parse the content line
     parts = line.split()
     if len(parts) != 2:
@@ -149,7 +149,7 @@ def acceptContentLine(f, digest, str, rootDir, uDir):
     digest.update(line)
     b64Hash = parts[0]
     path    = parts[1]
-    
+
     # XXX NO CHECK AGAINST rootDir
     # XXX NO CHECK AGAINST uDir
 
@@ -160,53 +160,154 @@ class BuildList(object):
     A BuildList has a title, an RSA public key, and some content, which
     is a MerkleTree, an indented list of files and directories and their
     associated content hashes.  The BuildList optionally has a timestamp
-    and a digital signature.  It is signed using the RSA private key 
-    associated with the RSA public key.  Signing the BuildList updates 
-    the timestamp.  The BuildList has a verify() method which 
-    mathematically verifies that the digital signature is compatible 
+    and a digital signature.  It is signed using the RSA private key
+    associated with the RSA public key.  Signing the BuildList updates
+    the timestamp.  The BuildList has a verify() method which
+    mathematically verifies that the digital signature is compatible
     with the title, timestamp, content lines, and the BuildList's RSA
     public key.
     """
-    def __init__(self, title, dirPath, ck, usingSHA1=False, exRE=None):
-        self._pubKey    = ck
+    def __init__(self, title, path, ck, usingSHA1=False, exRE=None):
+        self._publicKey = ck
         if (not ck) or (type(ck) != RSA._RSAobj) :
             raise "ck is nil or not a valid RSA public key"
         self._title     = title
         self._when      = 0         # seconds from the Epoch; a 64-bit value
-        self._path      = dirPath   # a relative path containing no . or ..
-        if (not dirPath) or (not os.path.isdir(dirPath)):
-            raise "%s does not exist or is not a directory" % dirPath
+        self._path      = path   # a relative path containing no . or ..
+        if (not path) or (not os.path.isdir(path)):
+            raise "%s does not exist or is not a directory" % path
         self._usingSHA1 = usingSHA1
 
-        self._tree = MerkleTree.createFromFileSystem(dirPath, 
+        self._tree = MerkleTree.createFromFileSystem(path,
             # accept default deltaIndent
             usingSHA1=usingSHA1, exRE=exRE)
+        self._digSig = None
 
-    def sign(ckPriv):
+    @property
+    def digSig(self):
+        """ 
+        Take care: we store the binary value but this returns it
+        base64-encoded.
+        """
+        return base64.b64encode(self._digSig).decode('utf-8')
+
+    @property
+    def exRE(self):         return self._exRE
+
+    @property
+    def path(self):         return self._path
+
+    @property
+    def publicKey(self):    return self._publicKey
+
+    @property
+    def timestamp(self):    return timestamp(self._when)
+
+    @property
+    def title(self):        return self._title
+
+    @property
+    def usingSHA1(self):    return self._usingSHA1
+
+    def _getBuildListSHA1(self):
+
+        h = SHA.new()
+
+        # add public key and then CRLF to hash
+        pemCK = self._publicKey.exportKey('PEM') # .decode('utf-8')
+        h.update(pemCK)
+        h.update(CRLF)
+
+        # add title and CRLF to hash
+        h.update(self._title.encode('utf-8'))
+        h.update(CRLF)
+
+        # add timestamp and CRLF to hash
+        h.update(self.timestamp.encode('utf-8'))
+        h.update(CRLF)
+
+        # add CONTENT_START and CRLF line to hash
+        h.update((CONTENT_START + '\r\n').encode('utf-8'))
+
+        # add serialized MerkleTree to hash, each line terminated by CRLF
+        h.update( self._tree.toString('').encode('utf-8'))
+
+        # add CONTENT_END and CRLF line to hash
+        h.update((CONTENT_END + '\r\n').encode('utf-8'))
+
+        # add CRLF to hash
+        h.update(CRLF)
+        return h
+
+
+    def sign(self, ckPriv):
         """ ckPriv is the RSA private key used for siging the BuildList """
-        now = time.gmtime()     # the GMT/UTC time of the signature
 
-        # Verify that the public key (ck) is the public part of ckPriv, 
+        if self._digSig != None:
+            raise "buildList has already been signed"
+
+        # Verify that the public key (ck) is the public part of ckPriv,
         # the private RSA key.
-        # XXX STUB XXX
+        if (not ckPriv) or (type(ckPriv) != RSA._RSAobj) :
+            raise "ckPriv is nil or not a valid RSA key"
+        if ckPriv.publickey() != self._publicKey:
+            raise "ckPriv does not match BuildList's public key"
 
-        # set the time in the data structure
-        # XXX STUB XXX
+        # the time is part of what is signed, so we need to set it now
+        now = time.time()       # seconds from Epoch
+        self._when = now
+
+        h = self._getBuildListSHA1()
 
         # Sign the list using SHA1 and RSA.  What we are signing is the
         # in-memory binary data structure.
+        signer = PKCS1_PSS.new(ckPriv)
+        self._digSig = signer.sign(h)
 
-        # signing sets self._signature and self._when
-
-        # XXX STUB XXX
-
-
-    def verify():
+    def verify(self):
 
         # if self._signature is not set, return False
+        success = False
 
-        # otherwise, return True if self._signature is set and it is
-        # consistent as an RSA-SHA1 with the public key on the 
-        # document and the SHA1 hash of the serialized document, taking
-        # the hash over the fields in standard order (pubkey, title, 
-        # timestamp, and content lines).
+        if self._digSig:
+
+	        # otherwise, return True if self._signature is set and it is
+	        # consistent as an RSA-SHA1 with the public key on the
+	        # document and the SHA1 hash of the serialized document, taking
+	        # the hash over the fields in standard order (pubkey, title,
+	        # timestamp, and content lines).
+
+            h = self._getBuildListSHA1()
+            verifier = PKCS1_PSS.new(self.publicKey)
+            success = verifier.verify(h, self._digSig)
+
+        return success
+
+    # SERIALIZATION -------------------------------------------------
+    @staticmethod
+    def createFromFileSystem(pathToDir, usingSHA1=False, 
+            exRE=None, matchRE=None):
+        
+        pass
+
+    @staticmethod
+    def createFromSerialization(s):
+        if s == None:
+            raise RuntimeError('BuildList.createFromSerialization: empty input')
+        if type(s) is not str:
+            s = str(s, 'utf-8')
+        ss = s.split('\r\n')
+        return BuildList.createFromStringArray(ss)
+
+    @staticmethod
+    def createFromStringArray(ss):
+        if ss == None:
+            raise "createFromStringArray: null argument"
+        pass
+
+    def __str__(self):
+        return self.toString()
+
+    def toString(self):
+        pass
+
