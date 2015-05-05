@@ -1,12 +1,16 @@
 ~/dev/py/buildList/TODO
 
 2015-05-04
-    * what is now BuildList.__init__() morphs into createFromFileSystem 
-        with the __init__() method acquiring a tree parameter
-    * need the usual serialization/deserialization tests, where the
-        buildList is first created from scratch, then written to 
-        disk, then deserialized, and then the two objects are 
-        tested for equality
+    * what is now BuildList.__init__() morphs into createFromFileSystem * DONE
+        with the __init__() method acquiring a tree parameter           * DONE
+    * need the usual serialization/deserialization tests, where the     * DONE
+        buildList is first created from scratch, then written to        * DONE
+        disk, then deserialized, and then the two objects are           * DONE
+        tested for equality                                             * DONE
+    * createFromFileSystem: path must not contain . or .. parts
+
+    * XXX testBuildList fails, line 54
+    * IMPORTANT: need working -X/--exclude
 
 2015-05-03
     * BuildList.__init__() needs sanity checks on parameters

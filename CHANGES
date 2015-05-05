@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+0.2.10
+    2015-05-05
+        * working, tested craateFromFileSystem, other serialization SLOC 1043
 0.2.9
     2015-05-04
         * sign() and verify() work; skeletal serialization          SLOC  950

@@ -1,6 +1,6 @@
 # buildList/__init__.py
 
-import base64, calendar, hashlib, os, time
+import base64, binascii, calendar, hashlib, os, time
 from Crypto.PublicKey import RSA
 from Crypto.Hash      import SHA, SHA256
 from Crypto.Signature import PKCS1_PSS
@@ -24,8 +24,8 @@ __all__ = ['__version__', '__version_date__',
             'BuildList',
           ]
 
-__version__      = '0.2.9'
-__version_date__ = '2015-05-04'
+__version__      = '0.2.10'
+__version_date__ = '2015-05-05'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
@@ -167,20 +167,21 @@ class BuildList(object):
     with the title, timestamp, content lines, and the BuildList's RSA
     public key.
     """
-    def __init__(self, title, path, ck, usingSHA1=False, exRE=None):
-        self._publicKey = ck
+    def __init__(self, title, ck, tree):
+        
+        self._title     = title
         if (not ck) or (type(ck) != RSA._RSAobj) :
             raise "ck is nil or not a valid RSA public key"
-        self._title     = title
-        self._when      = 0         # seconds from the Epoch; a 64-bit value
-        self._path      = path   # a relative path containing no . or ..
-        if (not path) or (not os.path.isdir(path)):
-            raise "%s does not exist or is not a directory" % path
-        self._usingSHA1 = usingSHA1
+        self._publicKey = ck
+   
+        if (not tree) or (type(tree) != MerkleTree):
+            raise 'tree is nil or not a valid MerkleTree'
 
-        self._tree = MerkleTree.createFromFileSystem(path,
-            # accept default deltaIndent
-            usingSHA1=usingSHA1, exRE=exRE)
+        self._tree      = tree
+
+        self._usingSHA1 = tree.usingSHA1    # REDUNDANT 
+
+        self._when      = 0         # seconds from the Epoch; a 64-bit value
         self._digSig = None
 
     @property
@@ -195,9 +196,6 @@ class BuildList(object):
     def exRE(self):         return self._exRE
 
     @property
-    def path(self):         return self._path
-
-    @property
     def publicKey(self):    return self._publicKey
 
     @property
@@ -207,6 +205,9 @@ class BuildList(object):
     def title(self):        return self._title
 
     @property
+    def tree(self):         return self._tree
+
+    @property
     def usingSHA1(self):    return self._usingSHA1
 
     def _getBuildListSHA1(self):
@@ -214,7 +215,7 @@ class BuildList(object):
         h = SHA.new()
 
         # add public key and then CRLF to hash
-        pemCK = self._publicKey.exportKey('PEM') # .decode('utf-8')
+        pemCK = self._publicKey.exportKey('PEM')
         h.update(pemCK)
         h.update(CRLF)
 
@@ -283,31 +284,169 @@ class BuildList(object):
 
         return success
 
+    # EQUALITY ------------------------------------------------------
+    def equal(self, other):
+        if (not other) or (type(other) != BuildList):
+            return False
+        if self.title != other.title:
+            return False
+        if self.publicKey != other.publicKey :
+            return False
+        if not self.tree.equal(other.tree):
+            return False
+        if self._when != other._when:
+            return False
+        # DEBUG
+        print("same whens ... %d" % self._when)
+        # END
+
+        if self._digSig == None:
+            # DEBUG
+            print("MY DIG SIG IS NIL")
+            # END
+            return other._digSig == None
+        else:
+            # DEBUG
+            print("MY DIG_SIG:\n%s" % self.digSig)
+            print("OTHER DIG_SIG:\n%s" % other.digSig)
+            if self.digSig == other.digSig:
+                print("  MATCH, usigSHA1 = %s" % self.usingSHA1)
+                return True
+            else:
+                print("  NO MATCH")
+            # END
+            return self.digSig == other.digSig
+
     # SERIALIZATION -------------------------------------------------
     @staticmethod
-    def createFromFileSystem(pathToDir, usingSHA1=False, 
-            exRE=None, matchRE=None):
+    def createFromFileSystem(title, pathToDir, ck, 
+            usingSHA1=False, exRE=None, matchRE=None):
         
-        pass
+        #############################################################
+        # XXX pathToDir must be a relative path containing no . or ..
+        #############################################################
+        
+        if (not pathToDir) or (not os.path.isdir(pathToDir)):
+            raise "%s does not exist or is not a directory" % pathToDir
+
+        tree = MerkleTree.createFromFileSystem(pathToDir,
+            # accept default deltaIndent
+            usingSHA1=usingSHA1, exRE=exRE)
+
+        return BuildList(title, ck, tree)
 
     @staticmethod
-    def createFromSerialization(s):
+    def parse(s):
+        """ 
+        This relies upon the fact that all fields are separated by 
+        CRLF sequences.
+        """
         if s == None:
-            raise RuntimeError('BuildList.createFromSerialization: empty input')
+            raise RuntimeError('BuildList.parse: empty input')
         if type(s) is not str:
             s = str(s, 'utf-8')
         ss = s.split('\r\n')
-        return BuildList.createFromStringArray(ss)
+        return BuildList.parseFromStrings(ss)
 
     @staticmethod
-    def createFromStringArray(ss):
+    def _expectField(ss, n):
+        """ 
+        Complain if the Nth field does not exist.  Return the index
+        of the next field.
+        """
+        if n >= len(ss):
+            raise "Missing %d-th field in BuildList"
+        field = ss[n]
+        n += 1
+        return field, n
+
+    @staticmethod
+    def parseFromStrings(ss):
         if ss == None:
-            raise "createFromStringArray: null argument"
-        pass
+            raise "parseFromStrings: null argument"
+
+        # expect a PEM-encoded publid key with embedded newlines
+        n = 0
+        serCK, n = BuildList._expectField(ss, n)
+        myCK = RSA.importKey(serCK)
+
+        # expect a title
+        myTitle, n = BuildList._expectField(ss, n)
+
+        # expect a timestamp
+        myTimestamp, n = BuildList._expectField(ss, n)
+
+        # expect CONTENT-START
+        startLine, n = BuildList._expectField(ss, n)
+        if startLine != CONTENT_START:
+            raise "expected CONTENT_START line"
+
+        # expect a serialized MerkleTree followed by a CONTENT END
+        mtLines = []
+        while True:
+            line, n = BuildList._expectField(ss, n)
+            if line == CONTENT_END:
+                break
+            else:
+                mtLines.append(line)
+        # expect default indents
+        myTree = MerkleTree.createFromStringArray(mtLines) 
+
+        # expect an empty line
+        space, n = BuildList._expectField(ss, n)
+        if space != '':
+            raise "expected an empty line"
+
+        # accept a digital signature if it is present
+        if n < len(ss):
+            myDigSig = ss[n]
+
+        bld = BuildList(myTitle, myCK, myTree)
+        bld._when   = parseTimestamp(myTimestamp)
+        bld._digSig = binascii.a2b_base64(myDigSig)
+        return bld
 
     def __str__(self):
         return self.toString()
 
     def toString(self):
-        pass
+        """ 
+        In this serialization, each field appears followed by a CR-LF
+        sequence.
+        """
+        ss = self.toStrings()
+        return '\r\n'.join(ss)
+    
+    def toStrings(self):
+        ss = []
+
+        # public key (with embedded newlines)
+        pemCK = self.publicKey.exportKey('PEM').decode('utf-8')
+        ss.append(pemCK)
+
+        # title 
+        ss.append(self.title )
+
+        # timestamp 
+        ss.append(self.timestamp)
+
+        # content start line
+        ss.append(CONTENT_START)
+
+        # merkle tree
+        ssTree = self.tree.toString().split('\r\n')
+        if (len(ssTree) > 1) and (ssTree[-1] == ''):
+            ssTree = ssTree[0:-1]
+        ss += ssTree
+
+        # content end line
+        ss.append(CONTENT_END)
+
+        # empty line
+        ss.append('')
+
+        # dig sig
+        ss.append(self.digSig)
+
+        return ss
 

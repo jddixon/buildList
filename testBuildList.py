@@ -25,22 +25,34 @@ class TestBuildList (unittest.TestCase):
         ck     = ckPriv.publickey()
 
         pathToData = os.path.join('example', 'dataDir')
-        bl = BuildList('a trial list', pathToData, ck, usingSHA1)
+        bl = BuildList.createFromFileSystem(
+                'a trial list', pathToData, ck, usingSHA1)
 
         # check properties ------------------------------------------
         self.assertEqual(bl.title,      'a trial list')
-        self.assertEqual(bl.path,       pathToData)
         self.assertEqual(bl.publicKey,  ck)
         self.assertEqual(bl.timestamp,  timestamp(0))
         self.assertEqual(bl.usingSHA1, usingSHA1)
 
         # check sign() and verify() ---------------------------------
 
+        self.assertTrue(bl.equal(bl))
         self.assertFalse(bl.verify())   # not signed yet
+
         bl.sign(ckPriv)
         sig = bl.digSig                 # this is the base64-encoded value
         self.assertTrue(sig != None)
         self.assertTrue(bl.verify())    # it has been signed
+
+        # equality, serialization, deserialization ------------------
+        self.assertTrue(bl.equal(bl))
+        s = bl.toString()
+        bl2 = BuildList.parse(s)
+        s2  = bl2.toString()
+        self.assertEqual(s, s2)
+        self.assertTrue( bl.equal(bl))  # same list, but signed now
+        self.assertTrue( bl.equal(bl2)) # XXX FAILS
+
 
     def testBuildList (self):
 
