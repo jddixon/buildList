@@ -1,0 +1,1 @@
+./blListGen -1s -k example/node/ckPriv.pem -r example/dataDir 

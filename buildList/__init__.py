@@ -24,8 +24,8 @@ __all__ = ['__version__', '__version_date__',
             'BuildList',
           ]
 
-__version__      = '0.2.10'
-__version_date__ = '2015-05-05'
+__version__      = '0.3.0'
+__version_date__ = '2015-05-06'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
@@ -255,7 +255,8 @@ class BuildList(object):
             raise "ckPriv does not match BuildList's public key"
 
         # the time is part of what is signed, so we need to set it now
-        now = time.time()       # seconds from Epoch
+        # XXX truncating loses microseconds
+        now = int(time.time())      # seconds from Epoch
         self._when = now
 
         h = self._getBuildListSHA1()
@@ -295,26 +296,12 @@ class BuildList(object):
         if not self.tree.equal(other.tree):
             return False
         if self._when != other._when:
+            print("  my when = %f, other when = %f" % (self._when, other._when))
             return False
-        # DEBUG
-        print("same whens ... %d" % self._when)
-        # END
 
         if self._digSig == None:
-            # DEBUG
-            print("MY DIG SIG IS NIL")
-            # END
             return other._digSig == None
         else:
-            # DEBUG
-            print("MY DIG_SIG:\n%s" % self.digSig)
-            print("OTHER DIG_SIG:\n%s" % other.digSig)
-            if self.digSig == other.digSig:
-                print("  MATCH, usigSHA1 = %s" % self.usingSHA1)
-                return True
-            else:
-                print("  NO MATCH")
-            # END
             return self.digSig == other.digSig
 
     # SERIALIZATION -------------------------------------------------

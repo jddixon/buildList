@@ -1,5 +1,22 @@
 ~/dev/py/buildList/TODO
 
+2015-05-05
+    * running blListGen without -s suggests that deserialization 
+        does not work if there is no digital signature
+    * blBootstrap should populate example/uDir
+
+2015-05-05 (edited from 04-12)
+    * recheck sanity checks in blCheck/ListGen/SrcGen                   * DONE
+    * move their doIt code into buildList/__init__.py
+    * for interoperability tests need 
+        - a directory example/                                          * DONE
+        - a valid buildList example/example.bld                         * DONE
+        - a directory tree example/dataDir/                             * DONE
+        - an appropriate example/uDir/
+        - and a serialized RSA private key, ckPriv.pem                  * DONE
+        - make sure buildList lines are CR-LF terminated                * DONE
+    * everything under example/ is read-only if at all possible
+
 2015-05-04
     * what is now BuildList.__init__() morphs into createFromFileSystem * DONE
         with the __init__() method acquiring a tree parameter           * DONE
@@ -9,8 +26,12 @@
         tested for equality                                             * DONE
     * createFromFileSystem: path must not contain . or .. parts
 
-    * XXX testBuildList fails, line 54
+    * XXX testBuildList fails, line 54                                  * FIXED
+    * Python time.time() delivers microseconds, which we truncate
+        - to retain, serialization must capture
     * IMPORTANT: need working -X/--exclude
+        - must collect exclusions as list
+        - must collect matchPats as list
 
 2015-05-03
     * BuildList.__init__() needs sanity checks on parameters
@@ -19,14 +40,14 @@
         from the Epoch (nanoseconds?)
 
 2015-04-29
-    * FIXME: old makeListing code doesnt' work because of casual 
-        intermixing of strings and bytearrays
+    * FIXME: old makeListing code doesnt' work because of casual        * GONE
+        intermixing of strings and bytearrays                           * GONE
 2015-04-27
     * data12 is missing (should be present but an empty file)           * FIXED
-    * public key should be wrapped in a standard way in the 
-        serialization
-    * consider omitting CRLF and content delimiter lines when 
-        calculating the digital signature
+    * public key should be wrapped in a standard way in the             * DONE
+        serialization                                                   * DONE
+    * consider omitting CRLF and content delimiter lines when           * SKIP
+        calculating the digital signature                               * SKIP
 
     * class BuildList should extend SignedList
     * BuildList should be sorted by path to file, which should
@@ -38,22 +59,8 @@
 2015-04-15
     * data12 should be empty but is being filled with random data       * FIXED
     * need node/ckPriv with serialized RSA private key                  * DONE
-    * need a build list, example.bld
+    * need a build list, example.bld                                    * DONE
     * need udir/ populated
-
-2015-04-12
-    * recheck sanity checks in blCheck/ListGen/SrcGen                   * DONE
-    * move their doIt code into buildList/__init__.py
-    * for interoperability tests need 
-        - a read-only directory example/
-        - a valid buildList example/buildList.dat, 
-        - a directory tree example/data/ 
-        - an appropriate example/uDir/
-        - and a node with its ID, ck/ckPriv, and sk/skPriv serialized 
-            under example/.xlattice/
-        - make sure buildList lines are CR-LF terminated
-    * bin/bootStrap script creates all of this
-    * everything under example/ is read-only if at all possible
 
 2014-10-01
     * implement blListGen code to handle -u option and copy input 

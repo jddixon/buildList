@@ -20,7 +20,6 @@ class TestBuildList (unittest.TestCase):
     # actual unit tests #############################################
    
     def doBuildTest(self, title, usingSHA1):
-
         ckPriv = RSA.generate(1024)
         ck     = ckPriv.publickey()
 
@@ -51,8 +50,7 @@ class TestBuildList (unittest.TestCase):
         s2  = bl2.toString()
         self.assertEqual(s, s2)
         self.assertTrue( bl.equal(bl))  # same list, but signed now
-        self.assertTrue( bl.equal(bl2)) # XXX FAILS
-
+        self.assertTrue( bl.equal(bl2)) 
 
     def testBuildList (self):
 

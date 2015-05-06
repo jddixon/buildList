@@ -8,94 +8,53 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash      import SHA    # presumably 1
 from Crypto.Signature import PKCS1_PSS
 
+from merkletree import MerkleDoc
 from buildList  import *
-
-def writeData(f, line):
-    # DEBUG
-    print(line)
-    # END
-    f.write (line)
-    f.write(CRLF)
-
-def writeDataUpdating(f, digest, line):
-    # DEBUG
-    print(line)
-    # END
-    digest.update(line)
-    f.write (line)
-    f.write(CRLF)
-
-def writeLine(f, line):
-    # DEBUG
-    print(line)
-    # END
-    line = line.encode('utf-8')
-    f.write (line)
-    f.write(CRLF)
-
-def writeLineUpdating(f, digest, line):
-    # DEBUG
-    print(line)
-    # END
-    line = line.encode('utf-8')
-    digest.update(line)
-    f.write (line)
-    f.write(CRLF)
-
-def walkDir(f, digest, dirPath):
-    files = os.listdir(dirPath)
-    files.sort()
-    for file in files:
-        pathToFile = os.path.join(dirPath, file)
-        if os.path.isfile(pathToFile):
-            b64Hash = base64SHA1File(pathToFile)
-            line = b64Hash + ' ' + pathToFile
-            writeLineUpdating(f, digest, line)
-        elif os.path.isdir(pathToFile):
-            walkDir(f, digest, pathToFile)
-        else:
-            print("can't handle %s" % pathToFile)
 
 def makeListing(args):
 
-    # this is here because assignment of args.keyFile to None fails
-    if args.keyFile and args.keyFile != "":
-        keyFile = args.keyFile
-    else:
-        keyFile = None
-    
     # this is here because assignment of args.uDir to None fails
     if args.uDir and args.uDir != "":
         uDir = args.uDir
     else:
         uDir = None
 
+    exclusions  = args.exclude
+    keyFile     = args.keyFile
     listFile    = args.listFile
+    matches     = args.matchPat
     now         = args.now
     rootDir     = args.rootDir
+    signing     = args.signing
     testing     = args.testing
     title       = args.title
+    usingSHA1   = args.usingSHA1
     verbose     = args.verbose
-  
-    digest = hashlib.new('sha1')
 
-    with open(listFile, "wb") as f:
-        writeLineUpdating(f, digest, title.encode('utf-8'))
-        writeLineUpdating(f, digest, now.encode('utf-8'))
-        if keyFile:
-            print("*** no support for dig sig yet ***")
-            # XXX PUBKEY STUB XXX
-        writeLine(f, CONTENT_START)
-        walkDir(f, digest, rootDir)
-        writeLine(f, CONTENT_END)
-        if keyFile:
-            # XXX DIGSIG STUB XX
-            print("*** no support for dig sig yet ***")
-        else:
-            hash = digest.digest()
-            b64Hash = base64.standard_b64encode(hash)
-            writeLine(f, b64Hash)
-            
+    if exclusions:
+        exRE = MerkleDoc.makeExRE(exclusions)
+    else:
+        exRE = None
+    if matches:
+        matchRE = MerkleDoc.makeMatchRE(matches)
+    else:
+        matchRE = None
+
+    with open(keyFile, 'r') as f:
+        ckPriv = RSA.importKey(f.read())
+    ck = ckPriv.publickey()
+
+    bl = BuildList.createFromFileSystem(
+                    title, rootDir, ck, usingSHA1, exRE, matchRE)
+    if signing:
+        bl.sign(ckPriv)
+
+    blSer = bl.toString()
+    if listFile and (listFile != ''):
+        with open(listFile, 'w') as f:
+            f.write(blSer)
+    else:
+        print(blSer)
 
 def main():
     """
@@ -113,6 +72,9 @@ def main():
     DESC = 'generate build list for directory, optionally populating uDir'
     parser = ArgumentParser(description=DESC)
 
+    parser.add_argument('-1', '--usingSHA1',    action='store_true',
+        help='use SHA1 in building merkletree (default=false=use SHA256)')
+
     parser.add_argument('-b', '--listFile', 
         help='path to build list')
     
@@ -122,8 +84,14 @@ def main():
     parser.add_argument('-k', '--keyFile',
         help='path to RSA private key if signing')
 
+    parser.add_argument('-P', '--matchPat', action='append',
+        help='include only files matching this pattern')
+
     parser.add_argument('-r', '--rootDir',
         help='root directory for build list (REQUIRED)')
+
+    parser.add_argument('-s', '--signing',      action='store_true',
+        help='sign the build list with the private key supplied')
 
     parser.add_argument('-T', '--testing', action='store_true',
         help='this is a test run')
@@ -136,6 +104,9 @@ def main():
 
     parser.add_argument('-v', '--verbose', action='store_true',
         help='be chatty')
+
+    parser.add_argument('-X', '--exclude', action='append',
+        help='exclude files matching this pattern')
 
     args = parser.parse_args()
 
@@ -174,10 +145,7 @@ def main():
         base = args.title
 
     # listFile --------------------------------------------
-    if not args.listFile or args.listFile == '':
-        args.listFile = base + ".bld"
-
-    if args.testing:
+    if args.listFile and args.testing:
         if args.listFile[0] == '/':
             args.listFile = args.listFile[1:]
         args.listFile = os.path.join('tmp', args.listFile)
@@ -194,7 +162,11 @@ def main():
             if not args.justShow and not os.path.isfile(args.keyFile):
                 print("key file %s does not exist, cannot continue" % args.keyFile)
                 sys.exit(1)
-    
+    else:
+        print('you must specify a private key file')
+        parser.print_usage()
+        sys.exit(1)
+
     # complete setup ------------------------------------------------
     appName = 'blListGen %s' % __version__
     args.title = str(args.title)
@@ -209,10 +181,21 @@ def main():
         print('listFile     = ' + str(args.listFile))
         print('timestamp    = ' + str(args.now))
         print('rootDir      = ' + str(args.rootDir))
+        print('signing      = ' + str(args.signing))
         print('testing      = ' + str(args.testing))
         print('title        = ' + str(args.title))
         print('uDir         = ' + str(args.uDir))
+        print('usingSHA1    = ' + str(args.usingSHA1))
         print('verbose      = ' + str(args.verbose))
+
+        if args.exclude and len(args.exclude) > 0:
+            print("exclude:")
+            for exclusion in args.exclude:
+                print("    %s" % exclusion)
+        if args.matchPat and len(args.matchPat) > 0:
+            print("match:")
+            for match in args.matchPat:
+                print("    %s" % match)
 
     if args.justShow:
         sys.exit(0)

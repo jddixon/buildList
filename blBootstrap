@@ -73,10 +73,14 @@ def doIt(args):
         f.write(ckPriv.exportKey('PEM'))
     ck = ckPriv.publickey()
     
-    # XXX WORKING HERE 
-
-    # 
-
+    # XXX WORKING HERE
+    bl = BuildList.createFromFileSystem(title, dataDir, ck, 
+                    usingSHA1=True, exRE=None, matchRE=None)
+    bl.sign(ckPriv)
+    blSer = bl.toString()
+    with open(listFile, 'w') as f:
+        f.write(blSer)
+    
 def main():
     """
     Expect a command like
