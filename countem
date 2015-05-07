@@ -2,6 +2,6 @@ cd /home/jdd/dev/py/buildList
 rm -rf build
 pySloc -v \
     text:MANIFEST.in \
-    bash:countem bash:make.example.bld bash:sampleRun \
+    bash:checkExample bash:countem bash:make.example.bld bash:sampleRun \
     bash:test.all \
     py:blBootstrap py:blCheck py:blListGen py:blSrcGen

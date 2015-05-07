@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+0.3.1
+    2015-05-07
+        * blBootstrap now populates uDir                            SLOC 1066
 0.3.0
     2015-05-06
         * blListGen works, has -X and -P options

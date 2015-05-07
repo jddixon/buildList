@@ -134,11 +134,6 @@ def main():
         args.listFile = os.path.join('tmp', args.listFile)
 
     # sanity checks -------------------------------------------------
-    if (not args.listFile) or (args.listFile == ''):
-        print("no list file specified, cannot continue")
-        parser.print_help()
-        sys.exit(1)
-
     if (not args.justShow) and (not os.path.isfile(args.listFile)):
         print("list file %s does not exist, cannot continue" % args.listFile)
         sys.exit(1)
@@ -146,7 +141,7 @@ def main():
     # fixups --------------------------------------------------------
 
     # rootDir --------------------------------------------
-    if (not args.rootDir) or (args.rootDir == ''):
+    if (not args.justShow) and (not args.rootDir) or (args.rootDir == ''):
         print("no root directory specified, cannot continue")
         parser.print_help()
         sys.exit(1)

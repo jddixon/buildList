@@ -5,7 +5,9 @@
 import base64, hashlib, os, shutil, sys
 from argparse   import ArgumentParser
 from Crypto.PublicKey import RSA
+from merkletree import MerkleLeaf, MerkleTree, MerkleDoc
 from buildList  import *
+from xlattice   import u
 
 import rnglib
 
@@ -29,6 +31,8 @@ def doIt(args):
     uDir         = args.uDir
     verbose      = args.verbose
 
+    uTmp        = os.path.join(uDir, 'tmp')
+
     if os.path.exists(exDir):
         print("deleting existing directory %s" % exDir)
         shutil.rmtree(exDir)
@@ -40,7 +44,7 @@ def doIt(args):
     subDir41    = os.path.join(subDir4, 'subDir41')
     subDir411   = os.path.join(subDir41, 'subDir411')
 
-    for d in [dataDir, nodeDir, uDir]:
+    for d in [dataDir, nodeDir, uDir, uTmp]:
         makedir_p(d, 0o755)
     for d in [subDir1, subDir2, subDir3, subDir4]:
         makedir_p(d, 0o755)
@@ -73,13 +77,31 @@ def doIt(args):
         f.write(ckPriv.exportKey('PEM'))
     ck = ckPriv.publickey()
     
-    # XXX WORKING HERE
     bl = BuildList.createFromFileSystem(title, dataDir, ck, 
                     usingSHA1=True, exRE=None, matchRE=None)
     bl.sign(ckPriv)
     blSer = bl.toString()
     with open(listFile, 'w') as f:
         f.write(blSer)
+    
+    # XXX WORKING HERE
+
+    # walk the tree, copying all files listed into uDir by content key
+    def walk(path, node):
+        if isinstance(node, MerkleDoc):
+            pathToNode = os.path.join(path, node.name)
+            walk(pathToNode, node.tree)
+        elif isinstance(node, MerkleTree):
+            for n in node.nodes:
+                pathToNode = os.path.join(path, n.name)
+                walk(pathToNode, n)
+        elif isinstance(node, MerkleLeaf):
+            u.copyAndPut1(path, uDir, node.asciiHash)
+        else:
+            print("INTERNAL ERROR: node is neither Doc nor Tree nor Leaf")
+            print("  skipping")
+
+    walk(dataDir, bl.tree)
     
 def main():
     """

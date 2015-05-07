@@ -1,0 +1,6 @@
+./blCheck  \
+            -b example/example.bld      \
+            -k example/node/ckPriv.pem  \
+            -r example/dataDir          \
+            -u example/udir             \
+            $@
