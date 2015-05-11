@@ -18,7 +18,33 @@ class TestBuildList (unittest.TestCase):
     # utility functions #############################################
     
     # actual unit tests #############################################
-   
+ 
+    def expectException(self, pathToDir):
+        try:
+            BuildList.createFromFileSystem('anything', pathToDir, None)
+            self.fail("accepted '%s' as pathToDir")
+        except RuntimeError as e:
+            pass
+        except Exception as e2:
+            self.fail("unexpected exception %s" % e2)
+
+    def doTestBadParts(self):
+        # we object to absolute paths
+        self.expectException('/')
+        self.expectException('/abc')
+        
+        # and we objected to embedded . and ..
+        self.expectException('.')
+        self.expectException('..')
+        self.expectException('./')
+        self.expectException('..//')
+        self.expectException('./a')
+        self.expectException('../b')
+        self.expectException('a/.')
+        self.expectException('b/..')
+        self.expectException('a/./b')
+        self.expectException('b/../c')
+
     def doBuildTest(self, title, usingSHA1):
         skPriv = RSA.generate(1024)
         sk     = skPriv.publickey()
@@ -53,7 +79,7 @@ class TestBuildList (unittest.TestCase):
         self.assertTrue( bl.equal(bl2)) 
 
     def testBuildList (self):
-
+        self.doTestBadParts()
         self.doBuildTest('SHA1 test', True)
         self.doBuildTest('SHA2 test', False)
 

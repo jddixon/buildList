@@ -20,8 +20,8 @@
         - a directory example/                                          * DONE
         - a valid buildList example/example.bld                         * DONE
         - a directory tree example/dataDir/                             * DONE
-        - an appropriate example/uDir/
-        - and a serialized RSA private key, ckPriv.pem                  * DONE
+        - an appropriate example/uDir/                                  * DONE
+        - and a serialized RSA private key, skPriv.pem                  * DONE
         - make sure buildList lines are CR-LF terminated                * DONE
     * everything under example/ is read-only if at all possible
 

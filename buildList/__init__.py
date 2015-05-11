@@ -167,15 +167,15 @@ class BuildList(object):
     with the title, timestamp, content lines, and the BuildList's RSA
     public key.
     """
-    def __init__(self, title, ck, tree):
+    def __init__(self, title, sk, tree):
         
         self._title     = title
-        if (not ck) or (type(ck) != RSA._RSAobj) :
-            raise "ck is nil or not a valid RSA public key"
-        self._publicKey = ck
+        if (not sk) or (type(sk) != RSA._RSAobj) :
+            raise RuntimeError("sk is nil or not a valid RSA public key")
+        self._publicKey = sk
    
         if (not tree) or (type(tree) != MerkleTree):
-            raise 'tree is nil or not a valid MerkleTree'
+            raise RuntimeError('tree is nil or not a valid MerkleTree')
 
         self._tree      = tree
 
@@ -241,18 +241,18 @@ class BuildList(object):
         return h
 
 
-    def sign(self, ckPriv):
-        """ ckPriv is the RSA private key used for siging the BuildList """
+    def sign(self, skPriv):
+        """ skPriv is the RSA private key used for siging the BuildList """
 
         if self._digSig != None:
-            raise "buildList has already been signed"
+            raise RuntimeError("buildList has already been signed")
 
-        # Verify that the public key (ck) is the public part of ckPriv,
+        # Verify that the public key (sk) is the public part of skPriv,
         # the private RSA key.
-        if (not ckPriv) or (type(ckPriv) != RSA._RSAobj) :
-            raise "ckPriv is nil or not a valid RSA key"
-        if ckPriv.publickey() != self._publicKey:
-            raise "ckPriv does not match BuildList's public key"
+        if (not skPriv) or (type(skPriv) != RSA._RSAobj) :
+            raise RuntimeError("skPriv is nil or not a valid RSA key")
+        if skPriv.publickey() != self._publicKey:
+            raise RuntimeError("skPriv does not match BuildList's public key")
 
         # the time is part of what is signed, so we need to set it now
         # XXX truncating loses microseconds
@@ -263,7 +263,7 @@ class BuildList(object):
 
         # Sign the list using SHA1 and RSA.  What we are signing is the
         # in-memory binary data structure.
-        signer = PKCS1_PSS.new(ckPriv)
+        signer = PKCS1_PSS.new(skPriv)
         self._digSig = signer.sign(h)
 
     def verify(self):
@@ -306,21 +306,24 @@ class BuildList(object):
 
     # SERIALIZATION -------------------------------------------------
     @staticmethod
-    def createFromFileSystem(title, pathToDir, ck, 
+    def createFromFileSystem(title, pathToDir, sk, 
             usingSHA1=False, exRE=None, matchRE=None):
         
-        #############################################################
-        # XXX pathToDir must be a relative path containing no . or ..
-        #############################################################
-        
         if (not pathToDir) or (not os.path.isdir(pathToDir)):
-            raise "%s does not exist or is not a directory" % pathToDir
+            raise RuntimeError(
+                    "%s does not exist or is not a directory" % pathToDir)
+
+        parts = pathToDir.split('/')
+        for part in parts:
+            if part=='.' or part=='..':
+                raise RuntimeError(
+                        "partToDir may not contain '.' or '..' parts")
 
         tree = MerkleTree.createFromFileSystem(pathToDir,
             # accept default deltaIndent
             usingSHA1=usingSHA1, exRE=exRE)
 
-        return BuildList(title, ck, tree)
+        return BuildList(title, sk, tree)
 
     @staticmethod
     def parse(s):
@@ -329,7 +332,7 @@ class BuildList(object):
         CRLF sequences.
         """
         if s == None:
-            raise RuntimeError('BuildList.parse: empty input')
+            raise ParseFailed('BuildList.parse: empty input')
         if type(s) is not str:
             s = str(s, 'utf-8')
         ss = s.split('\r\n')
@@ -342,7 +345,7 @@ class BuildList(object):
         of the next field.
         """
         if n >= len(ss):
-            raise "Missing %d-th field in BuildList"
+            raise ParseFailed("Missing %d-th field in BuildList")
         field = ss[n]
         n += 1
         return field, n
@@ -350,7 +353,7 @@ class BuildList(object):
     @staticmethod
     def parseFromStrings(ss):
         if ss == None:
-            raise "parseFromStrings: null argument"
+            raise ParseFailed("parseFromStrings: null argument")
 
         # expect a PEM-encoded publid key with embedded newlines
         n = 0
@@ -366,7 +369,7 @@ class BuildList(object):
         # expect CONTENT-START
         startLine, n = BuildList._expectField(ss, n)
         if startLine != CONTENT_START:
-            raise "expected CONTENT_START line"
+            raise ParseFailed("expected CONTENT_START line")
 
         # expect a serialized MerkleTree followed by a CONTENT END
         mtLines = []
@@ -382,7 +385,7 @@ class BuildList(object):
         # expect an empty line
         space, n = BuildList._expectField(ss, n)
         if space != '':
-            raise "expected an empty line"
+            raise ParseFailed("expected an empty line")
 
         # accept a digital signature if it is present
         if n < len(ss):

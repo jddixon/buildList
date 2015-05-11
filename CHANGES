@@ -3,6 +3,7 @@
 0.3.2
     2015-05-11
         * renamed ck to sk where appropriate
+        * added checks that pathToDir does not contain . or ..      SLOC 1094
 0.3.1
     2015-05-07
         * blBootstrap now populates uDir                            SLOC 1066
