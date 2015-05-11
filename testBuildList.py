@@ -20,16 +20,16 @@ class TestBuildList (unittest.TestCase):
     # actual unit tests #############################################
    
     def doBuildTest(self, title, usingSHA1):
-        ckPriv = RSA.generate(1024)
-        ck     = ckPriv.publickey()
+        skPriv = RSA.generate(1024)
+        sk     = skPriv.publickey()
 
         pathToData = os.path.join('example', 'dataDir')
         bl = BuildList.createFromFileSystem(
-                'a trial list', pathToData, ck, usingSHA1)
+                'a trial list', pathToData, sk, usingSHA1)
 
         # check properties ------------------------------------------
         self.assertEqual(bl.title,      'a trial list')
-        self.assertEqual(bl.publicKey,  ck)
+        self.assertEqual(bl.publicKey,  sk)
         self.assertEqual(bl.timestamp,  timestamp(0))
         self.assertEqual(bl.usingSHA1, usingSHA1)
 
@@ -38,7 +38,7 @@ class TestBuildList (unittest.TestCase):
         self.assertTrue(bl.equal(bl))
         self.assertFalse(bl.verify())   # not signed yet
 
-        bl.sign(ckPriv)
+        bl.sign(skPriv)
         sig = bl.digSig                 # this is the base64-encoded value
         self.assertTrue(sig != None)
         self.assertTrue(bl.verify())    # it has been signed

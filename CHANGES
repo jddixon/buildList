@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+0.3.2
+    2015-05-11
+        * renamed ck to sk where appropriate
 0.3.1
     2015-05-07
         * blBootstrap now populates uDir                            SLOC 1066

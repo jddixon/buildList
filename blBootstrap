@@ -71,15 +71,15 @@ def doIt(args):
     for path in [data12]:
         touch(path)
 
-    ckPriv = RSA.generate(1024)    # should be >= 2048, but this is just testing
-    pathToKey = os.path.join(nodeDir, "ckPriv.pem")
+    skPriv = RSA.generate(1024)    # should be >= 2048, but this is just testing
+    pathToKey = os.path.join(nodeDir, "skPriv.pem")
     with open(pathToKey, 'wb') as f:
-        f.write(ckPriv.exportKey('PEM'))
-    ck = ckPriv.publickey()
+        f.write(skPriv.exportKey('PEM'))
+    sk = skPriv.publiskey()
     
-    bl = BuildList.createFromFileSystem(title, dataDir, ck, 
+    bl = BuildList.createFromFileSystem(title, dataDir, sk, 
                     usingSHA1=True, exRE=None, matchRE=None)
-    bl.sign(ckPriv)
+    bl.sign(skPriv)
     blSer = bl.toString()
     with open(listFile, 'w') as f:
         f.write(blSer)
@@ -112,7 +112,7 @@ def main():
 
         example/
             node                # was .xlattice
-                ckPriv          # PEM serialization
+                skPriv          # PEM serialization
             dataDir/
                 data1
                 subDir1/
@@ -133,7 +133,7 @@ def main():
                 ff
                 tmp/
 
-    ckPriv is the RSA private key used to sign the example.bld
+    skPriv is the RSA private key used to sign the example.bld
     build list.
 
     The information under example/dataDir is a small directory tree.
@@ -149,7 +149,7 @@ def main():
     hash of the document and its title.  The build list ends with a
     digital signature over the earlier part of the document.  In this
     example, the RSA private key used in signing the document in
-    contained in node/ckPriv.
+    contained in node/skPriv.
 
     uDir/ contains the same set of files as under dataDir/, but
     instead of being organized by name it is organized by content
@@ -190,7 +190,7 @@ def main():
             args.exDir = args.exDir[1:]
         args.exDir = os.path.join('tmp', args.exDir)
 
-    # sanity checks -------------------------------------------------
+    # sanity chesks -------------------------------------------------
     if args.exDir[0] == '/':
         print("example dir must not be absolute path")
         parser.print_usage()
