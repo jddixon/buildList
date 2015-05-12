@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+0.3.3
+    2015-05-12
+        * added BuildList.checkWalk(dataDir,uDir) and copyWalk      SLOC 1134
 0.3.2
     2015-05-11
         * renamed ck to sk where appropriate

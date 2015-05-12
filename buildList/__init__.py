@@ -4,7 +4,8 @@ import base64, binascii, calendar, hashlib, os, time
 from Crypto.PublicKey import RSA
 from Crypto.Hash      import SHA, SHA256
 from Crypto.Signature import PKCS1_PSS
-from merkletree import MerkleTree
+from merkletree import MerkleDoc, MerkleLeaf, MerkleNode, MerkleTree
+from xlattice   import u
 
 __all__ = ['__version__', '__version_date__',
             # OTHER EXPORTED CONSTANTS
@@ -24,8 +25,8 @@ __all__ = ['__version__', '__version_date__',
             'BuildList',
           ]
 
-__version__      = '0.3.2'
-__version_date__ = '2015-05-11'
+__version__      = '0.3.3'
+__version_date__ = '2015-05-12'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
@@ -284,6 +285,59 @@ class BuildList(object):
             success = verifier.verify(h, self._digSig)
 
         return success
+    
+    # U_DIR ---------------------------------------------------------
+    def checkWalk(self, dataDir, uDir):
+        """ 
+        Walk the tree, verifying that all leafs files) can be found in uDir 
+        by content key.  We assume that the tree is congruent with dataDir 
+        and that uDir is well-formed.
+        """
+        def walk(node, path):
+            ok = True
+            if isinstance(node, MerkleDoc):
+                pathToNode = os.path.join(path, node.name)
+                ok = walk(node.tree, pathToNode)
+            elif isinstance(node, MerkleTree):
+                for n in node.nodes:
+                    pathToNode = os.path.join(path, n.name)
+                    ok = walk(n, pathToNode)
+                    if not ok:
+                        break
+            elif isinstance(node, MerkleLeaf):
+                if self.usingSHA1:
+                    leafHash = u.fileSHA1(path)
+                else:
+                    leafHash = u.fileSHA2(path)
+                ok = leafHash == node.asciiHash
+            else:
+                print("INTERNAL ERROR: node is neither Doc nor Tree nor Leaf")
+                ok = False
+            return ok
+
+        return walk(self.tree, dataDir)
+
+    def copyWalk(self, dataDir, uDir):
+        """ 
+        Walk the tree, copying all files listed into uDir by content key.
+        We assume that the tree is congruent with dataDir and that uDir
+        is well-formed.
+        """
+        def walk(node, path):
+            if isinstance(node, MerkleDoc):
+                pathToNode = os.path.join(path, node.name)
+                walk(node.tree, pathToNode)
+            elif isinstance(node, MerkleTree):
+                for n in node.nodes:
+                    pathToNode = os.path.join(path, n.name)
+                    walk(n, pathToNode)
+            elif isinstance(node, MerkleLeaf):
+                u.copyAndPut1(path, uDir, node.asciiHash)
+            else:
+                print("INTERNAL ERROR: node is neither Doc nor Tree nor Leaf")
+                print("  skipping")
+    
+        walk(self.tree, dataDir)
 
     # EQUALITY ------------------------------------------------------
     def equal(self, other):

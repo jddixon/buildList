@@ -6,10 +6,10 @@ import base64, hashlib, os, shutil, sys
 from argparse   import ArgumentParser
 from Crypto.PublicKey import RSA
 from merkletree import MerkleLeaf, MerkleTree, MerkleDoc
-from buildList  import *
 from xlattice   import u
+from rnglib     import SimpleRNG
 
-import rnglib
+from buildList  import *
 
 def makedir_p(path, mode):
     try:
@@ -52,7 +52,7 @@ def doIt(args):
     makedir_p(subDir411, 0o755)
     
     # files to be populaed with random data
-    rng         = rnglib.SimpleRNG()
+    rng         = SimpleRNG()
     data1       = os.path.join(dataDir, 'data1')
     data11      = os.path.join(subDir1, 'data11')
     data2       = os.path.join(dataDir, 'data2')
@@ -75,7 +75,7 @@ def doIt(args):
     pathToKey = os.path.join(nodeDir, "skPriv.pem")
     with open(pathToKey, 'wb') as f:
         f.write(skPriv.exportKey('PEM'))
-    sk = skPriv.publiskey()
+    sk = skPriv.publickey()
     
     bl = BuildList.createFromFileSystem(title, dataDir, sk, 
                     usingSHA1=True, exRE=None, matchRE=None)
@@ -86,22 +86,12 @@ def doIt(args):
     
     # XXX WORKING HERE
 
-    # walk the tree, copying all files listed into uDir by content key
-    def walk(path, node):
-        if isinstance(node, MerkleDoc):
-            pathToNode = os.path.join(path, node.name)
-            walk(pathToNode, node.tree)
-        elif isinstance(node, MerkleTree):
-            for n in node.nodes:
-                pathToNode = os.path.join(path, n.name)
-                walk(pathToNode, n)
-        elif isinstance(node, MerkleLeaf):
-            u.copyAndPut1(path, uDir, node.asciiHash)
-        else:
-            print("INTERNAL ERROR: node is neither Doc nor Tree nor Leaf")
-            print("  skipping")
+    # XXX need checks on uDir
 
-    walk(dataDir, bl.tree)
+    bl.copyWalk(dataDir, uDir)
+    ok = bl.checkWalk(dataDir, uDir)    # whether all leaf nodes are present
+    if not ok:
+        print("check walk on example/ failed")
     
 def main():
     """

@@ -1,5 +1,19 @@
 ~/dev/py/buildList/TODO
 
+2015-05-11 (edited)
+    * blListGen should create uDir if it is not None and then
+        should invoke BuildList.copyWalk(dataDir, uDir)
+        - then BuildList.checkWalk() must succeed
+        - it should be OK if uDir already exists (in fact this
+            will be the usual case)
+    * write testExample.py which verifies that the buildList in
+        example/example.bld is correct 
+        - and that every file under dataDir is in example/uDir
+        - (but not necessarily vice versa)
+    * this should be more or less equivalent to blCheck, which 
+        given a buildList verifies that dataDir (and optionally
+        uDir), are congruent
+
 2015-05-07
     * get blCheck running (use script checkExample)
     * TILT: sha1sum for an empty file returns 0xda39a3ee... 

@@ -28,6 +28,7 @@ def makeListing(args):
     signing     = args.signing
     testing     = args.testing
     title       = args.title
+    uDir        = args.uDir
     usingSHA1   = args.usingSHA1
     verbose     = args.verbose
 
@@ -41,13 +42,13 @@ def makeListing(args):
         matchRE = None
 
     with open(keyFile, 'r') as f:
-        ckPriv = RSA.importKey(f.read())
-    ck = ckPriv.publickey()
+        skPriv = RSA.importKey(f.read())
+    sk = skPriv.publickey()
 
     bl = BuildList.createFromFileSystem(
-                    title, rootDir, ck, usingSHA1, exRE, matchRE)
+                    title, rootDir, sk, usingSHA1, exRE, matchRE)
     if signing:
-        bl.sign(ckPriv)
+        bl.sign(skPriv)
 
     blSer = bl.toString()
     if listFile and (listFile != ''):
