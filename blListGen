@@ -83,7 +83,7 @@ def main():
         help='show options and exit')
 
     parser.add_argument('-k', '--keyFile',
-        help='path to RSA private key if signing')
+        help='path to RSA private key for signing')
 
     parser.add_argument('-P', '--matchPat', action='append',
         help='include only files matching this pattern')
@@ -91,8 +91,8 @@ def main():
     parser.add_argument('-r', '--rootDir',
         help='root directory for build list (REQUIRED)')
 
-    parser.add_argument('-s', '--signing',      action='store_true',
-        help='sign the build list with the private key supplied')
+    parser.add_argument('-s', '--signing', action='store_true',
+        help='digitally sign the generated BuildList')
 
     parser.add_argument('-T', '--testing', action='store_true',
         help='this is a test run')
@@ -119,84 +119,86 @@ def main():
         args.rootDir = os.path.join('tmp', args.rootDir)
 
     # sanity checks -------------------------------------------------
-    if (not args.rootDir) or (args.rootDir == ''):
-        print("no root directory specified, cannot continue")
-        parser.print_help()
-        sys.exit(1)
+    if not args.justShow:
+        if (not args.rootDir) or (args.rootDir == ''):
+            print("no root directory specified")
+            parser.print_usage()
+            sys.exit(1)
 
-    if not args.justShow and not os.path.isdir(args.rootDir):
-        print("root directory %s does not exist, cannot continue" % args.rootDir)
-        parser.print_help()
-        sys.exit(1)
+        if not os.path.isdir(args.rootDir):
+            print("root directory '%s' isn't a directory" % args.rootDir)
+            parser.print_usage()        # short form
+            # parser.print_help()       # long form (what you get from -h)
+            sys.exit(1)
+
+        if args.keyFile:
+            if args.keyFile == '':
+                args.keyFile = None
+            else:
+                if args.testing:
+                    if args.keyFile[0] == '/':
+                        args.keyFile = args.keyFile[1:]
+                    args.keyFile = os.path.join('tmp', args.keyFile)
+                if not os.path.isfile(args.keyFile):
+                    print("key file '%s' does not exist" % args.keyFile)
+                    sys.exit(1)
+        else:
+            print('you must specify a private key file')
+            parser.print_usage()
+            sys.exit(1)
 
     # fixups --------------------------------------------------------
-
+    
     # uDir ------------------------------------------------
     if args.testing and args.uDir:
         if args.uDir[0] == '/':
             args.uDir = args.uDir[1:]
         args.uDir = os.path.join('tmp', args.uDir)
-
+    
     # title -----------------------------------------------
-    if not args.title or args.title == '':
-        junk, sep, base = args.rootDir.rpartition('/')
-        args.title = base
-    else:
-        # this can contain spaces and other undesirable characters
-        base = args.title
-
+    if args.rootDir:
+        if not args.title or args.title == '':
+            junk, sep, base = args.rootDir.rpartition('/')
+            args.title = base
+        else:
+            # this can contain spaces and other undesirable characters
+            base = args.title
+    
     # listFile --------------------------------------------
     if args.listFile and args.testing:
         if args.listFile[0] == '/':
             args.listFile = args.listFile[1:]
         args.listFile = os.path.join('tmp', args.listFile)
-
-    # private key file ------------------------------------
-    if args.keyFile:
-        if args.keyFile == '':
-            args.keyFile = None
-        else:
-            if args.testing:
-                if args.keyFile[0] == '/':
-                    args.keyFile = args.keyFile[1:]
-                args.keyFile = os.path.join('tmp', args.keyFile)
-            if not args.justShow and not os.path.isfile(args.keyFile):
-                print("key file %s does not exist, cannot continue" % args.keyFile)
-                sys.exit(1)
-    else:
-        print('you must specify a private key file')
-        parser.print_usage()
-        sys.exit(1)
-
-    # complete setup ------------------------------------------------
-    appName = 'blListGen %s' % __version__
-    args.title = str(args.title)
-
-    # maybe show options and such -----------------------------------
-    if args.verbose or args.justShow:
-        print("%s %s" % (appName, __version_date__))
-
-    if args.verbose or args.justShow:
-        print('justShow     = ' + str(args.justShow))
-        print('keyFile      = ' + str(args.keyFile))
-        print('listFile     = ' + str(args.listFile))
-        print('timestamp    = ' + str(args.now))
-        print('rootDir      = ' + str(args.rootDir))
-        print('signing      = ' + str(args.signing))
-        print('testing      = ' + str(args.testing))
-        print('title        = ' + str(args.title))
-        print('uDir         = ' + str(args.uDir))
-        print('usingSHA1    = ' + str(args.usingSHA1))
-        print('verbose      = ' + str(args.verbose))
-
-        if args.exclude and len(args.exclude) > 0:
-            print("exclude:")
-            for exclusion in args.exclude:
-                print("    %s" % exclusion)
-        if args.matchPat and len(args.matchPat) > 0:
-            print("match:")
-            for match in args.matchPat:
-                print("    %s" % match)
+    
+        # complete setup ------------------------------------------------
+        appName = 'blListGen %s' % __version__
+        args.title = str(args.title)
+    
+        # maybe show options and such -----------------------------------
+        if args.verbose or args.justShow:
+            print("%s %s" % (appName, __version_date__))
+    
+        if args.verbose or args.justShow:
+            print('justShow     = ' + str(args.justShow))
+            print('keyFile      = ' + str(args.keyFile))
+            print('listFile     = ' + str(args.listFile))
+            print('timestamp    = ' + str(args.now))
+            print('rootDir      = ' + str(args.rootDir))
+            print('signing      = ' + str(args.signing))
+            print('testing      = ' + str(args.testing))
+            print('title        = ' + str(args.title))
+            print('uDir         = ' + str(args.uDir))
+            print('usingSHA1    = ' + str(args.usingSHA1))
+            print('verbose      = ' + str(args.verbose))
+    
+            if args.exclude and len(args.exclude) > 0:
+                print("exclude:")
+                for exclusion in args.exclude:
+                    print("    %s" % exclusion)
+            if args.matchPat and len(args.matchPat) > 0:
+                print("match:")
+                for match in args.matchPat:
+                    print("    %s" % match)
 
     if args.justShow:
         sys.exit(0)

@@ -4,91 +4,61 @@
 
 import base64, hashlib, os, sys
 from argparse   import ArgumentParser
+from merkletree import MerkleTree
 from buildList  import *
 
-def IntegrityCheckFailure(Exception):
-    pass
-def ParseFailed(Exception):
-    pass
-
-def readLine(f):
-    line = f.readline()
-    # DEBUG
-    print(line)
-    # END
-
-def readLineUpdating(f, digest):
-    line = f.readline()
-    # DEBUG
-    print(line)
-    # END
-    digest.update(line)
-    f.write (line + CRLF)
-
-# XXX This is WRONG
-def walkDir(f, digest, dirPath):
-    files = os.listdir(dirPath)
-    files.sort()
-    for file in files:
-        pathToFile = os.path.join(dirPath, file)
-        if os.path.isfile(pathToFile):
-            b64Hash = base64SHA1File(pathToFile)
-            line = b64Hash + ' ' + pathToFile
-            writeLineUpdating(f, digest, line)
-        elif os.path.isdir(pathToFile):
-            walkDir(f, digest, pathToFile)
-        else:
-            print("can't handle %s" % pathToFile)
-
-# MAIN --------------------------------------------------------------
-def checkListing(args):
-
-    # this is here because assignment of args.keyFile to None fails
-    if args.keyFile and args.keyFile != "":
-        keyFile = args.keyFile
-    else:
-        keyFile = None
-    
-    # this is here because assignment of args.rootDir to None fails
-    if args.rootDir and args.rootDir != "":
-        rootDir = args.rootDir
-    else:
-        rootDir = None
-
-    # this is here because assignment of args.uDir to None fails
-    if args.uDir and args.uDir != "":
-        uDir = args.uDir
-    else:
-        uDir = None
+def checkBuildList(args):
 
     listFile    = args.listFile
-    testing     = args.testing
+    rootDir     = args.rootDir
     verbose     = args.verbose
-  
-    digest  = hashlib.new('sha1')
-    b64Hash = None
+    uDir        = args.uDir
 
-    with open(listFile, "rU") as f:
-        expectTitle(f, digest)
-        expectTimestamp(f, digest)
-        # XXX PUB KEY NOT HANDLED
-        expectStr(f, CONTENT_START)
-        while acceptContentLine(f, digest, CONTENT_END, rootDir, uDir):
-            pass
-        b64Hash = expectListLine(f, "missing hash or dig sig")
-        # DEBUG
-        print("B64-ENCODED HASH: %s" % b64Hash)
-        # END
-        line = f.readline()
-        if line:
-            errMsg = "extra line at end of buildList: '%s'" % line
-            raise ParseFailure(errMsg)
-    actualB64Hash = base64.standard_b64encode(digest.digest())
-    if b64Hash != actualB64Hash:
-        errMsg = "calculated hash %s does not match hash in build list %s" % (
-                actualB64Hash, b64Hash)
+    bl      = None
+    data    = None
+    ok      = False
+    signed  = False
 
-        raise IntegrityCheckFailure(errMsg)
+    try:
+        # can't use 'r' which converts CRLF to just LF
+        with open(listFile, 'rb') as f:
+            data = f.read()
+            ok   = True     # no exceptions
+    except Exception as e:
+        print("error reading build list file: '%s'" % e)
+
+    if ok:
+        ok = False
+        try:
+            bl = BuildList.parse(data)
+            ok = True
+        except Exception as e:
+            print("error parsing BuildList: '%s'" % e)
+
+    if ok:
+        signed = bl.signed
+        if signed:
+            ok = bl.verify
+            if not ok:
+                print("dig sig verification fails")
+
+    if ok:
+        usingSHA1 = bl.usingSHA1
+        # assume exRE can be ignored
+        myTree = MerkleTree.createFromFileSystem(rootDir, usingSHA1)
+        ok = myTree.equal(bl.tree)
+        if not ok:
+            print("build list's MerkleTree doesn't match %s" % rootDir)
+            print("MerkleTree for %s:\n%s" % (rootDir, myTree))
+            print("MerkleTree for BuildList:\n%s" % bl.tree)
+
+    if ok and uDir:
+        ok = bl.checkWalk(rootDir, uDir) 
+        if not ok:
+            print("BuildList, rootDir, and uDir are inconsistent")
+    
+    if ok:
+        print("ok")
 
 def main():
     """
@@ -110,17 +80,11 @@ def main():
     parser.add_argument('-j', '--justShow', action='store_true',
         help='show options and exit')
 
-    parser.add_argument('-k', '--keyFile',
-        help='path to RSA private key if signing')
-
     parser.add_argument('-r', '--rootDir',
         help='root directory for build list')
 
-    parser.add_argument('-T', '--testing', action='store_true',
-        help='this is a test run')
-
     parser.add_argument('-u', '--uDir', 
-        help='path to uDir (relative to tmp/ if testing)')
+        help='path to uDir')
 
     parser.add_argument('-v', '--verbose', action='store_true',
         help='be chatty')
@@ -128,58 +92,39 @@ def main():
     args = parser.parse_args()
 
     # fixups --------------------------------------------------------
-    if args.testing and args.listFile:
-        if args.listFile[0] == '/':
-            args.listFile = args.listFile[1:]
-        args.listFile = os.path.join('tmp', args.listFile)
 
     # sanity checks -------------------------------------------------
-    if (not args.justShow) and (not os.path.isfile(args.listFile)):
-        print("list file %s does not exist, cannot continue" % args.listFile)
-        sys.exit(1)
+    if (not args.justShow):
+        if not args.listFile or (not os.path.isfile(args.listFile)):
+            print("list file %s does not exist" % args.listFile)
+            parser.print_usage()
+            sys.exit(1)
 
-    # fixups --------------------------------------------------------
+        if (not args.rootDir) or (args.rootDir == ''):
+            print("no root directory specified")
+            parser.print_usage()
+            sys.exit(1)
 
-    # rootDir --------------------------------------------
-    if (not args.justShow) and (not args.rootDir) or (args.rootDir == ''):
-        print("no root directory specified, cannot continue")
-        parser.print_help()
-        sys.exit(1)
-
-    if args.testing and args.rootDir:
-        if args.rootDir[0] == '/':
-            args.rootDir = args.rootDir[1:]
-        args.rootDir = os.path.join('tmp', args.rootDir)
-
-    if (not args.justShow) and (not os.path.isdir(args.rootDir)):
-        print("root directory %s does not exist, cannot continue" % args.rootDir)
-        sys.exit(1)
+        if not os.path.isdir(args.rootDir):
+            print("root directory %s does not exist" % args.rootDir)
+            parser.print_usage()
+            sys.exit(1)
     
-    # private key file ------------------------------------
-    if args.keyFile:
-        if args.keyFile == '':
-            args.keyFile = None
-        else:
-            if args.testing:
-                if args.keyFile[0] == '/':
-                    args.keyFile = args.keyFile[1:]
-                args.keyFile = os.path.join('tmp', args.keyFile)
-            if not args.justShow and not os.path.isfile(args.keyFile):
-                print("key file %s does not exist, cannot continue" % args.keyFile)
-                sys.exit(1)
+        if args.uDir and not os.path.isdir(args.uDir):
+            print("uDir directory %s is not a directory" % args.uDir)
+            parser.print_usage()
+            sys.exit(1)
     
     # complete setup ------------------------------------------------
-    appName = 'blListGen %s' % __version__
+    appName = 'blCheck %s' % __version__
 
     # maybe show options and such -----------------------------------
     if args.verbose or args.justShow:
         print("%s %s" % (appName, __version_date__))
 
     if args.verbose or args.justShow:
-        print('keyFile      = ' + str(args.keyFile))
         print('listFile     = ' + str(args.listFile))
         print('rootDir      = ' + str(args.rootDir))
-        print('testing      = ' + str(args.testing))
         print('uDir         = ' + str(args.uDir))
         print('verbose      = ' + str(args.verbose))
 
@@ -187,7 +132,7 @@ def main():
         sys.exit(0)
 
     # do what's required --------------------------------------------
-    checkListing(args)
+    checkBuildList(args)
 
         
 if __name__ == '__main__':

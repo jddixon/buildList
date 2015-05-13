@@ -1,6 +1,5 @@
 ./blCheck  \
             -b example/example.bld      \
-            -k example/node/skPriv.pem  \
             -r example/dataDir          \
-            -u example/udir             \
+            -u example/uDir             \
             $@

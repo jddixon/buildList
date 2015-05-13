@@ -1,24 +1,13 @@
 #!/usr/bin/python3
 #
-# ~/dev/py/buildList/blListGen
+# ~/dev/py/buildList/blSrcGen
 
 import os, sys
 from argparse   import ArgumentParser
-from buildList   import *
+from shutil     import rmtree
+from buildList  import *
 
-def makeListing(args):
-
-    # this is here because assignment of args.keyFile to None fails
-    if args.keyFile and args.keyFile != "":
-        keyFile = args.keyFile
-    else:
-        keyFile = None
-    
-    # this is here because assignment of args.keyFile to None fails
-    if args.uDir and args.uDir != "":
-        uDir = args.uDir
-    else:
-        uDir = None
+def makeDataDir(args):
 
     listFile    = args.listFile
     rootDir     = args.rootDir
@@ -32,7 +21,7 @@ def makeListing(args):
 def main():
     """
     Expect a command like
-        blListGen [options] 
+        blSrcGen [options] 
 
     """
 
@@ -46,11 +35,11 @@ def main():
     parser.add_argument('-b', '--listFile', 
         help='root directory for build list')
     
+    parser.add_argument('-f', '--force', action='store_true',
+        help='do it despite objections')
+
     parser.add_argument('-j', '--justShow', action='store_true',
         help='show options and exit')
-
-    parser.add_argument('-k', '--keyFile',
-        help='path to RSA private key if signing')
 
     parser.add_argument('-r', '--rootDir',
         help='root directory for build list (REQUIRED)')
@@ -69,75 +58,77 @@ def main():
 
     args = parser.parse_args()
 
-    # sanity checks -------------------------------------------------
-    if args.rootDir == None or args.rootDir == '':
-        print("you must specify a root directory")
-        parser.print_help()
-        sys.exit(1)
-
     # fixups --------------------------------------------------------
     if args.testing and args.rootDir:
         if args.rootDir[0] == '/':
             args.rootDir = args.rootDir[1:]
         args.rootDir = os.path.join('tmp', args.rootDir)
 
-    # sanity checks -------------------------------------------------
-    if not args.justShow and os.path.exists(args.rootDir):
-        if not os.path.isdir(args.rootDir):
-            print("rootDir %s is not a directory, cannot continue" % args.rootDir)
-            sys.exit(1)
-
-    # fixups --------------------------------------------------------
-
-    # uDir ------------------------------------------------
     if args.testing and args.uDir:
         if args.uDir[0] == '/':
             args.uDir = args.uDir[1:]
         args.uDir = os.path.join('tmp', args.uDir)
 
-    # title -----------------------------------------------
-    if not args.title or args.title == '':
-        junk, sep, base = args.rootDir.rpartition('/')
-        args.title = base
-    else:
-        # this can contain spaces and other undesirable characters
-        base = args.title
-
-    # listFile --------------------------------------------
-    if not args.listFile or args.listFile == '':
-        args.listFile = base + ".bld"
-
-    if args.testing:
-        if args.listFile[0] == '/':
-            args.listFile = args.listFile[1:]
-        args.listFile = os.path.join('tmp', args.listFile)
-
-    if not args.justShow and not os.path.isfile(args.listFile):
-        print("list file %s does not exist, cannot continue" % args.listFile)
+    # sanity checks -------------------------------------------------
+    def giveUp(msg):
+        print(msg)
+        parser.print_usage()
         sys.exit(1)
 
-    # private key file ------------------------------------
-    if args.keyFile:
-        if args.keyFile == '':
-            args.keyFile = None
+    if not args.justShow:
+        if args.rootDir == None or args.rootDir == '':
+            giveUp("you must specify a root directory")
+   
+        if args.force and os.path.exists(args.rootDir):
+            try:
+                rmtree(args.rootDir)
+            except Exception as e:
+                print("tried to delete %s; ignoring %s" % (
+                    args.rootDir, e))
+
+        os.mkdir(args.rootDir, 0o755)
+
+        if args.rootDir and not os.path.isdir(args.rootDir):
+            giveUp("rootDir %s is not a directory" % args.rootDir)
+
+        if not args.uDir:
+            giveUp("you must specify uDir")
+        elif os.path.exists(args.uDir) and not os.path.isdir(args.uDir):
+            giveUp("uDir %s is not a directory" % args.uDir)
+
+        if not os.path.exists(args.uDir):
+            # XXX could/should check path
+            os.mkdir(args.uDir, 0o755) 
+
+        # title -------------------------------------------
+        if not args.title or args.title == '':
+            junk, sep, base = args.rootDir.rpartition('/')
+            args.title = base
         else:
-            if args.testing:
-                if args.keyFile[0] == '/':
-                    args.keyFile = args.keyFile[1:]
-                args.keyFile = os.path.join('tmp', args.keyFile)
-            if not args.justShow and not os.path.isfile(args.keyFile):
-                print("key file %s does not exist, cannot continue" % args.keyFile)
-                sys.exit(1)
+            # this can contain spaces and other undesirable characters
+            base = args.title
+    
+        # listFile ----------------------------------------
+        if not args.listFile or args.listFile == '':
+            giveUp('no build list file specified')
+
+        if args.testing:
+            if args.listFile[0] == '/':
+                args.listFile = args.listFile[1:]
+            args.listFile = os.path.join('tmp', args.listFile)
+    
+        if not os.path.isfile(args.listFile):
+            giveUp("list file %s does not exist" % args.listFile)
     
     # complete setup ------------------------------------------------
-    appName = 'blListGen %s' % __version__
+    appName = 'blSrcGen %s' % __version__
 
     # maybe show options and such -----------------------------------
     if args.verbose or args.justShow:
         print("%s %s" % (appName, __version_date__))
 
     if args.verbose or args.justShow:
-        print('keyFile      = ' + str(args.keyFile))
+        print('force        = ' + str(args.force))
         print('listFile     = ' + str(args.listFile))
         print('rootDir      = ' + str(args.rootDir))
         print('testing      = ' + str(args.testing))
@@ -149,7 +140,7 @@ def main():
         sys.exit(0)
 
     # do what's required --------------------------------------------
-    makeListing(args)
+    makeDataDir(args)
 
         
 if __name__ == '__main__':

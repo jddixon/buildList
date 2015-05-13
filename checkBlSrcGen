@@ -1,0 +1,7 @@
+./blSrcGen  \
+            -b tmp/junk.bld         \
+            -f                      \
+            -r tmp/dataDir          \
+            -t "a trial title"      \
+            -u tmp/uDir             \
+            $@

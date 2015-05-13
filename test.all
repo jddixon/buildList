@@ -3,3 +3,4 @@
 ./testRSA.py
 ./testSHA1File.py
 ./testTimestamp.py
+./checkExample

@@ -25,8 +25,8 @@ __all__ = ['__version__', '__version_date__',
             'BuildList',
           ]
 
-__version__      = '0.3.3'
-__version_date__ = '2015-05-12'
+__version__      = '0.3.4'
+__version_date__ = '2015-05-13'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
@@ -198,6 +198,9 @@ class BuildList(object):
 
     @property
     def publicKey(self):    return self._publicKey
+
+    @property 
+    def signed(self):       return self._digSig is not None
 
     @property
     def timestamp(self):    return timestamp(self._when)
@@ -490,7 +493,8 @@ class BuildList(object):
         ss.append('')
 
         # dig sig
-        ss.append(self.digSig)
+        if self._digSig:
+            ss.append(self.digSig)
 
         return ss
 

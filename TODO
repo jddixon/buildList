@@ -1,21 +1,22 @@
 ~/dev/py/buildList/TODO
 
-2015-05-11 (edited)
-    * blListGen should create uDir if it is not None and then
-        should invoke BuildList.copyWalk(dataDir, uDir)
+2015-05-12
+    * get blSrcGen working
+
+2015-05-12 (edited from -11)
+    * if uDir != None (ie, -u is present), blListGen should create 
+        uDir if it does not exist and then should invoke 
+        BuildList.copyWalk(dataDir, uDir)
         - then BuildList.checkWalk() must succeed
         - it should be OK if uDir already exists (in fact this
             will be the usual case)
-    * write testExample.py which verifies that the buildList in
-        example/example.bld is correct 
+    * write checkExample which uses blCheck to verify that the 
+        buildList in example/example.bld is correct 
         - and that every file under dataDir is in example/uDir
         - (but not necessarily vice versa)
-    * this should be more or less equivalent to blCheck, which 
-        given a buildList verifies that dataDir (and optionally
-        uDir), are congruent
 
 2015-05-07
-    * get blCheck running (use script checkExample)
+    * get blCheck running (use script checkExample)                     * DONE
     * TILT: sha1sum for an empty file returns 0xda39a3ee... 
         - this appears to be consistent; two empty files return
             the same hash to u.filesha1 and system sha1sum
@@ -23,8 +24,8 @@
         - however empty directory in BuildList has SHA1_NONE as hash
 
 2015-05-05
-    * running blListGen without -s suggests that deserialization 
-        does not work if there is no digital signature
+    * running blListGen without -s suggests that deserialization        * FIXED
+        does not work if there is no digital signature                  * FIXED
     * blBootstrap should populate example/uDir                          * DONE
 
 2015-05-05 (edited from 04-12)
