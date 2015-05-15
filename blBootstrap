@@ -5,9 +5,10 @@
 import base64, hashlib, os, shutil, sys
 from argparse   import ArgumentParser
 from Crypto.PublicKey import RSA
-from merkletree import MerkleLeaf, MerkleTree, MerkleDoc
-from xlattice   import u
-from rnglib     import SimpleRNG
+from merkletree     import MerkleLeaf, MerkleTree, MerkleDoc
+from xlattice       import u
+from xlattice.lfs   import touch
+from rnglib         import SimpleRNG
 
 from buildList  import *
 

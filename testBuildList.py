@@ -6,6 +6,7 @@ import base64, hashlib, os, time, unittest
 from Crypto.PublicKey import RSA
 
 from rnglib         import SimpleRNG
+from xlattice.util  import timestamp
 from buildList      import *
 
 class TestBuildList (unittest.TestCase):

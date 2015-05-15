@@ -5,7 +5,9 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash      import SHA, SHA256
 from Crypto.Signature import PKCS1_PSS
 from merkletree import MerkleDoc, MerkleLeaf, MerkleNode, MerkleTree
-from xlattice   import u
+from xlattice       import u
+from xlattice.lfs   import touch
+from xlattice.util  import parseTimestamp, timestamp, timestampNow
 
 __all__ = ['__version__', '__version_date__',
             # OTHER EXPORTED CONSTANTS
@@ -13,7 +15,6 @@ __all__ = ['__version__', '__version_date__',
             'CRLF', 'LF',
             # FUNCTIONS
             'base64SHA1File',
-            'parseTimestamp', 'timestamp', 'timestampNow', 'touch',
             # PARSER FUNCTIONS
             'IntegrityCheckFailure', 'ParseFailed',
             'acceptContentLine',
@@ -25,39 +26,14 @@ __all__ = ['__version__', '__version_date__',
             'BuildList',
           ]
 
-__version__      = '0.3.4'
-__version_date__ = '2015-05-13'
+__version__      = '0.3.5'
+__version_date__ = '2015-05-14'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
 CONTENT_START   = '# START CONTENT #'
 CRLF            = '\r\n'.encode('utf-8')
 LF              = '\n'
-
-def touch(fname, times=None):
-    with open(fname, 'a'):
-        os.utime(fname, times)
-
-# TIMESTAMP FUNCTIONS -----------------------------------------------
-
-# Note that in the Go code timestamp is an int64, whereas here it
-# is a string.
-# Note also that these functions will misbehave from 2038 or so.
-
-FORMAT = "%Y-%m-%d %H:%M:%S"
-
-def parseTimestamp(s):
-    """ May raise ValueError """
-    t = time.strptime(s, FORMAT)
-    return calendar.timegm(t)
-
-def timestamp(n):       # sec from epoch
-    t = time.gmtime(n)
-    return time.strftime(FORMAT,  t)
-
-def timestampNow():
-    t = time.gmtime()
-    return time.strftime(FORMAT,  t)
 
 # SHA1 FILE HASHING -------------------------------------------------
 

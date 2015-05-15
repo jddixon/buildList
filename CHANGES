@@ -1,7 +1,10 @@
 ~/dev/py/buildList/CHANGES
 
+0.3.5
+    2015-05-14
+        * moved timestamp functionality to xlattice/util            SLOC 1080
+        * moved touch() to xlattice.lfs                             SLOC 1079
 0.3.4
-    FUTURE: NOT ON GITHUB
     2015-05-13
         * working blCheck and checkExample                          SLOC 1107
         * fixed signing (-s) option                                 SLOC 1111
