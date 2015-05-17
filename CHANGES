@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+0.3.6
+    2015-05-17
+        * SHA1_NONE value changed, regenerated example/             SLOC 1079
 0.3.5
     2015-05-14
         * moved timestamp functionality to xlattice/util            SLOC 1080

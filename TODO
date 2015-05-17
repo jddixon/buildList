@@ -20,11 +20,11 @@
 
 2015-05-07
     * get blCheck running (use script checkExample)                     * DONE
-    * TILT: sha1sum for an empty file returns 0xda39a3ee... 
-        - this appears to be consistent; two empty files return
-            the same hash to u.filesha1 and system sha1sum
-        - same value is returned by sha1sum of empty file on portland
-        - however empty directory in BuildList has SHA1_NONE as hash
+    * TILT: sha1sum for an empty file returns 0xda39a3ee...             * OK 
+        - this appears to be consistent; two empty files return         * OK
+            the same hash to u.filesha1 and system sha1sum              * OK
+        - same value is returned by sha1sum of empty file on portland   * OK
+        - however empty directory in BuildList has SHA1_NONE as hash    * FIXED
 
 2015-05-05
     * running blListGen without -s suggests that deserialization        * FIXED
