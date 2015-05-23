@@ -1,11 +1,9 @@
 ~/dev/py/buildList/TODO
 
 2015-05-14
-    * make it possible to move testRSA to xlattice_py
-
+    * make it possible to move testRSA to xlattice_py                   * DONE
 2015-05-12
     * get blSrcGen working using checkBlSrcGen
-
 2015-05-12 (edited from -11)
     * if uDir != None (ie, -u is present), blListGen should create 
         uDir if it does not exist and then should invoke 
