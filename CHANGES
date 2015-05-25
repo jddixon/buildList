@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+0.3.7
+    2015-05-22
+        * testRSA.py moved to xlattice_py (and edited there)        SLOC 1023
 0.3.6
     2015-05-17
         * SHA1_NONE value changed, regenerated example/             SLOC 1079
