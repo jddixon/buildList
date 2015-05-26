@@ -62,7 +62,7 @@ class TestBuildList (unittest.TestCase):
 
         # check sign() and verify() ---------------------------------
 
-        self.assertTrue(bl.equal(bl))
+        self.assertEqual(bl, bl)
         self.assertFalse(bl.verify())   # not signed yet
 
         bl.sign(skPriv)
@@ -71,13 +71,13 @@ class TestBuildList (unittest.TestCase):
         self.assertTrue(bl.verify())    # it has been signed
 
         # equality, serialization, deserialization ------------------
-        self.assertTrue(bl.equal(bl))
+        self.assertEqual(bl, bl)
         s = bl.toString()
-        bl2 = BuildList.parse(s)
+        bl2 = BuildList.parse(s, usingSHA1)
         s2  = bl2.toString()
         self.assertEqual(s, s2)
-        self.assertTrue( bl.equal(bl))  # same list, but signed now
-        self.assertTrue( bl.equal(bl2)) 
+        self.assertEqual( bl, bl)  # same list, but signed now
+        self.assertEqual( bl, bl2) 
 
     def testBuildList (self):
         self.doTestBadParts()

@@ -1,4 +1,5 @@
 ./blCheck  \
+            -1                          \
             -b example/example.bld      \
             -r example/dataDir          \
             -u example/uDir             \

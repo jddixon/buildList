@@ -1,5 +1,9 @@
 ~/dev/py/buildList/CHANGES
 
+0.4.0
+    2015-05-25
+        * base on NLHTree instead of MerkleTree                     SLOC 1017
+        * equal() renamed __eq__()                                  SLOC 1046
 0.3.7
     2015-05-22
         * testRSA.py moved to xlattice_py (and edited there)        SLOC 1023
