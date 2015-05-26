@@ -1,4 +1,5 @@
 ./blListGen \
+    -1                                  \
     -b  tmp/junk.bld                    \
     -k  example/node/skPriv.pem         \
     -r  example/dataDir                 \
@@ -7,6 +8,7 @@
     $@
 
 ./blCheck  \
+            -1                          \
             -b tmp/junk.bld             \
             -r example/dataDir          \
             -u tmp/uDir                 \

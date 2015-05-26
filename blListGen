@@ -8,8 +8,9 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash      import SHA    # presumably 1
 from Crypto.Signature import PKCS1_PSS
 
-from merkletree import MerkleDoc
-from buildList  import *
+from merkletree     import MerkleDoc
+from buildList      import *
+from xlattice.util  import timestampNow
 
 def makeListing(args):
 
@@ -170,35 +171,35 @@ def main():
             args.listFile = args.listFile[1:]
         args.listFile = os.path.join('tmp', args.listFile)
     
-        # complete setup ------------------------------------------------
-        appName = 'blListGen %s' % __version__
-        args.title = str(args.title)
-    
-        # maybe show options and such -----------------------------------
-        if args.verbose or args.justShow:
-            print("%s %s" % (appName, __version_date__))
-    
-        if args.verbose or args.justShow:
-            print('justShow     = ' + str(args.justShow))
-            print('keyFile      = ' + str(args.keyFile))
-            print('listFile     = ' + str(args.listFile))
-            print('timestamp    = ' + str(args.now))
-            print('rootDir      = ' + str(args.rootDir))
-            print('signing      = ' + str(args.signing))
-            print('testing      = ' + str(args.testing))
-            print('title        = ' + str(args.title))
-            print('uDir         = ' + str(args.uDir))
-            print('usingSHA1    = ' + str(args.usingSHA1))
-            print('verbose      = ' + str(args.verbose))
-    
-            if args.exclude and len(args.exclude) > 0:
-                print("exclude:")
-                for exclusion in args.exclude:
-                    print("    %s" % exclusion)
-            if args.matchPat and len(args.matchPat) > 0:
-                print("match:")
-                for match in args.matchPat:
-                    print("    %s" % match)
+    # complete setup ------------------------------------------------
+    appName = 'blListGen %s' % __version__
+    args.title = str(args.title)
+
+    # maybe show options and such -----------------------------------
+    if args.verbose or args.justShow:
+        print("%s %s" % (appName, __version_date__))
+
+    if args.verbose or args.justShow:
+        print('justShow     = ' + str(args.justShow))
+        print('keyFile      = ' + str(args.keyFile))
+        print('listFile     = ' + str(args.listFile))
+        print('timestamp    = ' + str(args.now))
+        print('rootDir      = ' + str(args.rootDir))
+        print('signing      = ' + str(args.signing))
+        print('testing      = ' + str(args.testing))
+        print('title        = ' + str(args.title))
+        print('uDir         = ' + str(args.uDir))
+        print('usingSHA1    = ' + str(args.usingSHA1))
+        print('verbose      = ' + str(args.verbose))
+
+        if args.exclude and len(args.exclude) > 0:
+            print("exclude:")
+            for exclusion in args.exclude:
+                print("    %s" % exclusion)
+        if args.matchPat and len(args.matchPat) > 0:
+            print("match:")
+            for match in args.matchPat:
+                print("    %s" % match)
 
     if args.justShow:
         sys.exit(0)

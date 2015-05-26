@@ -4,7 +4,7 @@ import base64, binascii, calendar, hashlib, os, time
 from Crypto.PublicKey import RSA
 from Crypto.Hash      import SHA, SHA256
 from Crypto.Signature import PKCS1_PSS
-from merkletree import MerkleDoc, MerkleLeaf, MerkleNode, MerkleTree
+from nlhtree        import NLHNode, NLHTree, NLHLeaf
 from xlattice       import u
 from xlattice.lfs   import touch
 from xlattice.util  import parseTimestamp, timestamp, timestampNow
@@ -26,8 +26,8 @@ __all__ = ['__version__', '__version_date__',
             'BuildList',
           ]
 
-__version__      = '0.3.7'
-__version_date__ = '2015-05-22'
+__version__      = '0.4.0'
+__version_date__ = '2015-05-25'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
@@ -135,7 +135,7 @@ def acceptContentLine(f, digest, str, rootDir, uDir):
 class BuildList(object):
     """
     A BuildList has a title, an RSA public key, and some content, which
-    is a MerkleTree, an indented list of files and directories and their
+    is an NLHTree, an indented list of directories and files and their
     associated content hashes.  The BuildList optionally has a timestamp
     and a digital signature.  It is signed using the RSA private key
     associated with the RSA public key.  Signing the BuildList updates
@@ -151,8 +151,8 @@ class BuildList(object):
             raise RuntimeError("sk is nil or not a valid RSA public key")
         self._publicKey = sk
    
-        if (not tree) or (type(tree) != MerkleTree):
-            raise RuntimeError('tree is nil or not a valid MerkleTree')
+        if (not tree) or (type(tree) != NLHTree):
+            raise RuntimeError('tree is nil or not a valid NLHTree')
 
         self._tree      = tree
 
@@ -210,8 +210,8 @@ class BuildList(object):
         # add CONTENT_START and CRLF line to hash
         h.update((CONTENT_START + '\r\n').encode('utf-8'))
 
-        # add serialized MerkleTree to hash, each line terminated by CRLF
-        h.update( self._tree.toString('').encode('utf-8'))
+        # add serialized NLHTree to hash, each line terminated by CRLF
+        h.update( self._tree.__str__().encode('utf-8'))
 
         # add CONTENT_END and CRLF line to hash
         h.update((CONTENT_END + '\r\n').encode('utf-8'))
@@ -274,21 +274,18 @@ class BuildList(object):
         """
         def walk(node, path):
             ok = True
-            if isinstance(node, MerkleDoc):
-                pathToNode = os.path.join(path, node.name)
-                ok = walk(node.tree, pathToNode)
-            elif isinstance(node, MerkleTree):
+            if isinstance(node, NLHTree):
                 for n in node.nodes:
                     pathToNode = os.path.join(path, n.name)
                     ok = walk(n, pathToNode)
                     if not ok:
                         break
-            elif isinstance(node, MerkleLeaf):
+            elif isinstance(node, NLHLeaf):
                 if self.usingSHA1:
                     leafHash = u.fileSHA1(path)
                 else:
                     leafHash = u.fileSHA2(path)
-                ok = leafHash == node.asciiHash
+                ok = leafHash == node.hexHash
             else:
                 print("INTERNAL ERROR: node is neither Doc nor Tree nor Leaf")
                 ok = False
@@ -303,15 +300,12 @@ class BuildList(object):
         is well-formed.
         """
         def walk(node, path):
-            if isinstance(node, MerkleDoc):
-                pathToNode = os.path.join(path, node.name)
-                walk(node.tree, pathToNode)
-            elif isinstance(node, MerkleTree):
+            if isinstance(node, NLHTree):
                 for n in node.nodes:
                     pathToNode = os.path.join(path, n.name)
                     walk(n, pathToNode)
-            elif isinstance(node, MerkleLeaf):
-                u.copyAndPut1(path, uDir, node.asciiHash)
+            elif isinstance(node, NLHLeaf):
+                u.copyAndPut1(path, uDir, node.hexHash)
             else:
                 print("INTERNAL ERROR: node is neither Doc nor Tree nor Leaf")
                 print("  skipping")
@@ -319,14 +313,25 @@ class BuildList(object):
         walk(self.tree, dataDir)
 
     # EQUALITY ------------------------------------------------------
-    def equal(self, other):
+    def __eq__(self, other):
         if (not other) or (type(other) != BuildList):
+            # DEBUG
+            if not other:       print("other is None")
+            else:               print("other is %s" % type(other))
+            # END
             return False
         if self.title != other.title:
+            # DEBUG
+            print("my title is '%s' but other's is '%s'" % (
+                self.title, other.title))
+            # END
             return False
         if self.publicKey != other.publicKey :
             return False
-        if not self.tree.equal(other.tree):
+        if not (self.tree == other.tree):
+            # DEBUG
+            print("NLHTrees differ")
+            # END
             return False
         if self._when != other._when:
             print("  my when = %f, other when = %f" % (self._when, other._when))
@@ -352,14 +357,14 @@ class BuildList(object):
                 raise RuntimeError(
                         "partToDir may not contain '.' or '..' parts")
 
-        tree = MerkleTree.createFromFileSystem(pathToDir,
+        tree = NLHTree.createFromFileSystem(pathToDir,
             # accept default deltaIndent
             usingSHA1=usingSHA1, exRE=exRE)
 
         return BuildList(title, sk, tree)
 
     @staticmethod
-    def parse(s):
+    def parse(s, usingSHA1):
         """ 
         This relies upon the fact that all fields are separated by 
         CRLF sequences.
@@ -369,7 +374,7 @@ class BuildList(object):
         if type(s) is not str:
             s = str(s, 'utf-8')
         ss = s.split('\r\n')
-        return BuildList.parseFromStrings(ss)
+        return BuildList.parseFromStrings(ss, usingSHA1)
 
     @staticmethod
     def _expectField(ss, n):
@@ -384,7 +389,7 @@ class BuildList(object):
         return field, n
 
     @staticmethod
-    def parseFromStrings(ss):
+    def parseFromStrings(ss, usingSHA1):
         if ss == None:
             raise ParseFailed("parseFromStrings: null argument")
 
@@ -404,7 +409,7 @@ class BuildList(object):
         if startLine != CONTENT_START:
             raise ParseFailed("expected CONTENT_START line")
 
-        # expect a serialized MerkleTree followed by a CONTENT END
+        # expect a serialized NLHTree followed by a CONTENT END
         mtLines = []
         while True:
             line, n = BuildList._expectField(ss, n)
@@ -413,7 +418,7 @@ class BuildList(object):
             else:
                 mtLines.append(line)
         # expect default indents
-        myTree = MerkleTree.createFromStringArray(mtLines) 
+        myTree = NLHTree.createFromStringArray(mtLines, usingSHA1) 
 
         # expect an empty line
         space, n = BuildList._expectField(ss, n)
@@ -456,8 +461,8 @@ class BuildList(object):
         # content start line
         ss.append(CONTENT_START)
 
-        # merkle tree
-        ssTree = self.tree.toString().split('\r\n')
+        # NLHTree
+        ssTree = self.tree.__str__().split('\r\n')
         if (len(ssTree) > 1) and (ssTree[-1] == ''):
             ssTree = ssTree[0:-1]
         ss += ssTree

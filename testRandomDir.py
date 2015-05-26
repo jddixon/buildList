@@ -40,8 +40,8 @@ class TestRandomDir (unittest.TestCase):
 
         self.rng.nextDataDir(pathToDir, depth, width, maxLen, minLen)
 
-        #data = bytearray(maxLen)     # that many null bytes
-        #self.rng.nextBytes(data)             # fill with random data
+        #data = bytearray(maxLen)            # that many null bytes
+        #self.rng.nextBytes(data)            # fill with random data
         #d = hashlib.new('sha1')
         #d.update(data)
         #hash = d.digest()

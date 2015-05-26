@@ -4,7 +4,7 @@
 
 import base64, hashlib, os, sys
 from argparse   import ArgumentParser
-from merkletree import MerkleTree
+from nlhtree import NLHTree
 from buildList  import *
 
 def checkBuildList(args):
@@ -13,6 +13,7 @@ def checkBuildList(args):
     rootDir     = args.rootDir
     verbose     = args.verbose
     uDir        = args.uDir
+    usingSHA1   = args.usingSHA1
 
     bl      = None
     data    = None
@@ -30,7 +31,7 @@ def checkBuildList(args):
     if ok:
         ok = False
         try:
-            bl = BuildList.parse(data)
+            bl = BuildList.parse(data, usingSHA1)
             ok = True
         except Exception as e:
             print("error parsing BuildList: '%s'" % e)
@@ -45,12 +46,12 @@ def checkBuildList(args):
     if ok:
         usingSHA1 = bl.usingSHA1
         # assume exRE can be ignored
-        myTree = MerkleTree.createFromFileSystem(rootDir, usingSHA1)
-        ok = myTree.equal(bl.tree)
+        myTree = NLHTree.createFromFileSystem(rootDir, usingSHA1)
+        ok = myTree == bl.tree
         if not ok:
-            print("build list's MerkleTree doesn't match %s" % rootDir)
-            print("MerkleTree for %s:\n%s" % (rootDir, myTree))
-            print("MerkleTree for BuildList:\n%s" % bl.tree)
+            print("build list's NLHTree doesn't match %s" % rootDir)
+            print("NLHTree for %s:\n%s" % (rootDir, myTree))
+            print("NLHTree for BuildList:\n%s" % bl.tree)
 
     if ok and uDir:
         ok = bl.checkWalk(rootDir, uDir) 
@@ -73,6 +74,9 @@ def main():
     
     DESC = 'verify integrity of build list, optionally agains root dir and uDir"'
     parser = ArgumentParser(description=DESC)
+
+    parser.add_argument('-1', '--usingSHA1', action='store_true',
+        help='using the 160-bit SHA1 hash')
 
     parser.add_argument('-b', '--listFile', 
         help='root directory for build list')
