@@ -3,7 +3,7 @@
 A set of Python utilities intended to be interoperable with the
 **builds/** package in https://github.com/jddixon/xlCrypto_go.
 
-## Serializtion
+## Serialization
 
 In its serialized form a BuildList consists of a public key line,
 a title line, a timestamp line, a number of content lines, and a

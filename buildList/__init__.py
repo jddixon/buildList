@@ -26,8 +26,8 @@ __all__ = ['__version__', '__version_date__',
             'BuildList',
           ]
 
-__version__      = '0.4.0'
-__version_date__ = '2015-05-25'
+__version__      = '0.4.1'
+__version_date__ = '2015-06-04'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
@@ -478,4 +478,5 @@ class BuildList(object):
             ss.append(self.digSig)
 
         return ss
+
 

@@ -1,16 +1,17 @@
 ~/dev/py/buildList/TODO
 
+2015-06-02
+    * ERRORS in documentation relating to NLHTree
+        - names are on left, hash is on right
+        _ hashes are hex-encoded, not base64
+    * README/index.md should contain a link to NLHTree project
+
 2015-05-25
     * complete testRandomDir.py or drop it  
     * use NLHTree instead of BuildList for body os the list             * DONE
     * FIX: blListGen ignores uDir if set
-
-2015-05-14
-    * make it possible to move testRSA to xlattice_py                   * DONE
-
 2015-05-12
     * get blSrcGen working using checkBlSrcGen
-
 2015-05-12 (edited from -11)
     * if uDir != None (ie, -u is present), blListGen should create 
         uDir if it does not exist and then should invoke 
@@ -23,53 +24,21 @@
         - and that every file under dataDir is in example/uDir
         - (but not necessarily vice versa)
 
-2015-05-07
-    * get blCheck running (use script checkExample)                     * DONE
-    * TILT: sha1sum for an empty file returns 0xda39a3ee...             * OK 
-        - this appears to be consistent; two empty files return         * OK
-            the same hash to u.filesha1 and system sha1sum              * OK
-        - same value is returned by sha1sum of empty file on portland   * OK
-        - however empty directory in BuildList has SHA1_NONE as hash    * FIXED
-
-2015-05-05
-    * running blListGen without -s suggests that deserialization        * FIXED
-        does not work if there is no digital signature                  * FIXED
-    * blBootstrap should populate example/uDir                          * DONE
-
 2015-05-05 (edited from 04-12)
-    * recheck sanity checks in blCheck/ListGen/SrcGen                   * DONE
     * move their doIt code into buildList/__init__.py
-    * for interoperability tests need 
-        - a directory example/                                          * DONE
-        - a valid buildList example/example.bld                         * DONE
-        - a directory tree example/dataDir/                             * DONE
-        - an appropriate example/uDir/                                  * DONE
-        - and a serialized RSA private key, skPriv.pem                  * DONE
-        - make sure buildList lines are CR-LF terminated                * DONE
     * everything under example/ is read-only if at all possible
-
 2015-05-04
-    * what is now BuildList.__init__() morphs into createFromFileSystem * DONE
-        with the __init__() method acquiring a tree parameter           * DONE
-    * need the usual serialization/deserialization tests, where the     * DONE
-        buildList is first created from scratch, then written to        * DONE
-        disk, then deserialized, and then the two objects are           * DONE
-        tested for equality                                             * DONE
     * createFromFileSystem: path must not contain . or .. parts
-
-    * XXX testBuildList fails, line 54                                  * FIXED
     * Python time.time() delivers microseconds, which we truncate
         - to retain, serialization must capture
     * IMPORTANT: need working -X/--exclude
         - must collect exclusions as list
         - must collect matchPats as list
-
 2015-05-03
     * BuildList.__init__() needs sanity checks on parameters
 2015-05-02
     * timestamp should be a 64-bit signed value representing seconds
         from the Epoch (nanoseconds?)
-
 2015-04-27
     * class BuildList should extend SignedList
     * BuildList should be sorted by path to file, which should
@@ -77,10 +46,8 @@
         - sort guarantees file uniqueness
         - forbid '/' as a leading character
         - forbid internal './' and '../' sequences
-
 2015-04-15
     * need udir/ populated
-
 2014-10-01
     * implement blListGen code to handle -u option and copy input 
         to uDir
