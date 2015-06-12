@@ -1,18 +1,19 @@
 # buildList/__init__.py
 
 import base64, binascii, calendar, hashlib, os, time
-from Crypto.PublicKey import RSA
-from Crypto.Hash      import SHA, SHA256
-from Crypto.Signature import PKCS1_PSS
-from nlhtree        import NLHNode, NLHTree, NLHLeaf
-from xlattice       import u
-from xlattice.lfs   import touch
-from xlattice.util  import parseTimestamp, timestamp, timestampNow
+from Crypto.PublicKey   import RSA
+from Crypto.Hash        import SHA, SHA256
+from Crypto.Signature   import PKCS1_PSS
+from nlhtree            import NLHNode, NLHTree, NLHLeaf
+from xlattice           import u
+from xlattice.crypto    import collectPEMRSAPublicKey
+from xlattice.lfs       import touch
+from xlattice.util      import parseTimestamp, timestamp, timestampNow
 
 __all__ = ['__version__', '__version_date__',
             # OTHER EXPORTED CONSTANTS
             'BLOCK_SIZE', 'CONTENT_END', 'CONTENT_START',
-            'CRLF', 'LF',
+            'LF',
             # FUNCTIONS
             'base64SHA1File',
             # PARSER FUNCTIONS
@@ -26,14 +27,13 @@ __all__ = ['__version__', '__version_date__',
             'BuildList',
           ]
 
-__version__      = '0.4.1'
-__version_date__ = '2015-06-04'
+__version__      = '0.4.2'
+__version_date__ = '2015-06-12'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
 CONTENT_START   = '# START CONTENT #'
-CRLF            = '\r\n'.encode('utf-8')
-LF              = '\n'
+LF              = '\n'.encode('utf-8')
 
 # SHA1 FILE HASHING -------------------------------------------------
 
@@ -58,12 +58,12 @@ def acceptListLine(f):
     line = f.readline()
     lenLine = len(line)
     if lenLine:
-        if line.endswith(CRLF):
+        if line.endswith(LF):
             line = line[:lenLine-2]
         elif line.endswith(LF):
             line = line[:lenLine-1]
         else:
-            raise ParseFailed("expected CRLF or LF")
+            raise ParseFailed("expected LF")
     return line
 
 def expectListLine(f, errMsg):
@@ -194,30 +194,30 @@ class BuildList(object):
 
         h = SHA.new()
 
-        # add public key and then CRLF to hash
+        # add public key and then LF to hash
         pemCK = self._publicKey.exportKey('PEM')
         h.update(pemCK)
-        h.update(CRLF)
+        h.update(LF)
 
-        # add title and CRLF to hash
+        # add title and LF to hash
         h.update(self._title.encode('utf-8'))
-        h.update(CRLF)
+        h.update(LF)
 
-        # add timestamp and CRLF to hash
+        # add timestamp and LF to hash
         h.update(self.timestamp.encode('utf-8'))
-        h.update(CRLF)
+        h.update(LF)
 
-        # add CONTENT_START and CRLF line to hash
-        h.update((CONTENT_START + '\r\n').encode('utf-8'))
+        # add CONTENT_START and LF line to hash
+        h.update((CONTENT_START + '\n').encode('utf-8'))
 
-        # add serialized NLHTree to hash, each line terminated by CRLF
+        # add serialized NLHTree to hash, each line terminated by LF
         h.update( self._tree.__str__().encode('utf-8'))
 
-        # add CONTENT_END and CRLF line to hash
-        h.update((CONTENT_END + '\r\n').encode('utf-8'))
+        # add CONTENT_END and LF line to hash
+        h.update((CONTENT_END + '\n').encode('utf-8'))
 
-        # add CRLF to hash
-        h.update(CRLF)
+        # add LF to hash
+        h.update(LF)
         return h
 
 
@@ -367,13 +367,13 @@ class BuildList(object):
     def parse(s, usingSHA1):
         """ 
         This relies upon the fact that all fields are separated by 
-        CRLF sequences.
+        LF ('\n').
         """
         if s == None:
             raise ParseFailed('BuildList.parse: empty input')
         if type(s) is not str:
             s = str(s, 'utf-8')
-        ss = s.split('\r\n')
+        ss = s.split('\n')
         return BuildList.parseFromStrings(ss, usingSHA1)
 
     @staticmethod
@@ -394,9 +394,12 @@ class BuildList(object):
             raise ParseFailed("parseFromStrings: null argument")
 
         # expect a PEM-encoded publid key with embedded newlines
-        n = 0
-        serCK, n = BuildList._expectField(ss, n)
+        firstLine = ss[0]
+        ss        = ss[1:]
+        serCK, ss = collectPEMRSAPublicKey(firstLine, ss)
         myCK = RSA.importKey(serCK)
+
+        n = 0
 
         # expect a title
         myTitle, n = BuildList._expectField(ss, n)
@@ -443,7 +446,7 @@ class BuildList(object):
         sequence.
         """
         ss = self.toStrings()
-        return '\r\n'.join(ss)
+        return '\n'.join(ss)
     
     def toStrings(self):
         ss = []
@@ -462,7 +465,7 @@ class BuildList(object):
         ss.append(CONTENT_START)
 
         # NLHTree
-        ssTree = self.tree.__str__().split('\r\n')
+        ssTree = self.tree.__str__().split('\n')
         if (len(ssTree) > 1) and (ssTree[-1] == ''):
             ssTree = ssTree[0:-1]
         ss += ssTree
@@ -478,5 +481,6 @@ class BuildList(object):
             ss.append(self.digSig)
 
         return ss
+
 
 

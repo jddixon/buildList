@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.4.2
+    2015-06-12
+        * correct collection of PEM RSA pub key                     SLOC 1050
 v0.4.1
     2015-06-04
         * update .gitignore, add example/uDir to repo               SLOC 1048
@@ -88,4 +91,5 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 

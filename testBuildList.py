@@ -73,6 +73,9 @@ class TestBuildList (unittest.TestCase):
         # equality, serialization, deserialization ------------------
         self.assertEqual(bl, bl)
         s = bl.toString()
+        # DEBUG
+        #print("SIGNED BUILD LIST:\n%s" % s)
+        # END
         bl2 = BuildList.parse(s, usingSHA1)
         s2  = bl2.toString()
         self.assertEqual(s, s2)
