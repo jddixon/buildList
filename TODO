@@ -1,5 +1,8 @@
 ~/dev/py/buildList/TODO
 
+2015-06-07
+    * use LF for line ending, not CRLF                                  * YEP
+
 2015-06-02
     * ERRORS in documentation relating to NLHTree
         - names are on left, hash is on right

@@ -16,22 +16,27 @@ the public key line.  The public key itself is base-64 encoded.
 ## Content Lines
 
 The content lines section begins and ends with fixed `# BEGIN CONTENT #` 
-and `# END CONTENT #` delimiters.  Each line contains the base64-encoded
-SHA1 hash of a file follows by a single space and then the path to the file.
-Every line, including the delimiting lines, is terminated by a CR-LF sequence.
+and `# END CONTENT #` delimiters.  Each line consists of either a directory
+name or a file name followed by its content hash.  In either case the name
+is indented by a number of spaces equivalent to its depth in the hierarchy.
 
 	# BEGIN CONTENT #
-	CmexcHeMLrchiUg2SARuyKGqhsQ= fileForHash0
-	a/UaOldRJxEvoaHpTLDC7TJZKWg= fileForHash1
-	6AExKQ3f+WHUnJH40dysyEPmI/w= fileForHash2
-	OrNHyszHbR7HM9FO/1evdK2i0YU= fileForHash3
+    dir1
+	 fileForHash0 0123456789012345678901234567890123456789
+	 fileForHash1 abcdef0123456789abcdef0123456789abcdef01
+     dir11
+	  fileForHash2 12abcdef0123456789abcdef0123456789abcdef
+	  fileForHash3 3456abcdef0123456789abcdef0123456789abcd
 	# END CONTENT #
+
+That is, the data structure between the BEGIN/END CONTENT lines is an
+[NLHTree](http://jddixon.github.io/nlhtree).
 
 ## Digital Signature
 
 The SHA1withRSA digital signature is on the entire SignedList excluding 
 the digital signature line and the blank line preceding it.  All line 
-endings are converted to CRLF before taking the digital signature.
+endings are converted to LF ('\n') before taking the digital signature.
 
 ## Extended Hash
 
