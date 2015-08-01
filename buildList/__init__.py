@@ -27,8 +27,8 @@ __all__ = ['__version__', '__version_date__',
             'BuildList',
           ]
 
-__version__      = '0.4.2'
-__version_date__ = '2015-06-12'
+__version__      = '0.4.3'
+__version_date__ = '2015-08-01'
 
 BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
 CONTENT_END     = '# END CONTENT #'
@@ -49,9 +49,9 @@ def base64SHA1File(pathToFile):
     return base64.standard_b64encode(h.digest())
 
 # PARSER ------------------------------------------------------------
-def IntegrityCheckFailure(Exception):
+class IntegrityCheckFailure(BaseException):
     pass
-def ParseFailed(Exception):
+class ParseFailed(BaseException):
     pass
 
 def acceptListLine(f):
@@ -410,6 +410,9 @@ class BuildList(object):
         # expect CONTENT-START
         startLine, n = BuildList._expectField(ss, n)
         if startLine != CONTENT_START:
+            # DEBUG
+            print("Expected CONTENT START, got '%s'" % startLine)
+            # END
             raise ParseFailed("expected CONTENT_START line")
 
         # expect a serialized NLHTree followed by a CONTENT END
@@ -481,6 +484,7 @@ class BuildList(object):
             ss.append(self.digSig)
 
         return ss
+
 
 
 
