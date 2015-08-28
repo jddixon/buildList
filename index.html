@@ -16,10 +16,17 @@
 
 <h2>Serialization</h2>
 
-<p>In its serialized form a BuildList consists of a public key line,
-a title line, a timestamp line, a number of content lines, and a
-digital signature.  Each of the lines ends with a CR-LF sequence.
-A blank line follows the last content line.  The timestamp (in
+<p>In its serialized form a BuildList consists of
+* a public key line,
+* a title line,
+* a timestamp line,
+* a number of content lines, and
+* optionally a digital signature.</p>
+
+<p>Each of the lines ends with a linefeed (a byte with the value 10,
+conventionally written as \n).</p>
+
+<p>A blank line follows the last content line.  The timestamp (in
 CCYY-MM-DD HH:MM:SS form) represents the time at which the list
 was signed using the RSA private key corresponding to the key in
 the public key line.  The public key itself is base-64 encoded.</p>
@@ -27,23 +34,30 @@ the public key line.  The public key itself is base-64 encoded.</p>
 <h2>Content Lines</h2>
 
 <p>The content lines section begins and ends with fixed <code># BEGIN CONTENT #</code>
-and <code># END CONTENT #</code> delimiters.  Each line contains the base64-encoded
-SHA1 hash of a file follows by a single space and then the path to the file.
-Every line, including the delimiting lines, is terminated by a CR-LF sequence.</p>
+and <code># END CONTENT #</code> delimiters.  Each actual content line consists of
+* either a directory name or
+* a file name followed by its content hash.<br />
+In either case the name
+is indented by a number of spaces equivalent to its depth in the hierarchy.</p>
 
 <pre><code># BEGIN CONTENT #
-CmexcHeMLrchiUg2SARuyKGqhsQ= fileForHash0
-a/UaOldRJxEvoaHpTLDC7TJZKWg= fileForHash1
-6AExKQ3f+WHUnJH40dysyEPmI/w= fileForHash2
-OrNHyszHbR7HM9FO/1evdK2i0YU= fileForHash3
+dir1
+ fileForHash0 0123456789012345678901234567890123456789
+ fileForHash1 abcdef0123456789abcdef0123456789abcdef01
+dir11
+  fileForHash2 12abcdef0123456789abcdef0123456789abcdef
+  fileForHash3 3456abcdef0123456789abcdef0123456789abcd
 # END CONTENT #
 </code></pre>
 
+<p>That is, the data structure between the BEGIN/END CONTENT lines is an
+<a href="http://jddixon.github.io/nlhtree">NLHTree</a>.</p>
+
 <h2>Digital Signature</h2>
 
-<p>The SHA1withRSA digital signature is on the entire SignedList excluding
+<p>The SHA1withRSA digital signature is over the entire SignedList excluding
 the digital signature line and the blank line preceding it.  All line
-endings are converted to CRLF before taking the digital signature.</p>
+endings are converted to LF (&rsquo;\n&rsquo;) before taking the digital signature.</p>
 
 <h2>Extended Hash</h2>
 
@@ -52,7 +66,11 @@ digest of a function of the public key and the title.  This means
 that the owner of the RSA key can create any number of documents
 with the same hash but different timestamps with the intention
 being that users can choose to regard the document with the most
-recent timestamp as authentic.</p>
+recent timestamp as current.</p>
+
+<h2>Project Status</h2>
+
+<p>A good beta.</p>
 
 <h2>Licensing</h2>
 <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />The material on this github.io website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
