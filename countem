@@ -1,6 +1,6 @@
 cd /home/jdd/dev/py/buildList
 rm -rf build
-pySloc -v \
+pySloc -v $@ \
     text:.gitignore text:MANIFEST.in \
     bash:checkExample bash:checkExample2 bash:checkSrcGen \
     bash:countem bash:installit bash:make.bld.from.example.datadir \
