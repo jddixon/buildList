@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.4.4
+    2015-08-29
+        * spec revisions in {README,indes}.md                       SLOC 1051
 v0.4.3
     2015-08-01
         * minor changes to licensing, etc                           SLOC 1051
