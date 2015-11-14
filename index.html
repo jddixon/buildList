@@ -9,22 +9,25 @@
 </head>
 <body>
 <div class="content">
-<h1>buildList</h1>
+<h1 class="libTop">buildList</h1>
 
 <p>A set of Python utilities intended to be interoperable with the
 <strong>builds/</strong> package in <a href="https://github.com/jddixon/xlCrypto_go">https://github.com/jddixon/xlCrypto_go</a>.</p>
 
 <h2>Serialization</h2>
 
-<p>In its serialized form a BuildList consists of
-* a public key line,
-* a title line,
-* a timestamp line,
-* a number of content lines, and
-* optionally a digital signature.</p>
+<p>In its serialized form a BuildList consists of</p>
+
+<ul>
+<li>a public key line,</li>
+<li>a title line,</li>
+<li>a timestamp line,</li>
+<li>a number of content lines, and</li>
+<li>optionally a digital signature.</li>
+</ul>
 
 <p>Each of the lines ends with a linefeed (a byte with the value 10,
-conventionally written as \n).</p>
+conventionally written as <code>\\n</code>).</p>
 
 <p>A blank line follows the last content line.  The timestamp (in
 CCYY-MM-DD HH:MM:SS form) represents the time at which the list
@@ -36,7 +39,7 @@ the public key line.  The public key itself is base-64 encoded.</p>
 <p>The content lines section begins and ends with fixed <code># BEGIN CONTENT #</code>
 and <code># END CONTENT #</code> delimiters.  Each actual content line consists of
 * either a directory name or
-* a file name followed by its content hash.<br />
+* a file name followed by its content hash.
 In either case the name
 is indented by a number of spaces equivalent to its depth in the hierarchy.</p>
 
@@ -57,7 +60,7 @@ dir11
 
 <p>The SHA1withRSA digital signature is over the entire SignedList excluding
 the digital signature line and the blank line preceding it.  All line
-endings are converted to LF (&rsquo;\n&rsquo;) before taking the digital signature.</p>
+endings are converted to LF (<code>\\n</code>) before taking the digital signature.</p>
 
 <h2>Extended Hash</h2>
 
@@ -71,6 +74,8 @@ recent timestamp as current.</p>
 <h2>Project Status</h2>
 
 <p>A good beta.</p>
+
+<h2>On-line Documentation</h2>
 
 <h2>Licensing</h2>
 <p><a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />The material on this github.io website is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.</p>
@@ -87,7 +92,7 @@ Follow the SOFTWARE LICENSE link below for more information on project software 
        </a> project
     </div>
     <div class="logo" >
-      <a href="http://www.xlattice.org">
+      <a href="https://jddixon.github.io/xlattice/">
       <img src="img/xlattice-2014.jpg" alt="the XLattice Project" style="float: right;" >
       </a>
     </div>
