@@ -40,7 +40,7 @@ is indented by a number of spaces equivalent to its depth in the hierarchy.
 	# END CONTENT #
 
 That is, the data structure between the BEGIN/END CONTENT lines is an
-[NLHTree](http://jddixon.github.io/nlhtree).
+[NLHTree](http://jddixon.github.io/nlhtree_py).
 
 ## Digital Signature
 
@@ -61,4 +61,3 @@ recent timestamp as current.
 
 A good beta.
 
-## On-line Documentation
