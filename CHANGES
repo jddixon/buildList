@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.4.7
+    2016-01-27
+        * minor edits                                               SLOC 1050
 v0.4.6
     2015-12-20
         * fix dead links                                            SLOC 1050
@@ -103,6 +106,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

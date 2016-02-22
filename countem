@@ -1,5 +1,7 @@
 cd /home/jdd/dev/py/buildList
-rm -rf build
+
+rm -rf build/* tmp/*
+
 pySloc -v $@ \
     text:.gitignore text:MANIFEST.in \
     bash:checkExample bash:checkExample2 bash:checkSrcGen \
