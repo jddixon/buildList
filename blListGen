@@ -2,15 +2,19 @@
 #
 # ~/dev/py/buildList/blListGen
 
-import base64, hashlib, os, sys
-from argparse   import ArgumentParser
+import base64
+import hashlib
+import os
+import sys
+from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
-from Crypto.Hash      import SHA    # presumably 1
+from Crypto.Hash import SHA    # presumably 1
 from Crypto.Signature import PKCS1_PSS
 
-from merkletree     import MerkleDoc
-from buildList      import *
-from xlattice.util  import timestampNow
+from merkletree import MerkleDoc
+from buildList import *
+from xlattice.util import timestampNow
+
 
 def makeListing(args):
 
@@ -20,18 +24,18 @@ def makeListing(args):
     else:
         uDir = None
 
-    exclusions  = args.exclude
-    keyFile     = args.keyFile
-    listFile    = args.listFile
-    matches     = args.matchPat
-    now         = args.now
-    rootDir     = args.rootDir
-    signing     = args.signing
-    testing     = args.testing
-    title       = args.title
-    uDir        = args.uDir
-    usingSHA1   = args.usingSHA1
-    verbose     = args.verbose
+    exclusions = args.exclude
+    keyFile = args.keyFile
+    listFile = args.listFile
+    matches = args.matchPat
+    now = args.now
+    rootDir = args.rootDir
+    signing = args.signing
+    testing = args.testing
+    title = args.title
+    uDir = args.uDir
+    usingSHA1 = args.usingSHA1
+    verbose = args.verbose
 
     if exclusions:
         exRE = MerkleDoc.makeExRE(exclusions)
@@ -47,7 +51,7 @@ def makeListing(args):
     sk = skPriv.publickey()
 
     bl = BuildList.createFromFileSystem(
-                    title, rootDir, sk, usingSHA1, exRE, matchRE)
+        title, rootDir, sk, usingSHA1, exRE, matchRE)
     if signing:
         bl.sign(skPriv)
 
@@ -58,10 +62,11 @@ def makeListing(args):
     else:
         print(blSer)
 
+
 def main():
     """
     Expect a command like
-        blListGen [options] 
+        blListGen [options]
 
     """
 
@@ -70,45 +75,45 @@ def main():
     now = timestampNow()
 
     # parse the command line ----------------------------------------
-    
+
     DESC = 'generate build list for directory, optionally populating uDir'
     parser = ArgumentParser(description=DESC)
 
-    parser.add_argument('-1', '--usingSHA1',    action='store_true',
-        help='use SHA1 in building merkletree (default=false=use SHA256)')
+    parser.add_argument('-1', '--usingSHA1', action='store_true',
+                        help='use SHA1 in building merkletree (default=false=use SHA256)')
 
-    parser.add_argument('-b', '--listFile', 
-        help='path to build list')
-    
+    parser.add_argument('-b', '--listFile',
+                        help='path to build list')
+
     parser.add_argument('-j', '--justShow', action='store_true',
-        help='show options and exit')
+                        help='show options and exit')
 
     parser.add_argument('-k', '--keyFile',
-        help='path to RSA private key for signing')
+                        help='path to RSA private key for signing')
 
     parser.add_argument('-P', '--matchPat', action='append',
-        help='include only files matching this pattern')
+                        help='include only files matching this pattern')
 
     parser.add_argument('-r', '--rootDir',
-        help='root directory for build list (REQUIRED)')
+                        help='root directory for build list (REQUIRED)')
 
     parser.add_argument('-s', '--signing', action='store_true',
-        help='digitally sign the generated BuildList')
+                        help='digitally sign the generated BuildList')
 
     parser.add_argument('-T', '--testing', action='store_true',
-        help='this is a test run')
+                        help='this is a test run')
 
-    parser.add_argument('-t', '--title', 
-        help='title for build list')
+    parser.add_argument('-t', '--title',
+                        help='title for build list')
 
-    parser.add_argument('-u', '--uDir', 
-        help='path to uDir (relative to tmp/ if testing)')
+    parser.add_argument('-u', '--uDir',
+                        help='path to uDir (relative to tmp/ if testing)')
 
     parser.add_argument('-v', '--verbose', action='store_true',
-        help='be chatty')
+                        help='be chatty')
 
     parser.add_argument('-X', '--exclude', action='append',
-        help='exclude files matching this pattern')
+                        help='exclude files matching this pattern')
 
     args = parser.parse_args()
 
@@ -149,13 +154,13 @@ def main():
             sys.exit(1)
 
     # fixups --------------------------------------------------------
-    
+
     # uDir ------------------------------------------------
     if args.testing and args.uDir:
         if args.uDir[0] == '/':
             args.uDir = args.uDir[1:]
         args.uDir = os.path.join('tmp', args.uDir)
-    
+
     # title -----------------------------------------------
     if args.rootDir:
         if not args.title or args.title == '':
@@ -164,13 +169,13 @@ def main():
         else:
             # this can contain spaces and other undesirable characters
             base = args.title
-    
+
     # listFile --------------------------------------------
     if args.listFile and args.testing:
         if args.listFile[0] == '/':
             args.listFile = args.listFile[1:]
         args.listFile = os.path.join('tmp', args.listFile)
-    
+
     # complete setup ------------------------------------------------
     appName = 'blListGen %s' % __version__
     args.title = str(args.title)
@@ -207,7 +212,6 @@ def main():
     # do what's required --------------------------------------------
     makeListing(args)
 
-        
+
 if __name__ == '__main__':
     main()
-

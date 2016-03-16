@@ -2,15 +2,20 @@
 #
 # ~/dev/py/buildList/blBootstrap
 
-import base64, hashlib, os, shutil, sys
-from argparse   import ArgumentParser
+import base64
+import hashlib
+import os
+import shutil
+import sys
+from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
-from nlhtree        import NLHLeaf, NLHTree
-from xlattice       import u
-from xlattice.lfs   import touch
-from rnglib         import SimpleRNG
+from nlhtree import NLHLeaf, NLHTree
+from xlattice import u
+from xlattice.lfs import touch
+from rnglib import SimpleRNG
 
-from buildList  import *
+from buildList import *
+
 
 def makedir_p(path, mode):
     try:
@@ -21,29 +26,30 @@ def makedir_p(path, mode):
         else:
             raise
 
-def doIt(args):
-    dataDir      = args.dataDir
-    exDir        = args.exDir
-    force        = args.force
-    listFile     = args.listFile
-    nodeDir      = args.nodeDir
-    testing      = args.testing
-    title        = args.title
-    uDir         = args.uDir
-    verbose      = args.verbose
 
-    uTmp        = os.path.join(uDir, 'tmp')
+def doIt(args):
+    dataDir = args.dataDir
+    exDir = args.exDir
+    force = args.force
+    listFile = args.listFile
+    nodeDir = args.nodeDir
+    testing = args.testing
+    title = args.title
+    uDir = args.uDir
+    verbose = args.verbose
+
+    uTmp = os.path.join(uDir, 'tmp')
 
     if os.path.exists(exDir):
         print("deleting existing directory %s" % exDir)
         shutil.rmtree(exDir)
-   
-    subDir1     = os.path.join(dataDir, 'subDir1')
-    subDir2     = os.path.join(dataDir, 'subDir2')
-    subDir3     = os.path.join(dataDir, 'subDir3')
-    subDir4     = os.path.join(dataDir, 'subDir4')
-    subDir41    = os.path.join(subDir4, 'subDir41')
-    subDir411   = os.path.join(subDir41, 'subDir411')
+
+    subDir1 = os.path.join(dataDir, 'subDir1')
+    subDir2 = os.path.join(dataDir, 'subDir2')
+    subDir3 = os.path.join(dataDir, 'subDir3')
+    subDir4 = os.path.join(dataDir, 'subDir4')
+    subDir41 = os.path.join(subDir4, 'subDir41')
+    subDir411 = os.path.join(subDir41, 'subDir411')
 
     for d in [dataDir, nodeDir, uDir, uTmp]:
         makedir_p(d, 0o755)
@@ -51,15 +57,15 @@ def doIt(args):
         makedir_p(d, 0o755)
     makedir_p(subDir41, 0o755)
     makedir_p(subDir411, 0o755)
-    
+
     # files to be populaed with random data
-    rng         = SimpleRNG()
-    data1       = os.path.join(dataDir, 'data1')
-    data11      = os.path.join(subDir1, 'data11')
-    data2       = os.path.join(dataDir, 'data2')
-    data31      = os.path.join(subDir3, 'data31')
-    data4111    = os.path.join(subDir411, 'data31')
-  
+    rng = SimpleRNG()
+    data1 = os.path.join(dataDir, 'data1')
+    data11 = os.path.join(subDir1, 'data11')
+    data2 = os.path.join(dataDir, 'data2')
+    data31 = os.path.join(subDir3, 'data31')
+    data4111 = os.path.join(subDir411, 'data31')
+
     for path in [data1, data11, data2, data31, data4111]:
         count = 16 + rng.nextInt16(2048)
         data = bytearray(count)
@@ -68,23 +74,24 @@ def doIt(args):
             f.write(data)
 
     # empty file(s)
-    data12      = os.path.join(subDir1, 'data12')
+    data12 = os.path.join(subDir1, 'data12')
     for path in [data12]:
         touch(path)
 
-    skPriv = RSA.generate(1024)    # should be >= 2048, but this is just testing
+    # should be >= 2048, but this is just testing
+    skPriv = RSA.generate(1024)
     pathToKey = os.path.join(nodeDir, "skPriv.pem")
     with open(pathToKey, 'wb') as f:
         f.write(skPriv.exportKey('PEM'))
     sk = skPriv.publickey()
-    
-    bl = BuildList.createFromFileSystem(title, dataDir, sk, 
-                    usingSHA1=True, exRE=None, matchRE=None)
+
+    bl = BuildList.createFromFileSystem(title, dataDir, sk,
+                                        usingSHA1=True, exRE=None, matchRE=None)
     bl.sign(skPriv)
     blSer = bl.toString()
     with open(listFile, 'w') as f:
         f.write(blSer)
-    
+
     # XXX WORKING HERE
 
     # XXX need checks on uDir
@@ -93,7 +100,8 @@ def doIt(args):
     ok = bl.checkWalk(dataDir, uDir)    # whether all leaf nodes are present
     if not ok:
         print("check walk on example/ failed")
-    
+
+
 def main():
     """
     Expect a command like
@@ -159,19 +167,19 @@ def main():
     parser = ArgumentParser(description=DESC)
 
     parser.add_argument('-e', '--exDir', default='example',
-        help='example directory, defaults to example/')
+                        help='example directory, defaults to example/')
 
     parser.add_argument('-f', '--force', action='store_true',
-        help='overwrite any existing example/ directory')
+                        help='overwrite any existing example/ directory')
 
     parser.add_argument('-j', '--justShow', action='store_true',
-        help='show options and exit')
+                        help='show options and exit')
 
     parser.add_argument('-T', '--testing', action='store_true',
-        help='this is a test run')
+                        help='this is a test run')
 
     parser.add_argument('-v', '--verbose', action='store_true',
-        help='be chatty')
+                        help='be chatty')
 
     args = parser.parse_args()
 
@@ -192,7 +200,9 @@ def main():
         sys.exit(1)
 
     if (not args.force) and os.path.exists(args.exDir):
-        print("example directory %s exists but force (-f) not specified" % args.exDir)
+        print(
+            "example directory %s exists but force (-f) not specified" %
+            args.exDir)
         parser.print_usage()
         sys.exit(1)
 
@@ -200,10 +210,10 @@ def main():
     if args.testing:
         args.exDir = os.path.join('test', args.exDir)
     args.dataDir = os.path.join(args.exDir, 'dataDir')
-    args.listFile= os.path.join(args.exDir, 'example.bld')
+    args.listFile = os.path.join(args.exDir, 'example.bld')
     args.nodeDir = os.path.join(args.exDir, 'node')
-    args.title   = 'sample build list'
-    args.uDir    = os.path.join(args.exDir, 'uDir')
+    args.title = 'sample build list'
+    args.uDir = os.path.join(args.exDir, 'uDir')
 
     # complete setup ------------------------------------------------
     appName = 'blBootstrap %s' % __version__
@@ -231,4 +241,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
