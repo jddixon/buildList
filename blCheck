@@ -2,29 +2,33 @@
 #
 # ~/dev/py/buildList/blCheck
 
-import base64, hashlib, os, sys
-from argparse   import ArgumentParser
+import base64
+import hashlib
+import os
+import sys
+from argparse import ArgumentParser
 from nlhtree import NLHTree
-from buildList  import *
+from buildList import *
+
 
 def checkBuildList(args):
 
-    listFile    = args.listFile
-    rootDir     = args.rootDir
-    verbose     = args.verbose
-    uDir        = args.uDir
-    usingSHA1   = args.usingSHA1
+    listFile = args.listFile
+    rootDir = args.rootDir
+    verbose = args.verbose
+    uDir = args.uDir
+    usingSHA1 = args.usingSHA1
 
-    bl      = None
-    data    = None
-    ok      = False
-    signed  = False
+    bl = None
+    data = None
+    ok = False
+    signed = False
 
     try:
         # can't use 'r' which converts CRLF to just LF
         with open(listFile, 'rb') as f:
             data = f.read()
-            ok   = True     # no exceptions
+            ok = True     # no exceptions
     except Exception as e:
         print("error reading build list file: '%s'" % e)
 
@@ -54,44 +58,45 @@ def checkBuildList(args):
             print("NLHTree for BuildList:\n%s" % bl.tree)
 
     if ok and uDir:
-        ok = bl.checkWalk(rootDir, uDir) 
+        ok = bl.checkWalk(rootDir, uDir)
         if not ok:
             print("BuildList, rootDir, and uDir are inconsistent")
-    
+
     if ok:
         print("ok")
+
 
 def main():
     """
     Expect a command like
-        blListGen [options] 
+        blListGen [options]
 
     """
 
     # program defaults ----------------------------------------------
 
     # parse the command line ----------------------------------------
-    
+
     DESC = 'verify integrity of build list, optionally agains root dir and uDir"'
     parser = ArgumentParser(description=DESC)
 
     parser.add_argument('-1', '--usingSHA1', action='store_true',
-        help='using the 160-bit SHA1 hash')
+                        help='using the 160-bit SHA1 hash')
 
-    parser.add_argument('-b', '--listFile', 
-        help='root directory for build list')
-    
+    parser.add_argument('-b', '--listFile',
+                        help='root directory for build list')
+
     parser.add_argument('-j', '--justShow', action='store_true',
-        help='show options and exit')
+                        help='show options and exit')
 
     parser.add_argument('-r', '--rootDir',
-        help='root directory for build list')
+                        help='root directory for build list')
 
-    parser.add_argument('-u', '--uDir', 
-        help='path to uDir')
+    parser.add_argument('-u', '--uDir',
+                        help='path to uDir')
 
     parser.add_argument('-v', '--verbose', action='store_true',
-        help='be chatty')
+                        help='be chatty')
 
     args = parser.parse_args()
 
@@ -113,12 +118,12 @@ def main():
             print("root directory %s does not exist" % args.rootDir)
             parser.print_usage()
             sys.exit(1)
-    
+
         if args.uDir and not os.path.isdir(args.uDir):
             print("uDir directory %s is not a directory" % args.uDir)
             parser.print_usage()
             sys.exit(1)
-    
+
     # complete setup ------------------------------------------------
     appName = 'blCheck %s' % __version__
 
@@ -138,7 +143,6 @@ def main():
     # do what's required --------------------------------------------
     checkBuildList(args)
 
-        
+
 if __name__ == '__main__':
     main()
-

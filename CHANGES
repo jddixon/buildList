@@ -1,5 +1,11 @@
 ~/dev/py/buildList/CHANGES
 
+v0.4.9
+    2016-03-16
+        * add and execute auto8it                                   SLOC 1085
+v0.4.8
+    2016-02-22
+        * update license                                            SLOC 1050
 v0.4.7
     2016-01-27
         * minor edits                                               SLOC 1050
@@ -106,6 +112,8 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
+
 
 
 

@@ -2,59 +2,62 @@
 #
 # ~/dev/py/buildList/blSrcGen
 
-import os, sys
-from argparse   import ArgumentParser
-from shutil     import rmtree
-from buildList  import *
+import os
+import sys
+from argparse import ArgumentParser
+from shutil import rmtree
+from buildList import *
+
 
 def makeDataDir(args):
 
-    listFile    = args.listFile
-    rootDir     = args.rootDir
-    testing     = args.testing
-    title       = args.title
-    uDir        = args.uDir
-    verbose     = args.verbose
+    listFile = args.listFile
+    rootDir = args.rootDir
+    testing = args.testing
+    title = args.title
+    uDir = args.uDir
+    verbose = args.verbose
 
     # XXX STUB XX
+
 
 def main():
     """
     Expect a command like
-        blSrcGen [options] 
+        blSrcGen [options]
 
     """
 
     # program defaults ----------------------------------------------
 
     # parse the command line ----------------------------------------
-    
+
     DESC = 'given a build list and uDir, regenerate the root directory'
     parser = ArgumentParser(description=DESC)
 
-    parser.add_argument('-b', '--listFile', 
-        help='root directory for build list')
-    
+    parser.add_argument('-b', '--listFile',
+                        help='root directory for build list')
+
     parser.add_argument('-f', '--force', action='store_true',
-        help='do it despite objections')
+                        help='do it despite objections')
 
     parser.add_argument('-j', '--justShow', action='store_true',
-        help='show options and exit')
+                        help='show options and exit')
 
     parser.add_argument('-r', '--rootDir',
-        help='root directory for build list (REQUIRED)')
+                        help='root directory for build list (REQUIRED)')
 
     parser.add_argument('-T', '--testing', action='store_true',
-        help='this is a test run')
+                        help='this is a test run')
 
-    parser.add_argument('-t', '--title', 
-        help='title for build list')
+    parser.add_argument('-t', '--title',
+                        help='title for build list')
 
-    parser.add_argument('-u', '--uDir', 
-        help='path to uDir (relative to tmp/ if testing)')
+    parser.add_argument('-u', '--uDir',
+                        help='path to uDir (relative to tmp/ if testing)')
 
     parser.add_argument('-v', '--verbose', action='store_true',
-        help='be chatty')
+                        help='be chatty')
 
     args = parser.parse_args()
 
@@ -76,9 +79,9 @@ def main():
         sys.exit(1)
 
     if not args.justShow:
-        if args.rootDir == None or args.rootDir == '':
+        if args.rootDir is None or args.rootDir == '':
             giveUp("you must specify a root directory")
-   
+
         if args.force and os.path.exists(args.rootDir):
             try:
                 rmtree(args.rootDir)
@@ -98,7 +101,7 @@ def main():
 
         if not os.path.exists(args.uDir):
             # XXX could/should check path
-            os.mkdir(args.uDir, 0o755) 
+            os.mkdir(args.uDir, 0o755)
 
         # title -------------------------------------------
         if not args.title or args.title == '':
@@ -107,7 +110,7 @@ def main():
         else:
             # this can contain spaces and other undesirable characters
             base = args.title
-    
+
         # listFile ----------------------------------------
         if not args.listFile or args.listFile == '':
             giveUp('no build list file specified')
@@ -116,10 +119,10 @@ def main():
             if args.listFile[0] == '/':
                 args.listFile = args.listFile[1:]
             args.listFile = os.path.join('tmp', args.listFile)
-    
+
         if not os.path.isfile(args.listFile):
             giveUp("list file %s does not exist" % args.listFile)
-    
+
     # complete setup ------------------------------------------------
     appName = 'blSrcGen %s' % __version__
 
@@ -142,7 +145,6 @@ def main():
     # do what's required --------------------------------------------
     makeDataDir(args)
 
-        
+
 if __name__ == '__main__':
     main()
-

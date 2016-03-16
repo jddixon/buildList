@@ -2,31 +2,38 @@
 
 # testTimestamp.py
 
-import base64, hashlib, os, time, unittest
+import base64
+import hashlib
+import os
+import time
+import unittest
 
-from rnglib         import SimpleRNG
-from buildList      import *
+from rnglib import SimpleRNG
+from buildList import *
+
 
 class TestTimestamp (unittest.TestCase):
 
     def setUp(self):
-        self.rng = SimpleRNG( time.time() )
+        self.rng = SimpleRNG(time.time())
+
     def tearDown(self):
         pass
 
     # utility functions #############################################
-    
+
     # actual unit tests #############################################
-    
+
     # Note that in the Go code timestamp is an int64, whereas here it
     # is a string.
 
-    def testSHA1File (self):
+    def testSHA1File(self):
 
         blkCount = 1 + self.rng.nextInt16(3)     # so 1 to 3
         # last block will usually be only partically populated
-        byteCount = BLOCK_SIZE * (blkCount - 1) + self.rng.nextInt16(BLOCK_SIZE)
-      
+        byteCount = BLOCK_SIZE * (blkCount - 1) + \
+            self.rng.nextInt16(BLOCK_SIZE)
+
         print("BLOCK COUNT %d, BYTE COUNT %d\n" % (blkCount, byteCount))
 
         data = bytearray(byteCount)     # that many null bytes
