@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.4.10
+    2016-03-31
+        * added documentation on utilities; fixed testRandomDir     SLOC 1097
 v0.4.9
     2016-03-16
         * add and execute auto8it                                   SLOC 1085
@@ -112,6 +115,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

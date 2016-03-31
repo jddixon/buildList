@@ -4,17 +4,19 @@
     * use LF for line ending, not CRLF                                  * YEP
 
 2015-06-02
-    * ERRORS in documentation relating to NLHTree
-        - names are on left, hash is on right
-        _ hashes are hex-encoded, not base64
-    * README/index.md should contain a link to NLHTree project
+    * ERRORS in documentation relating to NLHTree                       * FIXED
+        - names are on left, hash is on right                           * YEP
+        _ hashes are hex-encoded, not base64                            * YEP
+    * README/index.md should contain a link to NLHTree project          * DONE
 
 2015-05-25
-    * complete testRandomDir.py or drop it  
+    * complete testRandomDir.py or drop it                              * DONE
     * use NLHTree instead of BuildList for body os the list             * DONE
     * FIX: blListGen ignores uDir if set
+
 2015-05-12
     * get blSrcGen working using checkBlSrcGen
+
 2015-05-12 (edited from -11)
     * if uDir != None (ie, -u is present), blListGen should create 
         uDir if it does not exist and then should invoke 

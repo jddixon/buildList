@@ -46,18 +46,18 @@ class TestRandomDir (unittest.TestCase):
 
         self.rng.nextDataDir(pathToDir, depth, width, maxLen, minLen)
 
-        # data = bytearray(maxLen)            # that many null bytes
-        # self.rng.nextBytes(data)            # fill with random data
-        #d = hashlib.new('sha1')
-        # d.update(data)
-        #hash = d.digest()
-        #b64Hash = base64.standard_b64encode(hash)
-        #fileName = self.rng.nextFileName(8)
-        #pathToFile = os.path.join('tmp', fileName)
-        # with open(pathToFile, 'wb') as f:
-        #    f.write(data)
-        #fileB64Hash = base64SHA1File(pathToFile)
-        #self.assertEqual(b64Hash, fileB64Hash)
+        data = bytearray(maxLen)            # that many null bytes
+        self.rng.nextBytes(data)            # fill with random data
+        d = hashlib.new('sha1')
+        d.update(data)
+        hash = d.digest()
+        b64Hash = base64.standard_b64encode(hash)
+        fileName = self.rng.nextFileName(8)
+        pathToFile = os.path.join('tmp', fileName)
+        with open(pathToFile, 'wb') as f:
+            f.write(data)
+        fileB64Hash = base64SHA1File(pathToFile)
+        self.assertEqual(b64Hash, fileB64Hash)
 
 
 if __name__ == '__main__':
