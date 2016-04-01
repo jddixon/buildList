@@ -16,31 +16,6 @@ from xlattice.lfs import touch
 from xlattice.util import parseTimestamp, timestamp, timestampNow
 
 __all__ = ['__version__', '__version_date__',
-<<<<<<< HEAD
-            # OTHER EXPORTED CONSTANTS
-            'BLOCK_SIZE', 'CONTENT_END', 'CONTENT_START',
-            'LF',
-            # FUNCTIONS
-            'base64SHA1File',
-            # PARSER FUNCTIONS
-            'IntegrityCheckFailure', 'ParseFailed',
-            'acceptContentLine',
-            'acceptListLine', 'expectListLine',
-            'expectStr',
-            'expectTimestamp',
-            'expectTitle',
-            # CLASSES
-            'BuildList',
-          ]
-
-__version__      = '0.4.7'
-__version_date__ = '2016-01-27'
-
-BLOCK_SIZE      = 2**18         # 256KB, for no particular reason
-CONTENT_END     = '# END CONTENT #'
-CONTENT_START   = '# START CONTENT #'
-LF              = '\n'.encode('utf-8')
-=======
            # OTHER EXPORTED CONSTANTS
            'BLOCK_SIZE', 'CONTENT_END', 'CONTENT_START',
            'LF',
@@ -57,14 +32,13 @@ LF              = '\n'.encode('utf-8')
            'BuildList',
            ]
 
-__version__      = '0.4.10'
-__version_date__ = '2016-03-31'
+__version__      = '0.4.11'
+__version_date__ = '2016-04-01'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
 CONTENT_START = '# START CONTENT #'
 LF = '\n'.encode('utf-8')
->>>>>>> devel
 
 # SHA1 FILE HASHING -------------------------------------------------
 
@@ -407,6 +381,9 @@ class BuildList(object):
         tree = NLHTree.createFromFileSystem(pathToDir,
                                             # accept default deltaIndent
                                             usingSHA1=usingSHA1, exRE=exRE)
+        # DEBUG
+        print("buildList.createFromFileSystem() returning\n%s" % tree)
+        # END
 
         return BuildList(title, sk, tree)
 
@@ -532,11 +509,3 @@ class BuildList(object):
 
         return ss
 
-<<<<<<< HEAD
-
-
-
-
-
-=======
->>>>>>> devel

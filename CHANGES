@@ -1,20 +1,17 @@
 ~/dev/py/buildList/CHANGES
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
+v0.4.11
+    2016-04-01
+        * fix bug in blCheck, add docs for blCheck                  SLOC 1110
 v0.4.10
     2016-03-31
         * added documentation on utilities; fixed testRandomDir     SLOC 1097
->>>>>>> devel
 v0.4.9
     2016-03-16
         * add and execute auto8it                                   SLOC 1085
 v0.4.8
     2016-02-22
         * update license                                            SLOC 1050
->>>>>>> devel
 v0.4.7
     2016-01-27
         * minor edits                                               SLOC 1050
@@ -126,12 +123,7 @@ v0.4.1
 
 
 
-<<<<<<< HEAD
-=======
 
 
-<<<<<<< HEAD
->>>>>>> devel
-=======
 
->>>>>>> devel
+

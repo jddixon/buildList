@@ -37,6 +37,11 @@ def makeListing(args):
     usingSHA1 = args.usingSHA1
     verbose = args.verbose
 
+    if rootDir and rootDir[-1] == '/':      # trailing slash
+        rootDir = rootDir[:-1]
+    if uDir and uDir[-1] == '/':            # trailing slash
+        uDir = uDir[:-1]
+
     if exclusions:
         exRE = MerkleDoc.makeExRE(exclusions)
     else:

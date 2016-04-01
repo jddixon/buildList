@@ -79,6 +79,23 @@ A utility for use in testing the buildList package.
 	  -T, --testing         this is a test run
 	  -v, --verbose         be chatty
 
+### blCheck
+
+	usage: blCheck [-h] [-1] [-b LISTFILE] [-j] [-r ROOTDIR] [-u UDIR] [-v]
+	
+	verify integrity of build list, optionally agains root dir and uDir"
+	
+	optional arguments:
+	  -h, --help            show this help message and exit
+	  -1, --usingSHA1       using the 160-bit SHA1 hash
+	  -b LISTFILE, --listFile LISTFILE
+	                        root directory for build list
+	  -j, --justShow        show options and exit
+	  -r ROOTDIR, --rootDir ROOTDIR
+	                        root directory for build list
+	  -u UDIR, --uDir UDIR  path to uDir
+	  -v, --verbose         be chatty
+
 ### blListGen
 
 Given a source directory specified by `-r`, writes a buildList to `listFile`.
