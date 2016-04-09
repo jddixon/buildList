@@ -14,10 +14,15 @@ from buildList import *
 def checkBuildList(args):
 
     listFile = args.listFile
-    rootDir = args.rootDir
+    rootDir = args.rootDir  # _without_ trailing slash
     verbose = args.verbose
     uDir = args.uDir
     usingSHA1 = args.usingSHA1
+
+    if rootDir and rootDir[-1] == '/':      # trailing slash
+        rootDir = rootDir[:-1]
+    if uDir and uDir[-1] == '/':            # trailing slash
+        uDir = uDir[:-1]
 
     bl = None
     data = None

@@ -1,5 +1,19 @@
 ~/dev/py/buildList/TODO
 
+2016-03-31
+    * BUG: blCheck -1b example/example.bld -r example/dataDir \			* FIXED
+            -u example/uDir			                                    * FIXED
+      FAILS because NLHTree is missing first line (^dataDir\n)			* FIXED
+        - that is, the first line is blank			                    * FIXED
+
+    * URGENT: blSrcGen logic is stubbed!
+    * move blCheck logic into buildList/__init__.py as checkBuildList
+    * move blListGen makeListing into buildList/__init__.py
+        as genBuildList(options)
+    * write blSrcGen logic as restoreSrc(options), test, then move
+        into buildList/__init__.py
+    * confirm -X works on globs
+
 2015-06-07
     * use LF for line ending, not CRLF                                  * YEP
 

@@ -1,10 +1,7 @@
+#!/bin/bash
+
 cd /home/jdd/dev/py/buildList
 
 rm -rf build/* tmp/*
 
-pySloc -v $@ \
-    text:.gitignore text:MANIFEST.in \
-    bash:checkExample bash:checkExample2 bash:checkSrcGen \
-    bash:countem bash:installit bash:make.bld.from.example.datadir \
-    bash:sampleRun bash:test.all \
-    py:blBootstrap py:blCheck py:blListGen py:blSrcGen
+pySloc -v $@ 

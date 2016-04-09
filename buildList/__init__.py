@@ -32,8 +32,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            ]
 
-__version__      = '0.4.10'
-__version_date__ = '2016-03-31'
+__version__      = '0.4.12'
+__version_date__ = '2016-04-09'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
@@ -381,6 +381,9 @@ class BuildList(object):
         tree = NLHTree.createFromFileSystem(pathToDir,
                                             # accept default deltaIndent
                                             usingSHA1=usingSHA1, exRE=exRE)
+        # DEBUG
+        print("buildList.createFromFileSystem() returning\n%s" % tree)
+        # END
 
         return BuildList(title, sk, tree)
 

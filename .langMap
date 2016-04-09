@@ -1,0 +1,17 @@
+# ~/dev/py/buildList/.langMap
+
+code:.langMap
+txt:.gitignore
+txt:MANIFEST.in
+bash:auto8it
+bash:countem
+bash:installit
+bash:test.all
+bash:checkBlSrcGen
+bash:checkExample
+bash:checkExample2
+bash:make.bld.from.example.datadir
+py:blBootstrap
+py:blCheck
+py:blListGen
+py:blSrcGen

@@ -1,3 +1,5 @@
+#!/bin/bash
+
 ./blSrcGen  \
             -b tmp/junk.bld         \
             -f                      \
