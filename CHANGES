@@ -1,5 +1,11 @@
 ~/dev/py/buildList/CHANGES
 
+v0.4.13
+    2016-04-19
+        * .fileMap becomes .projCfg
+        * use xlattice.u::makeExRE(globs)                           SLOC 1132
+    2016-04-10
+        * rename .langMap to .fileMap
 v0.4.12
     2016-04-09
         * add .langMap; general tidy up                             SLOC 1129
@@ -121,6 +127,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

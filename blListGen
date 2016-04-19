@@ -13,7 +13,7 @@ from Crypto.Signature import PKCS1_PSS
 
 from merkletree import MerkleDoc
 from buildList import *
-from xlattice.util import timestampNow
+from xlattice.util import makeExRE, timestampNow
 
 
 def makeListing(args):
@@ -43,7 +43,7 @@ def makeListing(args):
         uDir = uDir[:-1]
 
     if exclusions:
-        exRE = MerkleDoc.makeExRE(exclusions)
+        exRE = makeExRE(exclusions)
     else:
         exRE = None
     if matches:
@@ -118,7 +118,7 @@ def main():
                         help='be chatty')
 
     parser.add_argument('-X', '--exclude', action='append',
-                        help='exclude files matching this pattern')
+                        help='exclude files matching this wildcard pattern')
 
     args = parser.parse_args()
 
@@ -215,8 +215,10 @@ def main():
         sys.exit(0)
 
     # do what's required --------------------------------------------
-    makeListing(args)
 
+    # try: ACQUIRE LOCK ON PROJECT, that is, on the name of the project
+    makeListing(args)
+    # finally: RELEASE LOCK ON PROJECT
 
 if __name__ == '__main__':
     main()
