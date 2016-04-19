@@ -1,5 +1,17 @@
 ~/dev/py/buildList/CHANGES
 
+<<<<<<< HEAD
+=======
+v0.4.13
+    2016-04-19
+        * .fileMap becomes .projCfg
+        * use xlattice.u::makeExRE(globs)                           SLOC 1132
+    2016-04-10
+        * rename .langMap to .fileMap
+v0.4.12
+    2016-04-09
+        * add .langMap; general tidy up                             SLOC 1129
+>>>>>>> devel
 v0.4.11
     2016-04-01
         * fix bug in blCheck, add docs for blCheck                  SLOC 1110
@@ -127,3 +139,8 @@ v0.4.1
 
 
 
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> devel

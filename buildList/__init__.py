@@ -32,8 +32,13 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            ]
 
+<<<<<<< HEAD
 __version__      = '0.4.11'
 __version_date__ = '2016-04-01'
+=======
+__version__      = '0.4.13'
+__version_date__ = '2016-04-19'
+>>>>>>> devel
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
