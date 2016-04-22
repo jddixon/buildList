@@ -4,4 +4,4 @@ cd /home/jdd/dev/py/buildList
 
 rm -rf build/* tmp/*
 
-pySloc -v $@ 
+pySloc -v -X dist $@ 

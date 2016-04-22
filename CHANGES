@@ -1,7 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
-<<<<<<< HEAD
-=======
+v0.4.14
+    2016-04-22
+        * add .dvcz, .projCfg.local                                 SLOC 1151
 v0.4.13
     2016-04-19
         * .fileMap becomes .projCfg
@@ -11,7 +12,6 @@ v0.4.13
 v0.4.12
     2016-04-09
         * add .langMap; general tidy up                             SLOC 1129
->>>>>>> devel
 v0.4.11
     2016-04-01
         * fix bug in blCheck, add docs for blCheck                  SLOC 1110
@@ -139,8 +139,6 @@ v0.4.1
 
 
 
-<<<<<<< HEAD
-=======
 
 
->>>>>>> devel
+
