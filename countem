@@ -1,7 +1,11 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-cd /home/jdd/dev/py/buildList
+cd $DEV_BASE/py/buildList
 
-rm -rf build/* tmp/*
+rm -rf build/* tmp/* 
 
+<<<<<<< HEAD
 pySloc -v -X dist $@ 
+=======
+pySloc  -X dist -v $@
+>>>>>>> devel

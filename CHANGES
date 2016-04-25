@@ -1,5 +1,11 @@
 ~/dev/py/buildList/CHANGES
 
+<<<<<<< HEAD
+=======
+v0.4.15
+    2016-04-24
+        * add .dvcz/projCfg                                         SLOC 1175
+>>>>>>> devel
 v0.4.14
     2016-04-22
         * add .dvcz, .projCfg.local                                 SLOC 1151
@@ -142,3 +148,7 @@ v0.4.1
 
 
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> devel

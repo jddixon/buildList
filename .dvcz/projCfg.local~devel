@@ -1,0 +1,26 @@
+# buildList/.dvcz/projCfg.local.local
+
+dir:clr:tmp
+dir:local:example
+
+code:local:.dvcz/langMap
+code:local:.dvcz/projCfg.local
+code:local:.dvcz/projCfg
+code:std:.gitignore
+code:std:MANIFEST.in
+
+bash:std:auto8it
+bash:std:countem
+bash:std:installit
+bash:std:test.all
+
+bash:local:checkBlSrcGen
+bash:local:checkExample
+bash:local:checkExample2
+bash:local:make.bld.from.example.datadir
+bash:local:sampleRun
+
+py:local:blBootstrap
+py:global:blCheck
+py:global:blListGen
+py:global:blSrcGen
