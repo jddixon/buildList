@@ -1,11 +1,8 @@
 ~/dev/py/buildList/TODO
 
-<<<<<<< HEAD
-=======
 2016-04-11, edited from -03-31
      * confirm that -X works on regexes instead of wildcards            * FALSE
 
->>>>>>> devel
 2016-03-31
     * BUG: blCheck -1b example/example.bld -r example/dataDir \			* FIXED
             -u example/uDir			                                    * FIXED
@@ -18,10 +15,6 @@
         as genBuildList(options)
     * write blSrcGen logic as restoreSrc(options), test, then move
         into buildList/__init__.py
-<<<<<<< HEAD
-    * confirm -X works on globs
-=======
->>>>>>> devel
 
 2015-06-07
     * use LF for line ending, not CRLF                                  * YEP
