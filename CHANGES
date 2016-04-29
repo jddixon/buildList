@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.4.16
+    2016-04-29
+        * blListGen largely works                                   SLOC 1204
 v0.4.15
     2016-04-24
         * add .dvcz/projCfg                                         SLOC 1175
@@ -133,6 +136,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

@@ -20,7 +20,6 @@ __all__ = ['__version__', '__version_date__',
            'BLOCK_SIZE', 'CONTENT_END', 'CONTENT_START',
            'LF',
            # FUNCTIONS
-           'base64SHA1File',
            # PARSER FUNCTIONS
            'IntegrityCheckFailure', 'ParseFailed',
            'acceptContentLine',
@@ -32,27 +31,33 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            ]
 
-__version__      = '0.4.15'
-__version_date__ = '2016-04-24'
+__version__      = '0.4.16'
+__version_date__ = '2016-04-29'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
 CONTENT_START = '# START CONTENT #'
 LF = '\n'.encode('utf-8')
 
-# SHA1 FILE HASHING -------------------------------------------------
+# RSA KEY PAIR ------------------------------------------------------
 
 
-def base64SHA1File(pathToFile):
-    """ This does not as yet cope with errors reading the file. """
+def generateRSAKey(pathToFile, bitCount=2048):
+    """
+    Generate an RSA key and write it to disk in PEM format.  The key size
+    should be no less than 1024 bits.
+    """
+    key = RSA.generate(bitCount)
+    with open(pathToFile, 'wb+') as f:
+        f.write(RSA.exportKey('PEM'))
+    os.chmod(pathToFile, 0o600)
+
+
+def readRSAKey(pathToFile):
     with open(pathToFile, 'rb') as f:
-        h = hashlib.sha1()
-        while True:
-            block = f.read(BLOCK_SIZE)
-            if not block:
-                break
-            h.update(block)
-    return base64.standard_b64encode(h.digest())
+        key = RSA.importKey(f.read())
+    return key
+
 
 # PARSER ------------------------------------------------------------
 
@@ -147,6 +152,8 @@ def acceptContentLine(f, digest, str, rootDir, uDir):
     # XXX NO CHECK AGAINST uDir
 
     return True
+
+# -- CLASSES --------------------------------------------------------
 
 
 class BuildList(object):
