@@ -1,14 +1,14 @@
 #!/usr/bin/python3
 
-# testTimestamp.py
+# buildList/testTimestamp.py
 
-import base64
 import hashlib
 import os
 import time
 import unittest
 
 from rnglib import SimpleRNG
+from xlattice import u
 from buildList import *
 
 
@@ -34,23 +34,20 @@ class TestTimestamp (unittest.TestCase):
         byteCount = BLOCK_SIZE * (blkCount - 1) + \
             self.rng.nextInt16(BLOCK_SIZE)
 
-        print("BLOCK COUNT %d, BYTE COUNT %d\n" % (blkCount, byteCount))
-
         data = bytearray(byteCount)     # that many null bytes
         self.rng.nextBytes(data)             # fill with random data
         d = hashlib.new('sha1')
         d.update(data)
-        hash = d.digest()
-        b64Hash = base64.standard_b64encode(hash)
+        hash = d.hexdigest()
 
         fileName = self.rng.nextFileName(8)
         pathToFile = os.path.join('tmp', fileName)
         with open(pathToFile, 'wb') as f:
             f.write(data)
 
-        fileB64Hash = base64SHA1File(pathToFile)
+        fileHash = u.fileSHA1Hex(pathToFile)
 
-        self.assertEqual(b64Hash, fileB64Hash)
+        self.assertEqual(hash, fileHash)
 
 
 if __name__ == '__main__':

@@ -5,15 +5,34 @@
 import base64
 import hashlib
 import os
+import re
+import shutil
 import sys
 from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA    # presumably 1
-from Crypto.Signature import PKCS1_PSS
 
 from merkletree import MerkleDoc
 from buildList import *
-from xlattice.util import makeExRE, timestampNow
+from xlattice.util import getExclusions, makeExRE, timestampNow
+
+# this should be in some common place ...
+
+
+def rm_f_dirContents(dir):
+    if not dir:
+        print('directory must be named')
+        sys.exit(1)
+    if dir[0] == '/' or (dir.find('..') != -1):
+        print("illegal path for rm_f_dirContents(): '%s'" % dir)
+        sys.exit(1)
+    for files in os.listdir(dir):
+        pathToFile = os.path.join(dir, file)
+        if os.path.isfile(pathToFile):
+            os.unlink(pathToFile)
+        elif os.path.isdir(pathToFile):
+            shutil.rmtree(pathToFile)
+    # allow exceptions to bubble up
 
 
 def makeListing(args):
@@ -24,7 +43,7 @@ def makeListing(args):
     else:
         uDir = None
 
-    exclusions = args.exclude
+    exclusions = args.excl
     keyFile = args.keyFile
     listFile = args.listFile
     matches = args.matchPat
@@ -78,6 +97,10 @@ def main():
     # program defaults ----------------------------------------------
 
     now = timestampNow()
+    __version__ = re.search("__version__\s*=\s*'(.*)'",
+                            open('buildList/__init__.py').read()).group(1)
+    appName = 'blListGen %s' % __version__
+    keyPath = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
 
     # parse the command line ----------------------------------------
 
@@ -87,20 +110,24 @@ def main():
     parser.add_argument('-1', '--usingSHA1', action='store_true',
                         help='use SHA1 in building merkletree (default=false=use SHA256)')
 
-    parser.add_argument('-b', '--listFile',
+    parser.add_argument('-b', '--listFile', default='lastBuildList',
                         help='path to build list')
+
+    parser.add_argument('-i', '--ignoreFile', default='.gitignore',
+                        help='file containing wildcards (globs) for files to ignore')
 
     parser.add_argument('-j', '--justShow', action='store_true',
                         help='show options and exit')
 
-    parser.add_argument('-k', '--keyFile',
+    parser.add_argument('-k', '--keyFile', default=keyPath,
                         help='path to RSA private key for signing')
 
-    parser.add_argument('-P', '--matchPat', action='append',
+    # NOT CURRENTLY SUPPORTED (may never be)
+    parser.add_argument('-M', '--matchPat', action='append',
                         help='include only files matching this pattern')
 
-    parser.add_argument('-r', '--rootDir',
-                        help='root directory for build list (REQUIRED)')
+    parser.add_argument('-r', '--rootDir', default='.',
+                        help='root directory for build list (default=./)')
 
     parser.add_argument('-s', '--signing', action='store_true',
                         help='digitally sign the generated BuildList')
@@ -114,23 +141,46 @@ def main():
     parser.add_argument('-u', '--uDir',
                         help='path to uDir (relative to tmp/ if testing)')
 
+    parser.add_argument('-V', '--showVersion', action='store_true',
+                        help='display version number and exit')
+
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='be chatty')
 
-    parser.add_argument('-X', '--exclude', action='append',
-                        help='exclude files matching this wildcard pattern')
-
     args = parser.parse_args()
 
+    if args.showVersion:
+        print(appName)
+        sys.exit(0)
+
     # fixups --------------------------------------------------------
+    args.curDir = os.getcwd()
+
+    if os.path.exists(args.ignoreFile):
+        args.excl = getExclusions(args.curDir)
+    else:
+        print("WARNING: ignore file '%s' NOT FOUND" % ignoreFile)
+        args.excl = []
+
     args.now = now
-    if args.testing and args.rootDir:
-        if args.rootDir[0] == '/':
-            args.rootDir = args.rootDir[1:]
-        args.rootDir = os.path.join('tmp', args.rootDir)
+    args.dvczDir = '.dvcz'
+    if args.testing:
+        if args.rootDir:
+            if args.rootDir[0] == '/':
+                args.rootDir = args.rootDir[1:]
+            args.rootDir = os.path.join('tmp', args.rootDir)
+        args.dvczDir = os.path.join('tmp/dvcz')
+        if os.path.exists(args.dvczDir):
+            rm_f_dirContents(args.dvczDir)      # empties the directory
+    if not os.path.exists(args.dvczDir):
+        os.mkdir(args.dvczDir, 0o755)
 
     # sanity checks -------------------------------------------------
     if not args.justShow:
+        if not args.usingSHA1:
+            print("can't handle SHA2 or SHA3 yet")
+            sys.exit(1)
+
         if (not args.rootDir) or (args.rootDir == ''):
             print("no root directory specified")
             parser.print_usage()
@@ -176,13 +226,12 @@ def main():
             base = args.title
 
     # listFile --------------------------------------------
-    if args.listFile and args.testing:
+    if args.testing:
         if args.listFile[0] == '/':
             args.listFile = args.listFile[1:]
-        args.listFile = os.path.join('tmp', args.listFile)
+    args.listFile = os.path.join(args.dvczDir, args.listFile)
 
     # complete setup ------------------------------------------------
-    appName = 'blListGen %s' % __version__
     args.title = str(args.title)
 
     # maybe show options and such -----------------------------------
@@ -190,6 +239,7 @@ def main():
         print("%s %s" % (appName, __version_date__))
 
     if args.verbose or args.justShow:
+        print('ignoreFile   = ' + str(args.ignoreFile))
         print('justShow     = ' + str(args.justShow))
         print('keyFile      = ' + str(args.keyFile))
         print('listFile     = ' + str(args.listFile))
@@ -202,10 +252,6 @@ def main():
         print('usingSHA1    = ' + str(args.usingSHA1))
         print('verbose      = ' + str(args.verbose))
 
-        if args.exclude and len(args.exclude) > 0:
-            print("exclude:")
-            for exclusion in args.exclude:
-                print("    %s" % exclusion)
         if args.matchPat and len(args.matchPat) > 0:
             print("match:")
             for match in args.matchPat:
