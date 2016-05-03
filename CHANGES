@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.4.17
+    2016-05-02
+        * blListGen writes buildList, updates U                     SLOC 1225
 v0.4.16
     2016-04-29
         * blListGen largely works                                   SLOC 1204
@@ -136,6 +139,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

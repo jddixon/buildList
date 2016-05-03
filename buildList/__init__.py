@@ -20,6 +20,8 @@ __all__ = ['__version__', '__version_date__',
            'BLOCK_SIZE', 'CONTENT_END', 'CONTENT_START',
            'LF',
            # FUNCTIONS
+           'checkDirsInPath',
+           "generateRSAKey", "readRSAKey", 'rm_f_dirContents',
            # PARSER FUNCTIONS
            'IntegrityCheckFailure', 'ParseFailed',
            'acceptContentLine',
@@ -31,13 +33,42 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            ]
 
-__version__      = '0.4.16'
-__version_date__ = '2016-04-29'
+__version__      = '0.4.17'
+__version_date__ = '2016-05-02'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
 CONTENT_START = '# START CONTENT #'
 LF = '\n'.encode('utf-8')
+
+# UTILITY FUNCTIONS -------------------------------------------------
+
+
+def checkDirsInPath(pathToFile):
+    # if a path to the file is specified, create intervening directories
+    # if they don't exist
+    if pathToFile:
+        dir, delim, fileName = pathToFile.rpartition('/')
+        if dir:
+            os.makedirs(dir, 0o711, exist_ok=True)
+
+# this should be in some common place ...
+
+
+def rm_f_dirContents(dir):
+    if not dir:
+        print('directory must be named')
+        sys.exit(1)
+    if dir[0] == '/' or (dir.find('..') != -1):
+        print("illegal path for rm_f_dirContents(): '%s'" % dir)
+        sys.exit(1)
+    for file in os.listdir(dir):
+        pathToFile = os.path.join(dir, file)
+        if os.path.isfile(pathToFile):
+            os.unlink(pathToFile)
+        elif os.path.isdir(pathToFile):
+            shutil.rmtree(pathToFile)
+    # allow exceptions to bubble up
 
 # RSA KEY PAIR ------------------------------------------------------
 
@@ -47,9 +78,12 @@ def generateRSAKey(pathToFile, bitCount=2048):
     Generate an RSA key and write it to disk in PEM format.  The key size
     should be no less than 1024 bits.
     """
+
+    checkDirsInPath(pathToFile)
+
     key = RSA.generate(bitCount)
     with open(pathToFile, 'wb+') as f:
-        f.write(RSA.exportKey('PEM'))
+        f.write(key.exportKey('PEM'))
     os.chmod(pathToFile, 0o600)
 
 
@@ -60,7 +94,6 @@ def readRSAKey(pathToFile):
 
 
 # PARSER ------------------------------------------------------------
-
 
 class IntegrityCheckFailure(BaseException):
     pass
@@ -325,15 +358,36 @@ class BuildList(object):
         """
         def walk(node, path):
             if isinstance(node, NLHTree):
+                # DEBUG
+                print("  NODE: %s" % node.name)
+                # END
                 for n in node.nodes:
                     pathToNode = os.path.join(path, n.name)
                     walk(n, pathToNode)
             elif isinstance(node, NLHLeaf):
+                # DEBUG
+                print("  LEAF %s %s" % (node.name, node.hexHash))
+                # END
                 u.copyAndPut1(path, uDir, node.hexHash)
             else:
                 print("INTERNAL ERROR: node is neither Doc nor Tree nor Leaf")
                 print("  skipping")
 
+        # DEBUG
+        print("copyWalk %s ==> %s" % (dataDir, uDir))
+
+        # XXX Seems unnecessary.
+        if not os.path.exists(uDir):
+            print("  %s doesn't exist; creating" % uDir)
+            os.makedirs(uDir, 0o711, exist_ok=True)
+        # END
+
+        # XXX This seems to be necessary, which means that xlattice.u
+        # needs some fixing
+        uTmp = os.path.join(uDir, 'tmp')
+        if not os.path.exists(uTmp):
+            print("  %s doesn't exist; creating" % uTmp)
+            os.makedirs(uTmp, 0o711, exist_ok=True)
         walk(self.tree, dataDir)
 
     # EQUALITY ------------------------------------------------------

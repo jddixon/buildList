@@ -2,14 +2,15 @@
 project:buildList
 package:buildList
 mainlang:py
-version:0.4.15
-versionDate:2016-04-24
+version:0.4.17
+versionDate:2016-05-02
 :?dirs?:
 dir:std:.dvcz
 dir:std:dist
 dir:std:ghpDoc
 dir:pkg:buildList
 dir:local:example
+dir:clr:tmp
 :?files?:
 code:std:.dvcz/projCfg.local
 code:std:.dvcz/projCfg
