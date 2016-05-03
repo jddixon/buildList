@@ -40,7 +40,7 @@ class TestBuildList (unittest.TestCase):
         self.expectException('/')
         self.expectException('/abc')
 
-        # and we objected to embedded . and ..
+        # and we must object to '.' and '..' path segments in the build list
         self.expectException('.')
         self.expectException('..')
         self.expectException('./')
@@ -80,7 +80,7 @@ class TestBuildList (unittest.TestCase):
         self.assertEqual(bl, bl)
         s = bl.toString()
         # DEBUG
-        #print("SIGNED BUILD LIST:\n%s" % s)
+        print("SIGNED BUILD LIST:\n%s" % s)
         # END
         bl2 = BuildList.parse(s, usingSHA1)
         s2 = bl2.toString()

@@ -1,4 +1,4 @@
-# buildList/.dvcz/projCfg.local.local
+# buildList/.dvcz/projCfg.local
 
 dir:clr:tmp
 dir:local:example
