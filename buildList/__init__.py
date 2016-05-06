@@ -13,14 +13,14 @@ from nlhtree import NLHNode, NLHTree, NLHLeaf
 from xlattice import u
 from xlattice.crypto import collectPEMRSAPublicKey
 from xlattice.lfs import touch
-from xlattice.util import parseTimestamp, timestamp, timestampNow
+from xlattice.util import makeExRE, parseTimestamp, timestamp, timestampNow
 
 __all__ = ['__version__', '__version_date__',
            # OTHER EXPORTED CONSTANTS
            'BLOCK_SIZE', 'CONTENT_END', 'CONTENT_START',
            'LF',
            # FUNCTIONS
-           'checkDirsInPath',
+           'checkDirsInPath', 'makeBuildList',
            "generateRSAKey", "readRSAKey", 'rm_f_dirContents',
            # PARSER FUNCTIONS
            'IntegrityCheckFailure', 'ParseFailed',
@@ -33,8 +33,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            ]
 
-__version__      = '0.4.17'
-__version_date__ = '2016-05-02'
+__version__ = '0.4.18'
+__version_date__ = '2016-05-05'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
@@ -53,6 +53,73 @@ def checkDirsInPath(pathToFile):
             os.makedirs(dir, 0o711, exist_ok=True)
 
 # this should be in some common place ...
+
+
+def makeBuildList(options):
+    """
+    Create a BuildList, optionally populating uDir at the same time.
+    """
+    # this is here because assignment of options.uDir to None fails
+    if options.uDir and options.uDir != "":
+        uDir = options.uDir
+    else:
+        uDir = None
+
+    exclusions = options.excl
+    keyFile = options.keyFile
+    listFile = options.listFile
+    matches = options.matchPat
+    now = options.now
+    rootDir = options.rootDir
+    signing = options.signing
+    testing = options.testing
+    title = options.title
+    uDir = options.uDir                     # guaraneed to exist if specified
+    usingSHA1 = options.usingSHA1
+    verbose = options.verbose
+
+    if rootDir and rootDir[-1] == '/':      # trailing slash
+        rootDir = rootDir[:-1]
+    if uDir and uDir[-1] == '/':            # trailing slash
+        uDir = uDir[:-1]
+
+    if exclusions:
+        exRE = makeExRE(exclusions)
+    else:
+        exRE = None
+    if matches:
+        matchRE = MerkleDoc.makeMatchRE(matches)
+    else:
+        matchRE = None
+
+    with open(keyFile, 'r') as f:
+        skPriv = RSA.importKey(f.read())
+    sk = skPriv.publickey()
+
+    bl = BuildList.createFromFileSystem(
+        title, rootDir, sk, usingSHA1, exRE, matchRE)
+    if signing:
+        # DEBUG
+        print("SIGNING THE BUILD LIST")
+        # END
+        bl.sign(skPriv)
+
+    blSer = bl.toString()
+    if listFile and (listFile != ''):
+        # DEBUG
+        print("WRITING THE BUILD LIST TO %s" % listFile)
+        # END
+        checkDirsInPath(listFile)
+        with open(listFile, 'w') as f:
+            f.write(blSer)
+    else:
+        print(blSer)
+
+    if uDir:
+        if verbose:
+            print("copying from %s into %s" % (rootDir, uDir))
+        # copy the files in the buildList into U
+        bl.copyWalk(rootDir, uDir)
 
 
 def rm_f_dirContents(dir):
@@ -569,4 +636,3 @@ class BuildList(object):
             ss.append(self.digSig)
 
         return ss
-

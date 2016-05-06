@@ -12,74 +12,8 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA    # presumably 1
 
 from merkletree import MerkleDoc
-from xlattice.util import getExclusions, makeExRE, timestampNow
+from xlattice.util import getExclusions, timestampNow
 from buildList import *
-
-
-def makeListing(args):
-
-    # this is here because assignment of args.uDir to None fails
-    if args.uDir and args.uDir != "":
-        uDir = args.uDir
-    else:
-        uDir = None
-
-    exclusions = args.excl
-    keyFile = args.keyFile
-    listFile = args.listFile
-    matches = args.matchPat
-    now = args.now
-    rootDir = args.rootDir
-    signing = args.signing
-    testing = args.testing
-    title = args.title
-    uDir = args.uDir                        # guaraneed to exist if specified
-    usingSHA1 = args.usingSHA1
-    verbose = args.verbose
-
-    if rootDir and rootDir[-1] == '/':      # trailing slash
-        rootDir = rootDir[:-1]
-    if uDir and uDir[-1] == '/':            # trailing slash
-        uDir = uDir[:-1]
-
-    if exclusions:
-        exRE = makeExRE(exclusions)
-    else:
-        exRE = None
-    if matches:
-        matchRE = MerkleDoc.makeMatchRE(matches)
-    else:
-        matchRE = None
-
-    with open(keyFile, 'r') as f:
-        skPriv = RSA.importKey(f.read())
-    sk = skPriv.publickey()
-
-    bl = BuildList.createFromFileSystem(
-        title, rootDir, sk, usingSHA1, exRE, matchRE)
-    if signing:
-        # DEBUG
-        print("SIGNING THE BUILD LIST")
-        # END
-        bl.sign(skPriv)
-
-    blSer = bl.toString()
-    if listFile and (listFile != ''):
-        # DEBUG
-        print("WRITING THE BUILD LIST TO %s" % listFile)
-        # END
-        checkDirsInPath(listFile)
-        with open(listFile, 'w') as f:
-            f.write(blSer)
-    else:
-        print(blSer)
-
-    if uDir:
-        if verbose:
-            print("copying from %s into %s" % (rootDir, uDir))
-        bl.copyWalk(rootDir, uDir)
-
-        # INSERT THE BUILDLIST INTO uDir XXX
 
 
 def main():
@@ -254,7 +188,7 @@ def main():
     # do what's required --------------------------------------------
 
     # try: ACQUIRE LOCK ON PROJECT, that is, on the name of the project
-    makeListing(args)
+    makeBuildList(args)
     # finally: RELEASE LOCK ON PROJECT
 
 if __name__ == '__main__':
