@@ -74,7 +74,7 @@ def checkBuildList(args):
 def main():
     """
     Expect a command like
-        blListGen [options]
+        blCheck [options]
 
     """
 
