@@ -3,11 +3,12 @@
 # testBuildList.py
 
 import base64
-import hashlib
 import os
 import time
 import unittest
 from Crypto.PublicKey import RSA
+
+from argparse import ArgumentParser
 
 from rnglib import SimpleRNG
 from xlattice.util import timestamp
@@ -92,6 +93,13 @@ class TestBuildList (unittest.TestCase):
         self.doTestBadParts()
         self.doBuildTest('SHA1 test', True)
         self.doBuildTest('SHA2 test', False)
+
+    def testNameSpace(self):
+        parser = ArgumentParser(description='oh hello')
+        args = parser.parse_args()
+        args.junk = 'trash'
+        self.assertEqual(args.junk, 'trash')
+
 
 if __name__ == '__main__':
     unittest.main()
