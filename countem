@@ -4,4 +4,4 @@ cd $DEV_BASE/py/buildList
 
 rm -rf build/* tmp/* 
 
-pySloc  -X dist -v $@
+pySloc  -X dist $@
