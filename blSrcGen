@@ -31,14 +31,16 @@ def makeDataDir(args):
     with open(listFile, 'r') as f:
         s = f.read()
     bl = BuildList.parse(s)
-    tree = bl.tree
+    tree = bl.tree                  # an NLHTree
+    ss = []                       # representation as a string array
+    tree.toStrings(ss)              # with zero initial indent
 
     # DEBUG : WORKING HERE
 
     #################################################################
-    # XXX Need an iterator over the nlhtree which returns 2-tuples,
-    # a hash and the corresponding relative path.  This function
-    # should be part of and be tested in the nlhtree_py package.
+    # XXX Need an iterator over the nlhtree which returns either 1-
+    # or 2-tuples, the former just the relative path to a diretory
+    # and the latter the relative path to a leaf node plus its hash.
     #################################################################
 
 

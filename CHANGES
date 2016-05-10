@@ -1,5 +1,10 @@
 ~/dev/py/buildList/CHANGES
 
+
+v0.4.20
+    2016-05-10
+        * {copy,check}Walk => NLHTree.{saveTo,checkIn}UDir
+        * xlattice.u => xlattice.u256                               SLOC 1263
 v0.4.19
     2016-05-06
         * less sketletal blSrcGen                                   SLOC 1256
@@ -145,6 +150,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

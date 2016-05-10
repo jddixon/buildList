@@ -1,5 +1,13 @@
 ~/dev/py/buildList/TODO
 
+2016-05-09
+    * move BuildList.copyWalk() to NLHTree, where it more logically     * DONE
+        belongs                                                         * DONE
+        - write a test 
+    * move BuildList.checkWalk() to NLHTree, where it more logically    * DONE
+        belongs                                                         * DONE
+        - write a test 
+
 2016-05-06
     * blListGen should have -X/--exclusions as well as .gitinore
     * blSrcGen will also need -X/--exclusions

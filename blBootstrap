@@ -96,8 +96,8 @@ def doIt(args):
 
     # XXX need checks on uDir
 
-    bl.copyWalk(dataDir, uDir)
-    ok = bl.checkWalk(dataDir, uDir)    # whether all leaf nodes are present
+    bl.saveToUDir(dataDir, uDir)
+    ok = bl.checkInUDir(dataDir, uDir)    # whether all leaf nodes are present
     if not ok:
         print("check walk on example/ failed")
 
