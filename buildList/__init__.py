@@ -6,11 +6,14 @@ import calendar
 import hashlib
 import os
 import time
+
 from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA, SHA256
 from Crypto.Signature import PKCS1_PSS
+
 from nlhtree import NLHNode, NLHTree, NLHLeaf
-from xlattice import u
+
+from xlattice import u256 as u
 from xlattice.crypto import collectPEMRSAPublicKey
 from xlattice.lfs import touch
 from xlattice.util import makeExRE, parseTimestamp, timestamp, timestampNow
@@ -33,8 +36,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            ]
 
-__version__ = '0.4.19'
-__version_date__ = '2016-05-06'
+__version__ = '0.4.20'
+__version_date__ = '2016-05-10'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
@@ -119,7 +122,7 @@ def makeBuildList(options):
         if verbose:
             print("copying from %s into %s" % (rootDir, uDir))
         # copy the files in the buildList into U
-        bl.copyWalk(rootDir, uDir)
+        bl.tree.saveToUDir(rootDir, uDir)
 
 
 def rm_f_dirContents(dir):
@@ -390,6 +393,11 @@ class BuildList(object):
         return success
 
     # U_DIR ---------------------------------------------------------
+
+    ###############################################################
+    # THIS METHOD IS NOW OBSOLETE: USE NLHTree.checkInDir INSTEAD #
+    ###############################################################
+
     def checkWalk(self, dataDir, uDir):
         """
         Walk the tree, verifying that all leafs files) can be found in uDir
@@ -406,9 +414,9 @@ class BuildList(object):
                         break
             elif isinstance(node, NLHLeaf):
                 if self.usingSHA1:
-                    leafHash = u.fileSHA1(path)
+                    leafHash = u.fileSHA1Hex(path)
                 else:
-                    leafHash = u.fileSHA2(path)
+                    leafHash = u.fileSHA2Hex(path)
                 ok = leafHash == node.hexHash
             else:
                 print("INTERNAL ERROR: node is neither Doc nor Tree nor Leaf")
@@ -416,6 +424,10 @@ class BuildList(object):
             return ok
 
         return walk(self.tree, dataDir)
+
+    ###############################################################
+    # THIS METHOD IS NOW OBSOLETE: USE NLHTree.saveToUDir INSTEAD #
+    ###############################################################
 
     def copyWalk(self, dataDir, uDir):
         """
@@ -456,6 +468,8 @@ class BuildList(object):
             print("  %s doesn't exist; creating" % uTmp)
             os.makedirs(uTmp, 0o711, exist_ok=True)
         walk(self.tree, dataDir)
+
+    # XXX END CODE BEING MOVED ######################################
 
     # EQUALITY ------------------------------------------------------
     def __eq__(self, other):
