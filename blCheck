@@ -63,9 +63,11 @@ def checkBuildList(args):
             print("NLHTree for BuildList:\n%s" % bl.tree)
 
     if ok and uDir:
-        ok = bl.checkWalk(rootDir, uDir)
-        if not ok:
+        unmatched = bl.tree.checkInUDir(uDir)
+        if unmatched:
             print("BuildList, rootDir, and uDir are inconsistent")
+            for u in unmatched:
+                print("  %s is in the tree but not found in uDir" % u)
 
     if ok:
         print("ok")

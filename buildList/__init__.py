@@ -36,8 +36,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            ]
 
-__version__ = '0.4.20'
-__version_date__ = '2016-05-10'
+__version__ = '0.4.21'
+__version_date__ = '2016-05-17'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
@@ -57,6 +57,9 @@ def checkDirsInPath(pathToFile):
 
 # this should be in some common place ...
 
+
+# THIS IS NOW OBSOLETE  ###################################
+# replaced by BuildList.listGen
 
 def makeBuildList(options):
     """
@@ -118,11 +121,15 @@ def makeBuildList(options):
     else:
         print(blSer)
 
+    unmatched = []
     if uDir:
         if verbose:
             print("copying from %s into %s" % (rootDir, uDir))
         # copy the files in the buildList into U
-        bl.tree.saveToUDir(rootDir, uDir)
+        unmatched = bl.tree.saveToUDir(rootDir, uDir)
+    return unmatched
+
+# END OBSOLETE ############################################
 
 
 def rm_f_dirContents(dir):
@@ -392,85 +399,6 @@ class BuildList(object):
 
         return success
 
-    # U_DIR ---------------------------------------------------------
-
-    ###############################################################
-    # THIS METHOD IS NOW OBSOLETE: USE NLHTree.checkInDir INSTEAD #
-    ###############################################################
-
-    def checkWalk(self, dataDir, uDir):
-        """
-        Walk the tree, verifying that all leafs files) can be found in uDir
-        by content key.  We assume that the tree is congruent with dataDir
-        and that uDir is well-formed.
-        """
-        def walk(node, path):
-            ok = True
-            if isinstance(node, NLHTree):
-                for n in node.nodes:
-                    pathToNode = os.path.join(path, n.name)
-                    ok = walk(n, pathToNode)
-                    if not ok:
-                        break
-            elif isinstance(node, NLHLeaf):
-                if self.usingSHA1:
-                    leafHash = u.fileSHA1Hex(path)
-                else:
-                    leafHash = u.fileSHA2Hex(path)
-                ok = leafHash == node.hexHash
-            else:
-                print("INTERNAL ERROR: node is neither Doc nor Tree nor Leaf")
-                ok = False
-            return ok
-
-        return walk(self.tree, dataDir)
-
-    ###############################################################
-    # THIS METHOD IS NOW OBSOLETE: USE NLHTree.saveToUDir INSTEAD #
-    ###############################################################
-
-    def copyWalk(self, dataDir, uDir):
-        """
-        Walk the tree, copying all files listed into uDir by content key.
-        We assume that the tree is congruent with dataDir and that uDir
-        is well-formed.
-        """
-        def walk(node, path):
-            if isinstance(node, NLHTree):
-                # DEBUG
-                print("  NODE: %s" % node.name)
-                # END
-                for n in node.nodes:
-                    pathToNode = os.path.join(path, n.name)
-                    walk(n, pathToNode)
-            elif isinstance(node, NLHLeaf):
-                # DEBUG
-                print("  LEAF %s %s" % (node.name, node.hexHash))
-                # END
-                u.copyAndPut1(path, uDir, node.hexHash)
-            else:
-                print("INTERNAL ERROR: node is neither Doc nor Tree nor Leaf")
-                print("  skipping")
-
-        # DEBUG
-        print("copyWalk %s ==> %s" % (dataDir, uDir))
-
-        # XXX Seems unnecessary.
-        if not os.path.exists(uDir):
-            print("  %s doesn't exist; creating" % uDir)
-            os.makedirs(uDir, 0o711, exist_ok=True)
-        # END
-
-        # XXX This seems to be necessary, which means that xlattice.u
-        # needs some fixing
-        uTmp = os.path.join(uDir, 'tmp')
-        if not os.path.exists(uTmp):
-            print("  %s doesn't exist; creating" % uTmp)
-            os.makedirs(uTmp, 0o711, exist_ok=True)
-        walk(self.tree, dataDir)
-
-    # XXX END CODE BEING MOVED ######################################
-
     # EQUALITY ------------------------------------------------------
     def __eq__(self, other):
         if (not other) or (not isinstance(other, BuildList)):
@@ -524,7 +452,7 @@ class BuildList(object):
                                             # accept default deltaIndent
                                             usingSHA1=usingSHA1, exRE=exRE)
         # DEBUG
-        print("buildList.createFromFileSystem() returning\n%s" % tree)
+        # print("buildList.createFromFileSystem() returning\n%s" % tree)
         # END
 
         return BuildList(title, sk, tree)
@@ -650,3 +578,44 @@ class BuildList(object):
             ss.append(self.digSig)
 
         return ss
+
+    # OTHER CONSTRUCTORS --------------------------------------------
+
+    @classmethod
+    def listGen(cls, title, dataDir,
+                listFile,
+                keyFile,
+                excl=['build'],
+                uDir=None, usingSHA1=False):
+        """
+        Create a BuildList for dataDir with the title indicated.
+        Files matching the globs in excl will be skipped.  'build'
+        should always be in the list.  If a private key is specified
+        and signing is True, the BuildList will be digitally signed.
+        If uDir is specified, the files in dataDir will be posted to uDir.
+        If usingSHA1 is True, an SHA1 hash will be used for the digital
+        signature.  Otherwise SHA2 will be used
+        """
+        exRE = makeExRE(excl)
+        signing = keyFile != ''
+        if signing:
+            with open(keyFile, 'r') as f:
+                skPriv = RSA.importKey(f.read())
+            sk = skPriv.publickey()
+        else:
+            sk = None
+        bl = cls.createFromFileSystem(title, dataDir, sk,
+                                      usingSHA1, exRE, matchRE=None)
+        if signing:
+            bl.sign(skPriv)
+
+        with open(listFile, 'w+') as f:
+            f.write(bl.__str__())
+
+        if uDir:
+            # BUG: we have to create this subdirectory
+            tmpDir = os.path.join(uDir, 'tmp')
+            os.makedirs(tmpDir, mode=0o755, exist_ok=True)
+
+            bl.tree.saveToUDir(dataDir, uDir, usingSHA1)
+        return bl

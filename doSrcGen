@@ -2,4 +2,4 @@
             -u example/uDir             \
             -k example/node/skPriv.pem  \
             -d test/dataDir             \
-            -Sv
+            -v

@@ -12,8 +12,30 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA    # presumably 1
 
 from merkletree import MerkleDoc
-from xlattice.util import getExclusions, timestampNow
+from xlattice.util import getExclusions, makeExRE, timestampNow
 from buildList import *
+
+
+def doit(options):
+    dataDir = options.dataDir
+    excl = options.excl
+    keyFile = options.keyFile
+    listFile = options.listFile
+    title = options.title
+    uDir = options.uDir      # if None, don't save to uDir
+    usingSHA1 = options.usingSHA1
+
+    bl = BuildList.listGen(title, dataDir, listFile, keyFile,
+                           excl, uDir, usingSHA1)
+
+    print("BuildList written to %s" % listFile)
+
+    # confirm that whatever is in the BuildList is now in uDir
+    if uDir:
+        unmatched = bl.tree.checkInUDir(uDir)
+        if unmatched:
+            for u in unmatched:
+                print("NOT IN UDIR: ", u)
 
 
 def main():
@@ -42,6 +64,12 @@ def main():
     parser.add_argument('-b', '--listFile', default='lastBuildList',
                         help='path to build list')
 
+    parser.add_argument('-D', '--dvczDir', default='.dvcz',
+                        help='dvcz directory (default=.dvcz)')
+
+    parser.add_argument('-d', '--dataDir', default='.',
+                        help='data directory for build list (default=./)')
+
     parser.add_argument('-i', '--ignoreFile', default='.gitignore',
                         help='file containing wildcards (globs) for files to ignore')
 
@@ -55,19 +83,13 @@ def main():
     parser.add_argument('-M', '--matchPat', action='append',
                         help='include only files matching this pattern')
 
-    parser.add_argument('-r', '--rootDir', default='.',
-                        help='root directory for build list (default=./)')
-
-    parser.add_argument('-s', '--signing', action='store_true',
-                        help='digitally sign the generated BuildList')
-
     parser.add_argument('-T', '--testing', action='store_true',
                         help='this is a test run')
 
     parser.add_argument('-t', '--title',
                         help='title for build list')
 
-    parser.add_argument('-u', '--uDir',
+    parser.add_argument('-u', '--uDir', type=str,
                         help='path to uDir (relative to tmp/ if testing)')
 
     parser.add_argument('-V', '--showVersion', action='store_true',
@@ -90,10 +112,11 @@ def main():
     else:
         print("WARNING: ignore file '%s' NOT FOUND" % ignoreFile)
         args.excl = []
+    if not 'build' in args.excl:
+        args.excl.append('build')
 
     args.now = now
 
-    args.dvczDir = '.dvcz'
     if args.testing:
         args.dvczDir = os.path.join('tmp/dvcz')
         if os.path.exists(args.dvczDir):
@@ -107,13 +130,13 @@ def main():
             print("can't handle SHA2 or SHA3 yet")
             sys.exit(1)
 
-        if (not args.rootDir) or (args.rootDir == ''):
+        if (not args.dataDir) or (args.dataDir == ''):
             print("no root directory specified")
             parser.print_usage()
             sys.exit(1)
 
-        if not os.path.isdir(args.rootDir):
-            print("root directory '%s' isn't a directory" % args.rootDir)
+        if not os.path.isdir(args.dataDir):
+            print("root directory '%s' isn't a directory" % args.dataDir)
             parser.print_usage()        # short form
             # parser.print_help()       # long form (what you get from -h)
             sys.exit(1)
@@ -132,19 +155,17 @@ def main():
         if args.uDir:
             if args.uDir[0] == '/':
                 args.uDir = args.uDir[1:]
-        else:
-            args.uDir = rng.nextFileName(8)
-        args.uDir = os.path.join('tmp', args.uDir)
-        if os.path.exists(args.uDir):
-            rm_f_dirContents(args.uDir)
+            args.uDir = os.path.join('tmp', args.uDir)
+            if os.path.exists(args.uDir):
+                rm_f_dirContents(args.uDir)
 
     if args.uDir:
         os.makedirs(args.uDir, 0o755, exist_ok=True)
 
     # title -----------------------------------------------
-    if args.rootDir:
+    if args.dataDir:
         if not args.title or args.title == '':
-            junk, sep, base = args.rootDir.rpartition('/')
+            junk, sep, base = args.dataDir.rpartition('/')
             args.title = base
         else:
             # this can contain spaces and other undesirable characters
@@ -164,13 +185,13 @@ def main():
         print("%s %s" % (appName, __version_date__))
 
     if args.verbose or args.justShow:
+        print('dataDir      = ' + str(args.dataDir))
+        print('dvczDir      = ' + str(args.dvczDir))
         print('ignoreFile   = ' + str(args.ignoreFile))
         print('justShow     = ' + str(args.justShow))
         print('keyFile      = ' + str(args.keyFile))
         print('listFile     = ' + str(args.listFile))
         print('timestamp    = ' + str(args.now))
-        print('rootDir      = ' + str(args.rootDir))
-        print('signing      = ' + str(args.signing))
         print('testing      = ' + str(args.testing))
         print('title        = ' + str(args.title))
         print('uDir         = ' + str(args.uDir))
@@ -188,7 +209,8 @@ def main():
     # do what's required --------------------------------------------
 
     # try: ACQUIRE LOCK ON PROJECT, that is, on the name of the project
-    makeBuildList(args)
+    doit(args)
+
     # finally: RELEASE LOCK ON PROJECT
 
 if __name__ == '__main__':

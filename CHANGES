@@ -1,6 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
-
+v0.4.21
+    2016-05-17
+        * minor fixes to blListGen, add doListGen                   SLOC 1265
 v0.4.20
     2016-05-10
         * {copy,check}Walk => NLHTree.{saveTo,checkIn}UDir
@@ -150,6 +152,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 
