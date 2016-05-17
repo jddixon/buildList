@@ -10,8 +10,8 @@ import sys
 from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
 from nlhtree import NLHLeaf, NLHTree
-from xlattice import u
 from xlattice.lfs import touch
+from xlattice.util import makeExRE
 from rnglib import SimpleRNG
 
 from buildList import *
@@ -85,8 +85,9 @@ def doIt(args):
         f.write(skPriv.exportKey('PEM'))
     sk = skPriv.publickey()
 
+    exRE = makeExRE(['build', ])
     bl = BuildList.createFromFileSystem(title, dataDir, sk,
-                                        usingSHA1=True, exRE=None, matchRE=None)
+                                        usingSHA1=True, exRE, matchRE=None)
     bl.sign(skPriv)
     blSer = bl.toString()
     with open(listFile, 'w') as f:
@@ -96,10 +97,12 @@ def doIt(args):
 
     # XXX need checks on uDir
 
-    bl.saveToUDir(dataDir, uDir)
-    ok = bl.checkInUDir(dataDir, uDir)    # whether all leaf nodes are present
-    if not ok:
+    bl.tree.saveToUDir(dataDir, uDir)
+    unmatched = bl.checkInUDir(dataDir, uDir)    # all leaf nodes present ?
+    if unmatched:
         print("check walk on example/ failed")
+        for u in unmatched:
+            print("  %s is not in uDir" % u)
 
 
 def main():

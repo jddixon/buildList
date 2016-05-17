@@ -9,39 +9,45 @@ from argparse import ArgumentParser
 from shutil import rmtree
 from buildList import *
 
+# this becomes a buildList method
 
-def makeDataDir(args):
 
-    dataDir = args.dataDir
-    keyFile = args.keyFile
-    listFile = args.listFile
-    testing = args.testing
-    uDir = args.uDir
-    verbose = args.verbose
-    verifying = args.verifying
+def populateDataDir(bl, path, uDir):
+
+    # We are guaranteed that dataDir does not exist and that
+    # listFile and uDir do exist.
+
+    tree = bl.tree                  # an NLHTree
+
+    # INVOKE
+    # tree.populateDataDir(uDir, path)  # where path excludes tree.name
+
+
+def makeDataDir(options):
+
+    dataDir = options.dataDir
+    keyFile = options.keyFile
+    listFile = options.listFile
+    testing = options.testing
+    uDir = options.uDir
+    verbose = options.verbose
+
+    verifying = keyFile != ''
 
     if dataDir and dataDir[-1] == '/':      # trailing slash
         dataDir = dataDir[:-1]
     if uDir and uDir[-1] == '/':            # trailing slash
         uDir = uDir[:-1]
 
-    # We are guaranteed that dataDir does not exist and that
-    # listFile and uDir do exist.
-
     with open(listFile, 'r') as f:
-        s = f.read()
-    bl = BuildList.parse(s)
-    tree = bl.tree                  # an NLHTree
-    ss = []                       # representation as a string array
-    tree.toStrings(ss)              # with zero initial indent
+        data = f.read()
+    bl = BuildList.parse(data, usingSHA1=True)  # XXX HACK XXX
 
-    # DEBUG : WORKING HERE
+    name, junk, path = dataDir.rpartition('/')
 
-    #################################################################
-    # XXX Need an iterator over the nlhtree which returns either 1-
-    # or 2-tuples, the former just the relative path to a diretory
-    # and the latter the relative path to a leaf node plus its hash.
-    #################################################################
+    # ERROR IF name != tree.name
+
+    populateDataDir(bl, path, uDir)
 
 
 def main():
@@ -82,9 +88,6 @@ def main():
     # NOT CURRENTLY SUPPORTED (may never be)
     parser.add_argument('-M', '--matchOn', action='append',
                         help='include only files matching this pattern')
-
-    parser.add_argument('-S', '--verifying', action='store_true',
-                        help='veriy the digital signature')
 
     parser.add_argument('-T', '--testing', action='store_true',
                         help='this is a test run')
@@ -191,7 +194,7 @@ def main():
         print('testing      = ' + str(args.testing))
         print('uDir         = ' + str(args.uDir))
         print('verbose      = ' + str(args.verbose))
-        print('verifying    = ' + str(args.verifying))
+        print('verifying    = %s' % (args.keyFile != ''))
 
     if args.justShow:
         sys.exit(0)

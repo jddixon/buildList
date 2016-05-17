@@ -1,0 +1,13 @@
+cd ~/dev/py/buildList
+
+rm -rf tmp/*
+
+echo "The build list gets written to tmp/dvcz/lastBuildList."
+echo "You may want to add -u tmp/uDir."
+
+./blListGen -b lastBuildList                \
+            -D tmp/dvcz                     \
+            -k example/node/skPriv.pem      \
+            -d example/dataDir              \
+            -1                              \
+            $@
