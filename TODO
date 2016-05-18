@@ -1,5 +1,8 @@
 ~/dev/py/buildList/TODO
 
+2016-05-17
+    * URGENT: blCheck needs a -i argument, defaulting to .gitignore
+   
 2016-05-09
     * move BuildList.copyWalk() to NLHTree, where it more logically     * DONE
         belongs                                                         * DONE

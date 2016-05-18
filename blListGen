@@ -18,17 +18,19 @@ from buildList import *
 
 def doit(options):
     dataDir = options.dataDir
+    dvczDir = options.dvczDir
     excl = options.excl
     keyFile = options.keyFile
     listFile = options.listFile
+    logging = options.logging
     title = options.title
     uDir = options.uDir      # if None, don't save to uDir
     usingSHA1 = options.usingSHA1
 
-    bl = BuildList.listGen(title, dataDir, listFile, keyFile,
-                           excl, uDir, usingSHA1)
+    bl = BuildList.listGen(title, dataDir, dvczDir, listFile, keyFile,
+                           excl, logging, uDir, usingSHA1)
 
-    print("BuildList written to %s" % listFile)
+    print("BuildList written to %s" % os.path.join(dvczDir, listFile))
 
     # confirm that whatever is in the BuildList is now in uDir
     if uDir:
@@ -48,8 +50,6 @@ def main():
     # program defaults ----------------------------------------------
 
     now = timestampNow()
-    __version__ = re.search("__version__\s*=\s*'(.*)'",
-                            open('buildList/__init__.py').read()).group(1)
     appName = 'blListGen %s' % __version__
     keyPath = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
 
@@ -78,6 +78,9 @@ def main():
 
     parser.add_argument('-k', '--keyFile', default=keyPath,
                         help='path to RSA private key for signing')
+
+    parser.add_argument('-L', '--logging', action='store_true',
+                        help="append timestamp and BuildList hash to to .dvcz/builds")
 
     # NOT CURRENTLY SUPPORTED (may never be)
     parser.add_argument('-M', '--matchPat', action='append',
@@ -171,12 +174,6 @@ def main():
             # this can contain spaces and other undesirable characters
             base = args.title
 
-    # listFile --------------------------------------------
-    if args.testing:
-        if args.listFile[0] == '/':
-            args.listFile = args.listFile[1:]
-    args.listFile = os.path.join(args.dvczDir, args.listFile)
-
     # complete setup ------------------------------------------------
     args.title = str(args.title)
 
@@ -191,6 +188,7 @@ def main():
         print('justShow     = ' + str(args.justShow))
         print('keyFile      = ' + str(args.keyFile))
         print('listFile     = ' + str(args.listFile))
+        print('logging      = ' + str(args.logging))
         print('timestamp    = ' + str(args.now))
         print('testing      = ' + str(args.testing))
         print('title        = ' + str(args.title))

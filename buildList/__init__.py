@@ -23,7 +23,8 @@ __all__ = ['__version__', '__version_date__',
            'BLOCK_SIZE', 'CONTENT_END', 'CONTENT_START',
            'LF',
            # FUNCTIONS
-           'checkDirsInPath', 'makeBuildList',
+           'checkDirsInPath',
+           'makeBuildList',         # <-- OBSOLETE <--
            "generateRSAKey", "readRSAKey", 'rm_f_dirContents',
            # PARSER FUNCTIONS
            'IntegrityCheckFailure', 'ParseFailed',
@@ -36,8 +37,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            ]
 
-__version__ = '0.4.21'
-__version_date__ = '2016-05-17'
+__version__ = '0.4.22'
+__version_date__ = '2016-05-18'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
@@ -442,19 +443,9 @@ class BuildList(object):
             raise RuntimeError(
                 "%s does not exist or is not a directory" % pathToDir)
 
-        parts = pathToDir.split('/')
-        for part in parts:
-            if part == '.' or part == '..':
-                raise RuntimeError(
-                    "partToDir may not contain '.' or '..' parts")
-
         tree = NLHTree.createFromFileSystem(pathToDir,
                                             # accept default deltaIndent
                                             usingSHA1=usingSHA1, exRE=exRE)
-        # DEBUG
-        # print("buildList.createFromFileSystem() returning\n%s" % tree)
-        # END
-
         return BuildList(title, sk, tree)
 
     @staticmethod
@@ -583,10 +574,14 @@ class BuildList(object):
 
     @classmethod
     def listGen(cls, title, dataDir,
-                listFile,
-                keyFile,
+                dvczDir='.dvcz',
+                listFile='lastBuildList',
+                keyFile=os.path.join(
+                        os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem'),
                 excl=['build'],
-                uDir=None, usingSHA1=False):
+                logging=False,
+                uDir=None,
+                usingSHA1=False):
         """
         Create a BuildList for dataDir with the title indicated.
         Files matching the globs in excl will be skipped.  'build'
@@ -595,7 +590,20 @@ class BuildList(object):
         If uDir is specified, the files in dataDir will be posted to uDir.
         If usingSHA1 is True, an SHA1 hash will be used for the digital
         signature.  Otherwise SHA2 will be used
+
+        If there is a title, we try to read the version number from
+        the first line of .dvcz/version.  If that exists, we append
+        a space and then the version number to the title.
         """
+        pathToVersion = os.path.join(dvczDir, 'version')
+        if os.path.exists(pathToVersion):
+            with open(pathToVersion, 'r') as f:
+                version = f.readline().strip()
+                title = title + ' v' + version
+                # DEBUG
+                print("title with version is '%s'" % title)
+                # END
+
         exRE = makeExRE(excl)
         signing = keyFile != ''
         if signing:
@@ -609,8 +617,23 @@ class BuildList(object):
         if signing:
             bl.sign(skPriv)
 
-        with open(listFile, 'w+') as f:
+        pathToListing = os.path.join(dvczDir, listFile)
+        with open(pathToListing, 'w+') as f:
             f.write(bl.__str__())
+
+        if logging:
+            with open(pathToListing, 'rb') as f:
+                data = f.read()
+            if usingSHA1:
+                sha = hashlib.sha1()
+            else:
+                sha = hashlib.sha256()
+            sha.update(data)
+            hash = sha.hexdigest()
+
+            pathToLog = os.path.join(dvczDir, 'builds')
+            with open(pathToLog, 'a') as f:
+                f.write(bl.timestamp + ' ' + hash + '\n')
 
         if uDir:
             # BUG: we have to create this subdirectory
