@@ -1,3 +1,0 @@
-cd /home/jdd/dev/py/buildList
-
-autopep8 -air buildList blBootstrap blCheck blListGen blSrcGen test*py

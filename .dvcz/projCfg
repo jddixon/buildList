@@ -2,8 +2,8 @@
 project:buildList
 package:buildList
 mainlang:py
-version:0.4.17
-versionDate:2016-05-02
+version:0.4.23
+versionDate:2016-05-19
 :?dirs?:
 dir:std:.dvcz
 dir:std:dist
@@ -21,9 +21,9 @@ txt:std:CHANGES
 txt:std:LICENSE.md
 txt:std:README.md
 txt:std:TODO
-bash:std:auto8it
 bash:std:countem
 bash:std:installit
+bash:std:styleit
 bash:std:test.all
 bash:local:checkBlSrcGen
 bash:local:checkExample
@@ -38,3 +38,6 @@ py:global:blSrcGen
 py:test:testBuildList.py
 py:test:testRandomDir.py
 py:test:testTimestamp.py
+dunno:local:bkp2U
+dunno:local:doListGen
+dunno:local:doSrcGen
