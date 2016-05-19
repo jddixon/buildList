@@ -8,19 +8,21 @@ import os
 import sys
 from argparse import ArgumentParser
 from nlhtree import NLHTree
+from xlattice.util import getExclusions, makeExRE
 from buildList import *
 
 
 def checkBuildList(args):
 
+    dataDir = args.dataDir  # _without_ trailing slash
+    exRE = makeExRE(args.excl)
     listFile = args.listFile
-    rootDir = args.rootDir  # _without_ trailing slash
     verbose = args.verbose
     uDir = args.uDir
     usingSHA1 = args.usingSHA1
 
-    if rootDir and rootDir[-1] == '/':      # trailing slash
-        rootDir = rootDir[:-1]
+    if dataDir and dataDir[-1] == '/':      # trailing slash
+        dataDir = dataDir[:-1]
     if uDir and uDir[-1] == '/':            # trailing slash
         uDir = uDir[:-1]
 
@@ -55,17 +57,17 @@ def checkBuildList(args):
     if ok:
         usingSHA1 = bl.usingSHA1
         # assume exRE can be ignored
-        myTree = NLHTree.createFromFileSystem(rootDir, usingSHA1)
+        myTree = NLHTree.createFromFileSystem(dataDir, usingSHA1, exRE)
         ok = myTree == bl.tree
         if not ok:
-            print("build list's NLHTree doesn't match %s" % rootDir)
-            print("NLHTree for %s:\n%s" % (rootDir, myTree))
+            print("build list's NLHTree doesn't match %s" % dataDir)
+            print("NLHTree for %s:\n%s" % (dataDir, myTree))
             print("NLHTree for BuildList:\n%s" % bl.tree)
 
     if ok and uDir:
         unmatched = bl.tree.checkInUDir(uDir)
         if unmatched:
-            print("BuildList, rootDir, and uDir are inconsistent")
+            print("BuildList, dataDir, and uDir are inconsistent")
             for u in unmatched:
                 print("  %s is in the tree but not found in uDir" % u)
 
@@ -93,11 +95,14 @@ def main():
     parser.add_argument('-b', '--listFile',
                         help='root directory for build list')
 
+    parser.add_argument('-d', '--dataDir',
+                        help='root directory for build list')
+
+    parser.add_argument('-i', '--ignoreFile', default='.gitignore',
+                        help='file containing wildcards (globs) for files to ignore')
+
     parser.add_argument('-j', '--justShow', action='store_true',
                         help='show options and exit')
-
-    parser.add_argument('-r', '--rootDir',
-                        help='root directory for build list')
 
     parser.add_argument('-u', '--uDir',
                         help='path to uDir')
@@ -108,6 +113,14 @@ def main():
     args = parser.parse_args()
 
     # fixups --------------------------------------------------------
+    args.curDir = os.getcwd()
+    if os.path.exists(args.ignoreFile):
+        args.excl = getExclusions(args.curDir)
+    else:
+        print("WARNING: ignore file '%s' NOT FOUND" % ignoreFile)
+        args.excl = []
+    if not 'build' in args.excl:
+        args.excl.append('build')
 
     # sanity checks -------------------------------------------------
     if (not args.justShow):
@@ -116,13 +129,13 @@ def main():
             parser.print_usage()
             sys.exit(1)
 
-        if (not args.rootDir) or (args.rootDir == ''):
+        if (not args.dataDir) or (args.dataDir == ''):
             print("no root directory specified")
             parser.print_usage()
             sys.exit(1)
 
-        if not os.path.isdir(args.rootDir):
-            print("root directory %s does not exist" % args.rootDir)
+        if not os.path.isdir(args.dataDir):
+            print("root directory %s does not exist" % args.dataDir)
             parser.print_usage()
             sys.exit(1)
 
@@ -139,8 +152,9 @@ def main():
         print("%s %s" % (appName, __version_date__))
 
     if args.verbose or args.justShow:
+        print('dataDir      = ' + str(args.dataDir))
+        print('ignoreFile   = ' + str(args.ignoreFile))
         print('listFile     = ' + str(args.listFile))
-        print('rootDir      = ' + str(args.rootDir))
         print('uDir         = ' + str(args.uDir))
         print('verbose      = ' + str(args.verbose))
 

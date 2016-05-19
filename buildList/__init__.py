@@ -13,6 +13,7 @@ from Crypto.Signature import PKCS1_PSS
 
 from nlhtree import NLHNode, NLHTree, NLHLeaf
 
+# XXX THIS CODE ONLY WORKS WITH U256x256 FILE SYSTEMS  XXXXXXXXXXXXXX
 from xlattice import u256 as u
 from xlattice.crypto import collectPEMRSAPublicKey
 from xlattice.lfs import touch
@@ -24,7 +25,6 @@ __all__ = ['__version__', '__version_date__',
            'LF',
            # FUNCTIONS
            'checkDirsInPath',
-           'makeBuildList',         # <-- OBSOLETE <--
            "generateRSAKey", "readRSAKey", 'rm_f_dirContents',
            # PARSER FUNCTIONS
            'IntegrityCheckFailure', 'ParseFailed',
@@ -37,8 +37,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            ]
 
-__version__ = '0.4.22'
-__version_date__ = '2016-05-18'
+__version__ = '0.4.23'
+__version_date__ = '2016-05-19'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
@@ -57,80 +57,6 @@ def checkDirsInPath(pathToFile):
             os.makedirs(dir, 0o711, exist_ok=True)
 
 # this should be in some common place ...
-
-
-# THIS IS NOW OBSOLETE  ###################################
-# replaced by BuildList.listGen
-
-def makeBuildList(options):
-    """
-    Create a BuildList, optionally populating uDir at the same time.
-    """
-    # this is here because assignment of options.uDir to None fails
-    if options.uDir and options.uDir != "":
-        uDir = options.uDir
-    else:
-        uDir = None
-
-    exclusions = options.excl
-    keyFile = options.keyFile
-    listFile = options.listFile
-    matches = options.matchPat
-    now = options.now
-    rootDir = options.rootDir
-    signing = options.signing
-    testing = options.testing
-    title = options.title
-    uDir = options.uDir                     # guaraneed to exist if specified
-    usingSHA1 = options.usingSHA1
-    verbose = options.verbose
-
-    if rootDir and rootDir[-1] == '/':      # trailing slash
-        rootDir = rootDir[:-1]
-    if uDir and uDir[-1] == '/':            # trailing slash
-        uDir = uDir[:-1]
-
-    if exclusions:
-        exRE = makeExRE(exclusions)
-    else:
-        exRE = None
-    if matches:
-        matchRE = MerkleDoc.makeMatchRE(matches)
-    else:
-        matchRE = None
-
-    with open(keyFile, 'r') as f:
-        skPriv = RSA.importKey(f.read())
-    sk = skPriv.publickey()
-
-    bl = BuildList.createFromFileSystem(
-        title, rootDir, sk, usingSHA1, exRE, matchRE)
-    if signing:
-        # DEBUG
-        print("SIGNING THE BUILD LIST")
-        # END
-        bl.sign(skPriv)
-
-    blSer = bl.toString()
-    if listFile and (listFile != ''):
-        # DEBUG
-        print("WRITING THE BUILD LIST TO %s" % listFile)
-        # END
-        checkDirsInPath(listFile)
-        with open(listFile, 'w') as f:
-            f.write(blSer)
-    else:
-        print(blSer)
-
-    unmatched = []
-    if uDir:
-        if verbose:
-            print("copying from %s into %s" % (rootDir, uDir))
-        # copy the files in the buildList into U
-        unmatched = bl.tree.saveToUDir(rootDir, uDir)
-    return unmatched
-
-# END OBSOLETE ############################################
 
 
 def rm_f_dirContents(dir):
@@ -595,6 +521,7 @@ class BuildList(object):
         the first line of .dvcz/version.  If that exists, we append
         a space and then the version number to the title.
         """
+        version = '0.0.0'
         pathToVersion = os.path.join(dvczDir, 'version')
         if os.path.exists(pathToVersion):
             with open(pathToVersion, 'r') as f:
@@ -617,23 +544,25 @@ class BuildList(object):
         if signing:
             bl.sign(skPriv)
 
+        # serialize the BuildList, typically to .dvcz/lastBuildList
         pathToListing = os.path.join(dvczDir, listFile)
         with open(pathToListing, 'w+') as f:
             f.write(bl.__str__())
 
-        if logging:
-            with open(pathToListing, 'rb') as f:
-                data = f.read()
-            if usingSHA1:
-                sha = hashlib.sha1()
-            else:
-                sha = hashlib.sha256()
-            sha.update(data)
-            hash = sha.hexdigest()
+        # get the SHA1 or SHA256 hash of the BuildList
+        with open(pathToListing, 'rb') as f:
+            data = f.read()
+        if usingSHA1:
+            sha = hashlib.sha1()
+        else:
+            sha = hashlib.sha256()
+        sha.update(data)
+        hash = sha.hexdigest()
 
+        if logging:
             pathToLog = os.path.join(dvczDir, 'builds')
             with open(pathToLog, 'a') as f:
-                f.write(bl.timestamp + ' ' + hash + '\n')
+                f.write("%s v%s %s\n" % (bl.timestamp, version, hash))
 
         if uDir:
             # BUG: we have to create this subdirectory
@@ -641,4 +570,17 @@ class BuildList(object):
             os.makedirs(tmpDir, mode=0o755, exist_ok=True)
 
             bl.tree.saveToUDir(dataDir, uDir, usingSHA1)
+
+            # insert this BuildList into U
+            # DEBUG
+            print("writing %s into %s" % (hash, uDir))
+            # END
+            if usingSHA1:
+                hashBack = u.copyAndPut1(pathToListing, uDir, hash)
+            else:
+                hashBack = u.copyAndPut2(pathToListing, uDir, hash)
+            if hashBack != hash:
+                print("WARNING: wrote %s to %s, but actual hash is %s" % (
+                    hash, uDir, hashBack))
+
         return bl

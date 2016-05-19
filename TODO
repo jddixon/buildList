@@ -1,7 +1,14 @@
 ~/dev/py/buildList/TODO
 
+2016-05-18
+    * documentation is out of date and incomplete
+        - claimed beta status is not warranted by state of code
+    * should add version number to .dvcz/builds, making it              * DONE
+        '$TIMESTAMP $VERSION $HASH'                                     * DONE
+
 2016-05-17
-    * URGENT: blCheck needs a -i argument, defaulting to .gitignore
+    * URGENT: blCheck needs a -i argument, defaulting to .gitignore     * DONE
+        - and calculate exRE                                            * DONE
    
 2016-05-09
     * move BuildList.copyWalk() to NLHTree, where it more logically     * DONE
