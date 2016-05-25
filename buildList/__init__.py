@@ -37,8 +37,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            ]
 
-__version__ = '0.4.23'
-__version_date__ = '2016-05-19'
+__version__ = '0.4.24'
+__version_date__ = '2016-05-25'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
@@ -576,9 +576,9 @@ class BuildList(object):
             print("writing %s into %s" % (hash, uDir))
             # END
             if usingSHA1:
-                hashBack = u.copyAndPut1(pathToListing, uDir, hash)
+                (length, hashBack) = u.copyAndPut1(pathToListing, uDir, hash)
             else:
-                hashBack = u.copyAndPut2(pathToListing, uDir, hash)
+                (length, hashBack) = u.copyAndPut2(pathToListing, uDir, hash)
             if hashBack != hash:
                 print("WARNING: wrote %s to %s, but actual hash is %s" % (
                     hash, uDir, hashBack))

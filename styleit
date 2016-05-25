@@ -4,7 +4,7 @@ if [ ! -z "${DEV_BASE// }" ]
 then
   cd $DEV_BASE/py/buildList
   
-  autopep8 -ai -r buildList blBootstrap blCheck blListGen blSrcGen *.py
+  autopep8 -ai -r buildList blBootstrap doListGen doSrcGen blCheck blListGen blSrcGen *.py
   echo "not styling example/ subdir"
   
 else

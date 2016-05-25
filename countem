@@ -4,9 +4,9 @@ if [ ! -z "${DEV_BASE// }" ]
 then
   cd $DEV_BASE/py/buildList
   
-  rm -rf build/* tmp/* 
+  rm -rf tmp/* 
   
-  pySloc  -X dist -v $@
+  pySloc -L py  -X dist -v $@
 else
   echo "DEV_BASE is not defined"
 fi

@@ -1,15 +1,15 @@
-cd ~/dev/py/buildList
+cd ~ / dev / py / buildList
 
-rm -rf tmp/*
-mkdir -p tmp/dvcz
-cp .dvcz/version tmp/dvcz
+rm - rf tmp / *
+mkdir - p tmp / dvcz
+cp .dvcz / version tmp / dvcz
 
 echo "The build list gets written to tmp/dvcz/lastBuildList."
 echo "You may want to add -u tmp/uDir."
 
-./blListGen -b lastBuildList                \
-            -D tmp/dvcz                     \
-            -k example/node/skPriv.pem      \
-            -d example/dataDir              \
-            -L1                             \
-            $@
+. / blListGen - b lastBuildList                \
+    - D tmp / dvcz                     \
+    - k example / node / skPriv.pem      \
+    - d example / dataDir              \
+    - L1                             \
+    $@
