@@ -1,6 +1,14 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-./testBuildList.py
-./testRandomDir.py
-./testTimestamp.py
-./checkExample
+if [ ! -z "${DEV_BASE// }" ]
+then
+  cd $DEV_BASE/py/buildList
+  
+  ./testBuildList.py
+  ./testRandomDir.py
+  ./testTimestamp.py
+  echo "CONGRATULATIONS: YOU HAVE OVERWRITTEN test.all"
+  
+else
+  echo "DEV_BASE is not defined"
+fi

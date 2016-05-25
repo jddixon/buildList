@@ -101,6 +101,9 @@ def main():
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='be chatty')
 
+    parser.add_argument('-X', '--exclusions', action='append',
+                        help='do not include files/directories matching this pattern')
+
     args = parser.parse_args()
 
     if args.showVersion:
@@ -117,6 +120,9 @@ def main():
         args.excl = []
     if not 'build' in args.excl:
         args.excl.append('build')
+
+    if args.exclusions:
+        args.excl.extend(args.exclusions)
 
     args.now = now
 
@@ -184,6 +190,8 @@ def main():
     if args.verbose or args.justShow:
         print('dataDir      = ' + str(args.dataDir))
         print('dvczDir      = ' + str(args.dvczDir))
+        print('excl         = ' + str(args.excl))
+        print('exclusions   = ' + str(args.exclusions))
         print('ignoreFile   = ' + str(args.ignoreFile))
         print('justShow     = ' + str(args.justShow))
         print('keyFile      = ' + str(args.keyFile))

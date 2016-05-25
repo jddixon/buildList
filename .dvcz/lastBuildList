@@ -1,0 +1,135 @@
+-----BEGIN RSA PUBLIC KEY-----
+MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoM2sBgX0ChP2JriXkOxS
+e2FjHYVzBGkNvgf0vIAa7FFYZi2pWmxBAVXgl3tTiB3quqqud/MbKqdejM6gkKBK
+v8f7hlcBQLD6BLIZ/RRfhIElc+WlDVfKSnBTB4va5qTQAgvuq5i8+oMj7G8WEy5d
+7cYucWyUJMtHvT4pCDtBWeeqQ62tByWjv34Ud/+A9Mjf0leiWxM3tiToVsqIKb4s
+zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
+H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
+GQIDAQAB
+-----END RSA PUBLIC KEY-----
+buildList v0.4.24
+2016-05-25 20:04:30
+# START CONTENT #
+buildList
+ .copyright 803f3e50518123ef8a08d34f2238e89b62d0c9a2
+ .dvcz
+  builds 22edb55f179db1173448c698d363a4b3d165e579
+  lastBuildList 72c6b20233914284ed1e35087d191437e49f4d29
+  projCfg cd501e15810e86044b7418a9b5afe9e03bdd55d5
+  projCfg.local 659960cd22d114f726ac1c90453d16207405e9d9
+  version 270f8ab57ee19279bf275c988488ae1fa27687db
+ .gitignore 274228c81d7b75ce1888567cdfb763aacfcd74db
+ CHANGES ac03cc8841c1ec2d35d9089aa62cb0d624c159ed
+ LICENSE.md d1cecfadc47b23486f6bc8a863cfdde348c3eb46
+ MANIFEST.in 0faaebb5df7d0d418f90e80a771e2a1c57f371a5
+ README.md a977f33155033c4e92694af8484bfa52a2732e7f
+ TODO 2628a80d648b0cfda96b467f57161826cb8a69d9
+ bkp2U 6a1a5dbb3ae8be789760ebb2cf13dece8216795a
+ blBootstrap a1282494be51c7c0834e56048733d00d769bd3b1
+ blCheck 30081de92b303a811ba441246a0033cbfab8a5b2
+ blListGen d6598054f6cb2296a41b9d8d4ce0b92390451ad0
+ blSrcGen 195c159706a5f8ceabffc2b2909aac605c919f41
+ buildList
+  __init__.py ec6edeede08b19841af84ca097851560c58b3fb2
+ checkBlSrcGen ddfbda1aa91cd552beb99aa9305631cc041891bc
+ checkExample f13d8d6928bce388dcb781ef249c828b036d7650
+ checkExample2 e82aa5dcf4a5677ae0973533066bf13855f4a9c5
+ countem d06d9941f16240a7e1949ecde487b5302469a460
+ dist
+  buildList-0.1.0.tar.gz aae011231fa591fd83dca1bf9d289c14e5cc2ed3
+  buildList-0.1.3.tar.gz 58297b3cc0aa7cfddee9d9a3a8c9ec6e7d6d21e6
+  buildList-0.2.0.tar.gz 96ca7327900e4574d4e80075c8cb0c34d6d6a1e5
+  buildList-0.2.1.tar.gz 94aab61d65913f7cc85944e81dc7f27692120127
+  buildList-0.2.10.tar.gz d36f2eea08b44e2dc257ea94efcc8e2292c75eb0
+  buildList-0.2.2.tar.gz acb18143e112f9215e43ea0e7bc348aad6ed47c5
+  buildList-0.2.3.tar.gz 18b89d05775c5270ef94b4417d90de19d1e5ff37
+  buildList-0.2.4.tar.gz b5cc3ed81f3b88c1878ade7c8c9d0712c6b1fe98
+  buildList-0.2.5.tar.gz e3b476f7a0666beafdf7e1fea81c2630ecfbac32
+  buildList-0.2.6.tar.gz ded34e4c73beffcbaaa3496eeeb923543bebdea3
+  buildList-0.2.7.tar.gz 0cd3a5a021bcf5d92611444e5f61ae0b53441c32
+  buildList-0.2.8.tar.gz 2dbf0dc12b932ce3784e6b248ff7c1bc15d4770e
+  buildList-0.2.9.tar.gz cd29a8d0498f6bbb591123fc3be8aaa7431968a3
+  buildList-0.3.0.tar.gz 677a096b6dda5e22deeff6b2176f533a2794ba8c
+  buildList-0.3.1.tar.gz e1a36297b8992ebad52c54492e3177e9d76e8575
+  buildList-0.3.2.tar.gz b6a41440c0205f2c50333abc6553097ac19402cb
+  buildList-0.3.3.tar.gz 0430b057dabcd35b208cc03662e6a245b838a721
+  buildList-0.3.4.tar.gz 675b57690209340b9081a577438d2a1d250e41fd
+  buildList-0.3.5.tar.gz 3f27015a6678a30a64ab2a688c7e4344e0bad425
+  buildList-0.3.6.tar.gz 5564b0e1a1ad5c3aee47d68b7504d5d4ef7502b3
+  buildList-0.3.7.tar.gz 1646b29007ba9653b70cecddb33575407a39855d
+  buildList-0.4.0.tar.gz a50c8993fa76a8afdd6fd6b5bbdadf17d74fd5ff
+  buildList-0.4.1.tar.gz 62601aec198d243c8d71b7e1258d5f8ae42207f0
+  buildList-0.4.10.tar.gz 0329db9465e4593c188107e28dafea5cd703286c
+  buildList-0.4.11.tar.gz 7aa65f4ad9eb7a7e0ca85f7740bea81d923d50fc
+  buildList-0.4.12.tar.gz c4ab402c8a2aabc46e996d724ec8883f3a64e6d7
+  buildList-0.4.13.tar.gz 2d839b484917db78ab9279609eee7b6927da346c
+  buildList-0.4.14.tar.gz d736e3cee8b5b80af547c7085b33bea70a794d77
+  buildList-0.4.15.tar.gz 5e442bff69c29ab1504f90cbfd1106bae40f338a
+  buildList-0.4.16.tar.gz 77f6709bc6896804f0bf044cada3e8e7c305f52a
+  buildList-0.4.17.tar.gz a726308a4161ee9f32fa9be1c55079607c26cd10
+  buildList-0.4.18.tar.gz b50a394e94055a6653b708f4c54a13bfd7f8e3f1
+  buildList-0.4.19.tar.gz d507787c9341382fb4ce56395944af1ac9e59e24
+  buildList-0.4.2.tar.gz ac2804b333682c2ea30acd602c41700e0f9c9051
+  buildList-0.4.20.tar.gz a0c624b9ab420a04a41c5107981e84d0bc617734
+  buildList-0.4.21.tar.gz 2a44c723ee88474c62895d47b9c96dfd928c8907
+  buildList-0.4.22.tar.gz b4ff6e0494f7f70fe17a3d3543ff2689b7599270
+  buildList-0.4.23.tar.gz ce9a04e6cd07ad5f87b0c254b6285e5e99de7186
+  buildList-0.4.24.tar.gz a2bb79eac45eeb8c3b727f50db4749c4a945bb29
+  buildList-0.4.3.tar.gz d0f7d62d7c804e8acfc028a93367c9750eb1cf49
+  buildList-0.4.5.tar.gz 0a6cba16bf57a5d0bc8e34727f2a69d73bde3b48
+  buildList-0.4.6.tar.gz bc8eeac969b5ffd434b5f5d7b7fa41b9c32e5abb
+  buildList-0.4.7.tar.gz bbee115abab819f032deed9cd395ed29638c94c0
+  buildList-0.4.8.tar.gz 89f71851671c56c228079f5619c0781f36b9e332
+  buildList-0.4.9.tar.gz 678d34ae2c53106bbb9f2963714b10de411a425d
+ doListGen b9a5e29395bd2146edfb8a5e68a0c696c1de5a04
+ doSrcGen 0cd617de76fcbcc6f782d34904ec218739e5c1b4
+ example
+  dataDir
+   data1 34463aa26c4d7214a96e6e42c3a9e8f55727c695
+   data2 14193743b265973e5824ca5257eef488094e19e9
+   subDir1
+    data11 58089ce970b65940dd5bf07703cd81b4306cb8f0
+    data12 da39a3ee5e6b4b0d3255bfef95601890afd80709
+   subDir2
+   subDir3
+    data31 487607ec22ee1255cc31c35506c64b1819a48090
+   subDir4
+    subDir41
+     subDir411
+      data31 0b57d3ab229a69ce5f7fad62f9fe654fe96c51bb
+  example.bld fe8b30351e1297eacc624ef21caa02a6f8a03cb6
+  node
+   skPriv.pem b24faa328549a8a2379d38253a1381aea93995c7
+  uDir
+   0b
+    57
+     0b57d3ab229a69ce5f7fad62f9fe654fe96c51bb 0b57d3ab229a69ce5f7fad62f9fe654fe96c51bb
+   14
+    19
+     14193743b265973e5824ca5257eef488094e19e9 14193743b265973e5824ca5257eef488094e19e9
+   34
+    46
+     34463aa26c4d7214a96e6e42c3a9e8f55727c695 34463aa26c4d7214a96e6e42c3a9e8f55727c695
+   48
+    76
+     487607ec22ee1255cc31c35506c64b1819a48090 487607ec22ee1255cc31c35506c64b1819a48090
+   58
+    08
+     58089ce970b65940dd5bf07703cd81b4306cb8f0 58089ce970b65940dd5bf07703cd81b4306cb8f0
+   da
+    39
+     da39a3ee5e6b4b0d3255bfef95601890afd80709 da39a3ee5e6b4b0d3255bfef95601890afd80709
+ ghpDoc
+  index.md 352421974aff3087de25b1950ce66398c750fe5f
+ installit ece6c8b99a410db9a3477d28f706e47989b1e982
+ make.bld.from.example.datadir 5d2df5fefae187821af2e85e57213034da1a8744
+ sampleRun aad7774c254290e4179bfbe0f4d93bdb6b92ea25
+ setup.py b987d5f073a7d2656d03106a43fb796327d2e47b
+ styleit 75766ee1977d9e38cfa91d4e4aa193e56fdd8c8d
+ test.all 3c15b130c9cb43128341a44a3de22b9f6056f516
+ testBuildList.py 657a56cf926d9ba022924fe48bfcdb3a1ce745be
+ testRandomDir.py 1011b68becfab8638f850c69eaa83444644fe32c
+ testTimestamp.py 6d08c2496861020e6edb42e4bfa1205f563b876b
+# END CONTENT #
+
+eqGO/z3gMKhxkGyJA+240HxPwa1opOUyyrtVDkurROXzQ/yDbZc7qLMh1jvWnWlc/+Ps0HYFYzz3rxjGYTZBmdV1+SZ8YI1qWEyDadLdoHzRfECyB1UKC+tqxXuvyepvlkgea833p2RdOnlcsQfPR0VBoAfnoxxdAIeRvv3KD+vU/SBFMnWsVi8krL3Gd6wZKEVOJubzlvTXxGLsjOPrP75/mcFYJevg3iNjV3LcLiLcpqfdl85V/7W/jQcZArzBNYvfNGghmvJGMlaeOzBq/dkDAtsykhyFTq8aleUjKmnGh9sp5MopikILw9HVvN2xdZ+47SDgow/GNSbhfJ1l+Q==

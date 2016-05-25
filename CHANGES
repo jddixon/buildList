@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.4.24
+    2016-05-25
+        * add -X/--exclusions option                                SLOC 1319
 v0.4.23
     2016-05-19
         * blCheck: minor edits                                      SLOC 1271
@@ -158,6 +161,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 
