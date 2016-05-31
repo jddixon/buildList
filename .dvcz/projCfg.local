@@ -1,5 +1,6 @@
 # buildList/.dvcz/projCfg.local
 
+dir:pkg:buildList
 dir:clr:tmp
 dir:local:example
 

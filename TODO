@@ -1,5 +1,9 @@
 ~/dev/py/buildList/TODO
 
+2016-05-25
+    * need -X/--exclusions option                                       * DONE
+    * checkExample should be in test.all
+
 2016-05-18
     * documentation is out of date and incomplete
         - claimed beta status is not warranted by state of code

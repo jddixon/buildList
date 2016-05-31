@@ -4,7 +4,7 @@ if [ ! -z "${DEV_BASE// }" ]
 then
   cd $DEV_BASE/py/buildList
   
-  rm -rf tmp/* 
+  rm -rf build/* tmp/* 
   
   pySloc -L py  -X dist -v $@
 else
