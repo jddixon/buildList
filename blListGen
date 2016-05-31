@@ -116,7 +116,7 @@ def main():
     if os.path.exists(args.ignoreFile):
         args.excl = getExclusions(args.curDir)
     else:
-        print("WARNING: ignore file '%s' NOT FOUND" % ignoreFile)
+        print("WARNING: ignore file '%s' NOT FOUND" % args.ignoreFile)
         args.excl = []
     if not 'build' in args.excl:
         args.excl.append('build')

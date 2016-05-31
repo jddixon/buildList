@@ -8,6 +8,7 @@ then
     -d ../buildList \
     -1L  \
     -u $DVCZ_UDIR \
+    -X .ssh \
     $@
   
 else

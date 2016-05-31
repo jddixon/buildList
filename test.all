@@ -7,7 +7,6 @@ then
   ./testBuildList.py
   ./testRandomDir.py
   ./testTimestamp.py
-  echo "CONGRATULATIONS: YOU HAVE OVERWRITTEN test.all"
   
 else
   echo "DEV_BASE is not defined"
