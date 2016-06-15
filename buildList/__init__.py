@@ -14,7 +14,7 @@ from Crypto.Signature import PKCS1_PSS
 from nlhtree import NLHNode, NLHTree, NLHLeaf
 
 # XXX THIS CODE ONLY WORKS WITH U256x256 FILE SYSTEMS  XXXXXXXXXXXXXX
-from xlattice import u256 as u
+from xlattice import u
 from xlattice.crypto import collectPEMRSAPublicKey
 from xlattice.lfs import touch
 from xlattice.util import makeExRE, parseTimestamp, timestamp, timestampNow
@@ -25,7 +25,8 @@ __all__ = ['__version__', '__version_date__',
            'LF',
            # FUNCTIONS
            'checkDirsInPath',
-           "generateRSAKey", "readRSAKey", 'rm_f_dirContents',
+           "generateRSAKey",
+           "readRSAKey", 'rm_f_dirContents',
            # PARSER FUNCTIONS
            'IntegrityCheckFailure', 'ParseFailed',
            'acceptContentLine',
@@ -37,8 +38,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            ]
 
-__version__ = '0.4.25'
-__version_date__ = '2016-05-31'
+__version__ = '0.4.26'
+__version_date__ = '2016-06-14'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
@@ -565,7 +566,7 @@ class BuildList(object):
                 f.write("%s v%s %s\n" % (bl.timestamp, version, hash))
 
         if uDir:
-            # BUG: we have to create this subdirectory
+            # HERE
             tmpDir = os.path.join(uDir, 'tmp')
             os.makedirs(tmpDir, mode=0o755, exist_ok=True)
 
@@ -573,7 +574,7 @@ class BuildList(object):
 
             # insert this BuildList into U
             # DEBUG
-            print("writing %s into %s" % (hash, uDir))
+            print("writing BuildList with hash %s into %s" % (hash, uDir))
             # END
             if usingSHA1:
                 (length, hashBack) = u.copyAndPut1(pathToListing, uDir, hash)

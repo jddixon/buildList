@@ -8,7 +8,7 @@ import time
 import unittest
 
 from rnglib import SimpleRNG
-from xlattice import u256 as u
+from xlattice import u
 from buildList import *
 
 
