@@ -13,10 +13,9 @@ from Crypto.Signature import PKCS1_PSS
 
 from nlhtree import NLHNode, NLHTree, NLHLeaf
 
-# XXX THIS CODE ONLY WORKS WITH U256x256 FILE SYSTEMS  XXXXXXXXXXXXXX
-from xlattice import u
 from xlattice.crypto import collectPEMRSAPublicKey
 from xlattice.lfs import touch
+from xlattice.u import UDir
 from xlattice.util import makeExRE, parseTimestamp, timestamp, timestampNow
 
 __all__ = ['__version__', '__version_date__',
@@ -28,7 +27,6 @@ __all__ = ['__version__', '__version_date__',
            "generateRSAKey",
            "readRSAKey", 'rm_f_dirContents',
            # PARSER FUNCTIONS
-           'IntegrityCheckFailure', 'ParseFailed',
            'acceptContentLine',
            'acceptListLine', 'expectListLine',
            'expectStr',
@@ -36,10 +34,11 @@ __all__ = ['__version__', '__version_date__',
            'expectTitle',
            # CLASSES
            'BuildList',
+           'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.4.26'
-__version_date__ = '2016-06-14'
+__version__ = '0.4.27'
+__version_date__ = '2016-06-15'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
@@ -97,14 +96,14 @@ def readRSAKey(pathToFile):
         key = RSA.importKey(f.read())
     return key
 
-
 # PARSER ------------------------------------------------------------
 
-class IntegrityCheckFailure(BaseException):
+
+class BLIntegrityCheckFailure(BaseException):
     pass
 
 
-class ParseFailed(BaseException):
+class BLParseFailed(BaseException):
     pass
 
 
@@ -117,14 +116,14 @@ def acceptListLine(f):
         elif line.endswith(LF):
             line = line[:lenLine - 1]
         else:
-            raise ParseFailed("expected LF")
+            raise BLParseFailed("expected LF")
     return line
 
 
 def expectListLine(f, errMsg):
     line = acceptListLine(f)
     if not line:
-        raise ParseFailed(errMsg)
+        raise BLParseFailed(errMsg)
     return line
 
 
@@ -159,7 +158,7 @@ def acceptContentLine(f, digest, str, rootDir, uDir):
     """
     Accept either a content line or a delimiter (str).  Anything else
     raises an exception.  Returns True if content line matched, False
-    if delimiter detected; otherwise raises a ParseFailed.
+    if delimiter detected; otherwise raises a BLParseFailed.
 
     NOT IMPLEMENTED: If rootDir is not None, compares the content hash
     with that of the file at the relative path.
@@ -167,7 +166,7 @@ def acceptContentLine(f, digest, str, rootDir, uDir):
     NOT IMPLEMENTED: If uDir is not None, verifies that the content key
     matches that of a file present in uDir.
     """
-    line = acceptListLine(f)        # may raise ParseFailed
+    line = acceptListLine(f)        # may raise BLParseFailed
     if line == str:
         # DEBUG
         print("STR: " + line)
@@ -194,6 +193,10 @@ def acceptContentLine(f, digest, str, rootDir, uDir):
 # -- CLASSES --------------------------------------------------------
 
 
+class BLError(RuntimeError):
+    pass
+
+
 class BuildList(object):
     """
     A BuildList has a title, an RSA public key, and some content, which
@@ -211,11 +214,11 @@ class BuildList(object):
 
         self._title = title
         if (not sk) or (not isinstance(sk, RSA._RSAobj)):
-            raise RuntimeError("sk is nil or not a valid RSA public key")
+            raise BLError("sk is nil or not a valid RSA public key")
         self._publicKey = sk
 
         if (not tree) or (not isinstance(tree, NLHTree)):
-            raise RuntimeError('tree is nil or not a valid NLHTree')
+            raise BLError('tree is nil or not a valid NLHTree')
 
         self._tree = tree
 
@@ -254,9 +257,7 @@ class BuildList(object):
     def usingSHA1(self): return self._usingSHA1
 
     def _getBuildListSHA1(self):
-
         h = SHA.new()
-
         # add public key and then LF to hash
         pemCK = self._publicKey.exportKey('PEM')
         h.update(pemCK)
@@ -287,14 +288,14 @@ class BuildList(object):
         """ skPriv is the RSA private key used for siging the BuildList """
 
         if self._digSig is not None:
-            raise RuntimeError("buildList has already been signed")
+            raise BLError("buildList has already been signed")
 
         # Verify that the public key (sk) is the public part of skPriv,
         # the private RSA key.
         if (not skPriv) or (not isinstance(skPriv, RSA._RSAobj)):
-            raise RuntimeError("skPriv is nil or not a valid RSA key")
+            raise BLError("skPriv is nil or not a valid RSA key")
         if skPriv.publickey() != self._publicKey:
-            raise RuntimeError("skPriv does not match BuildList's public key")
+            raise BLError("skPriv does not match BuildList's public key")
 
         # the time is part of what is signed, so we need to set it now
         # XXX truncating loses microseconds
@@ -367,7 +368,7 @@ class BuildList(object):
                              usingSHA1=False, exRE=None, matchRE=None):
 
         if (not pathToDir) or (not os.path.isdir(pathToDir)):
-            raise RuntimeError(
+            raise BLError(
                 "%s does not exist or is not a directory" % pathToDir)
 
         tree = NLHTree.createFromFileSystem(pathToDir,
@@ -382,7 +383,7 @@ class BuildList(object):
         LF ('\n').
         """
         if s is None:
-            raise ParseFailed('BuildList.parse: empty input')
+            raise BLParseFailed('BuildList.parse: empty input')
         if not isinstance(s, str):
             s = str(s, 'utf-8')
         ss = s.split('\n')
@@ -395,7 +396,7 @@ class BuildList(object):
         of the next field.
         """
         if n >= len(ss):
-            raise ParseFailed("Missing %d-th field in BuildList")
+            raise BLParseFailed("Missing %d-th field in BuildList")
         field = ss[n]
         n += 1
         return field, n
@@ -403,7 +404,7 @@ class BuildList(object):
     @staticmethod
     def parseFromStrings(ss, usingSHA1):
         if ss is None:
-            raise ParseFailed("parseFromStrings: null argument")
+            raise BLParseFailed("parseFromStrings: null argument")
 
         # expect a PEM-encoded publid key with embedded newlines
         firstLine = ss[0]
@@ -425,7 +426,7 @@ class BuildList(object):
             # DEBUG
             print("Expected CONTENT START, got '%s'" % startLine)
             # END
-            raise ParseFailed("expected CONTENT_START line")
+            raise BLParseFailed("expected CONTENT_START line")
 
         # expect a serialized NLHTree followed by a CONTENT END
         mtLines = []
@@ -441,7 +442,7 @@ class BuildList(object):
         # expect an empty line
         space, n = BuildList._expectField(ss, n)
         if space != '':
-            raise ParseFailed("expected an empty line")
+            raise BLParseFailed("expected an empty line")
 
         # accept a digital signature if it is present
         if n < len(ss):
@@ -507,14 +508,14 @@ class BuildList(object):
                         os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem'),
                 excl=['build'],
                 logging=False,
-                uDir=None,
+                uPath='',
                 usingSHA1=False):
         """
         Create a BuildList for dataDir with the title indicated.
         Files matching the globs in excl will be skipped.  'build'
         should always be in the list.  If a private key is specified
         and signing is True, the BuildList will be digitally signed.
-        If uDir is specified, the files in dataDir will be posted to uDir.
+        If uPath is specified, the files in dataDir will be posted to uDir.
         If usingSHA1 is True, an SHA1 hash will be used for the digital
         signature.  Otherwise SHA2 will be used
 
@@ -545,43 +546,53 @@ class BuildList(object):
         if signing:
             bl.sign(skPriv)
 
-        # serialize the BuildList, typically to .dvcz/lastBuildList
-        pathToListing = os.path.join(dvczDir, listFile)
-        with open(pathToListing, 'w+') as f:
-            f.write(bl.__str__())
-
-        # get the SHA1 or SHA256 hash of the BuildList
-        with open(pathToListing, 'rb') as f:
-            data = f.read()
+        newData = bl.__str__().encode('utf-8')
         if usingSHA1:
             sha = hashlib.sha1()
         else:
             sha = hashlib.sha256()
-        sha.update(data)
-        hash = sha.hexdigest()
+        sha.update(newData)
+        newHash = sha.hexdigest()
+        pathToListing = os.path.join(dvczDir, listFile)
 
-        if logging:
-            pathToLog = os.path.join(dvczDir, 'builds')
-            with open(pathToLog, 'a') as f:
-                f.write("%s v%s %s\n" % (bl.timestamp, version, hash))
+#       # WHOLLY REDUNDANT ================================
+#       # get the SHA1 or SHA256 hash of the last BuildList
+#       with open(pathToListing, 'rb') as f:
+#           data = f.read()
+#       if usingSHA1:
+#           sha = hashlib.sha1()
+#       else:
+#           sha = hashlib.sha256()
+#       sha.update(data)
+#       oldHash = sha.hexdigest()
+#       # END REDUNDANT BLOCK =============================
 
-        if uDir:
-            # HERE
-            tmpDir = os.path.join(uDir, 'tmp')
-            os.makedirs(tmpDir, mode=0o755, exist_ok=True)
+        if uPath:
 
-            bl.tree.saveToUDir(dataDir, uDir, usingSHA1)
+            bl.tree.saveToUDir(dataDir, uPath, usingSHA1)
 
             # insert this BuildList into U
             # DEBUG
-            print("writing BuildList with hash %s into %s" % (hash, uDir))
+            print("writing BuildList with hash %s into %s" % (newHash, uPath))
             # END
-            if usingSHA1:
-                (length, hashBack) = u.copyAndPut1(pathToListing, uDir, hash)
-            else:
-                (length, hashBack) = u.copyAndPut2(pathToListing, uDir, hash)
-            if hashBack != hash:
+            uDir = UDir(uPath)
+            (length, hashBack) = uDir.putData(newData, newHash)
+            if hashBack != newHash:
                 print("WARNING: wrote %s to %s, but actual hash is %s" % (
-                    hash, uDir, hashBack))
+                    newHash, uPath, hashBack))
+
+        # CHANGES TO DATADIR AFTER UPDATING uPath ===================
+
+        # serialize the BuildList, typically to .dvcz/lastBuildList
+        with open(pathToListing, 'wb+') as f:
+            f.write(newData)
+
+        # DEBUG
+        print("hash of buildList at %s is %s" % (pathToListing, newHash))
+        # END
+        if logging:
+            pathToLog = os.path.join(dvczDir, 'builds')
+            with open(pathToLog, 'a') as f:
+                f.write("%s v%s %s\n" % (bl.timestamp, version, newHash))
 
         return bl

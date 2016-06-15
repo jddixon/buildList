@@ -1,8 +1,29 @@
 ~/dev/py/buildList/TODO
 
+2016-06-15
+    * the code specific to blBootstrap shoud be in __init__.py
+        - preferably with code requiring manual confirmation
+
+2016-06-14
+    * blListGen reporting problems writing BuildList to U, although
+        it seems to get there
+        - need to verify that lastBuildList and its contents are in U
+            * if necessary, catch exception, print stacktrace,
+                hash .dvcz/lastBuildGen to get its key, verify that
+                is in U, then parse it and verify the listed files 
+                are in U
+    * BuildList.listGen 
+        - it appears that references to uDir should be uPath
+        - use of u.copyAndPrint1, u.copyAntPrint2,
+            * where u is xlattice.u
+    * BuildList.verify makes use of _getBuildListSHA1(), which is
+        probably correct but needs to be checked
+    * BuildList.acceptContentLine() seems questionable, never used
+    * buildList/__init__.py aroundL 565 must create uDir from uPath
+
 2016-06-03
     * modify to use xlattice.u.UDir
-s
+
 2016-05-25
     * need -X/--exclusions option                                       * DONE
     * checkExample should be in test.all

@@ -5,9 +5,10 @@
 import os
 import re
 import sys
+
 from argparse import ArgumentParser
 from shutil import rmtree
-from buildList import *
+from buildList import __file__, BuildList
 
 # this becomes a buildList method
 
@@ -60,7 +61,10 @@ def main():
     # program defaults ----------------------------------------------
 
     __version__ = re.search("__version__\s*=\s*'(.*)'",
-                            open('buildList/__init__.py').read()).group(1)
+                            open(__file__).read()).group(1)
+    __version_date__ = re.search("__version_date__\s*=\s*'(.*)'",
+                                 open(__file__).read()).group(1)
+
     APP_NAME = 'blSrcGen %s' % __version__
     KEY_PATH = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
     UDIR = os.environ['DVCZ_UDIR']

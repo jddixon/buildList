@@ -2,8 +2,8 @@
 project:buildList
 package:buildList
 mainlang:py
-version:0.4.25
-versionDate:2016-05-31
+version:0.4.27
+versionDate:2016-06-15
 :?dirs?:
 dir:std:ghpDoc
 dir:std:dist

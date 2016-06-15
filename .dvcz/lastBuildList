@@ -7,30 +7,30 @@ zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
 H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
 GQIDAQAB
 -----END RSA PUBLIC KEY-----
-buildList v0.4.26
-2016-06-15 00:32:54
+buildList v0.4.27
+2016-06-15 21:37:22
 # START CONTENT #
 buildList
  .copyright 803f3e50518123ef8a08d34f2238e89b62d0c9a2
  .dvcz
-  builds a3904681313056a07e73a2561df5c5634c8009c4
-  lastBuildList 2026ccd5c10112e509108606f7770a4cd3f61a6c
-  projCfg 126d6ed835d0af4a520704965c97bf7e7e4e24c6
+  builds c076ff92883eb02842236d7a526bfa18398ee3d2
+  lastBuildList 61bc0cc00b46f0613ede52149d863cbf5d0c9d74
+  projCfg 338f71cae71e468677e48a0f4c0b4a4c0e89455d
   projCfg.local 92bcb76dbb01e44ba21a91e49c94be17fe76cb4a
-  version 388c3598d94862e56026958f67aaab24aba012af
+  version bbfd38e632f7e720d4206b7217d17efd3ffecda8
  .gitignore 5f1a04317952b671c5828218c6efe88c2594f8fb
- CHANGES 8fe99a0db5441fffbac18d1939907aafd070368c
+ CHANGES dbea12a520f240d8c2e030b8c5629aa7ed50bcb8
  LICENSE.md d1cecfadc47b23486f6bc8a863cfdde348c3eb46
  MANIFEST.in 0faaebb5df7d0d418f90e80a771e2a1c57f371a5
  README.md a977f33155033c4e92694af8484bfa52a2732e7f
- TODO cf70ff0b4f9e381e17c5185ac675d358caa4f20a
+ TODO 79cf972a9cfc6dbeef93a8f1d79ffb0613b21464
  bkp2U 88a8cc0ed6ccd76467106a64d294535aacfe33ed
- blBootstrap a1282494be51c7c0834e56048733d00d769bd3b1
- blCheck 30081de92b303a811ba441246a0033cbfab8a5b2
- blListGen 9f456e2cc531b6803e4a245193b99306cda0e6e7
- blSrcGen 195c159706a5f8ceabffc2b2909aac605c919f41
+ blBootstrap 2982327940565058f55274ef8da4017582f3868e
+ blCheck 982bae7be166ba7580592ad0f28b40f00bae4ed9
+ blListGen 78296b53c9a9884b4d0722650051963db5039121
+ blSrcGen b0f53482a6a7b250972246c0b6e44bca864d48b4
  buildList
-  __init__.py 4d4ca1fdaf6aa217edc2ced4b842a85ea0c0fcfd
+  __init__.py 753c70f70e0bbdcd8cd5eec855dac6ab55428f27
  checkBlSrcGen ddfbda1aa91cd552beb99aa9305631cc041891bc
  checkExample f13d8d6928bce388dcb781ef249c828b036d7650
  checkExample2 e82aa5dcf4a5677ae0973533066bf13855f4a9c5
@@ -76,7 +76,9 @@ buildList
   buildList-0.4.23.tar.gz ce9a04e6cd07ad5f87b0c254b6285e5e99de7186
   buildList-0.4.24.tar.gz a2bb79eac45eeb8c3b727f50db4749c4a945bb29
   buildList-0.4.25.tar.gz 4dc2505e443b615bb72cd796fe5ab6613a7d0c8a
-  buildList-0.4.26.tar.gz 6c503eabbe28b54a77f4f2f190f043a628653558
+  buildList-0.4.26.1.tar.gz 671d28fe809d2daa8d0dc5ea63ff67dac1338214
+  buildList-0.4.26.tar.gz 56fc35ef8f08a054ba6005e291ef011d8ca87651
+  buildList-0.4.27.tar.gz 337f95f9581850da95dd38126ad490976ed40837
   buildList-0.4.3.tar.gz d0f7d62d7c804e8acfc028a93367c9750eb1cf49
   buildList-0.4.5.tar.gz 0a6cba16bf57a5d0bc8e34727f2a69d73bde3b48
   buildList-0.4.6.tar.gz bc8eeac969b5ffd434b5f5d7b7fa41b9c32e5abb
@@ -134,4 +136,4 @@ buildList
  testTimestamp.py 46e3c0eaad5853d3075e7e1a9902624c9a8da80e
 # END CONTENT #
 
-L4+rcCKwirzx0MMyTqiQUQwp0LMWa7qlcI2ixFhFbmwOA+zmx5I6tIZSN0l32n33AdHSsnby8/2k2kIR77YtktVt8nwHr8MB8XUgvUMPwUmlDGYX3B6ubHDnRr6NCcI+VyyhMrX2m5gixov3HpAxSWGC8mFi9/0Z/UL34EUo5U8n76Ox6XaY8UBbnDNre7ic4Re8T4PPZgV6hF3gQte/+0/uW799Og7Xa12p8BdXd1L+OW1tuX7xsXprZEsSO9wuzVdwhNZH6XQKA8cDpv/UlrZw2/HMOmHPSwt3gkdRX2KxJvImF9D4iQu6HCrFiYCJrUIwBTxqyBkAE3Sp0wd3Ng==
+BaQF9vAfIayqVMtq15SVPo+2roxjouZ/Ls0jju1l5I5wjmwIYhas8pU21gOeGwY1WbYVvRm0GvtJELXoW4TVQYHjeJ3o3QaFAiYqwNFwW/d50aBKhImhXZxQhY8mQ13pMZ7dEl7K4SoyPk0lyl0/anz5hzQzXbc3cWJrLI0bTP7qx4zannLPBTHQESFky2XAuxFeOSr5gy3gkXojG3jvQKNuAbx8sof+5Gm0rgk9pfm/dgCKME3MKHh+9BfwXB+UYJg1ziD92o44iOKTlrraVaOHpojPCwpPYet8LUlowxEGE2+XJQC6Wo3++Jsx2Am4Mq5bWPBi0LmDlJyQtKf2Uw==

@@ -2,18 +2,17 @@
 #
 # ~/dev/py/buildList/blListGen
 
-import base64
-import hashlib
 import os
 import re
 import sys
+
 from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA    # presumably 1
 
 from merkletree import MerkleDoc
 from xlattice.util import getExclusions, makeExRE, timestampNow
-from buildList import BuildList
+from buildList import __file__, BuildList
 
 
 def doit(options):
@@ -24,17 +23,17 @@ def doit(options):
     listFile = options.listFile
     logging = options.logging
     title = options.title
-    uDir = options.uDir      # if None, don't save to uDir
+    uPath = options.uPath      # if None, don't save to uPath
     usingSHA1 = options.usingSHA1
 
     bl = BuildList.listGen(title, dataDir, dvczDir, listFile, keyFile,
-                    excl, logging, uDir, usingSHA1)
+                           excl, logging, uPath, usingSHA1)
 
     print("BuildList written to %s" % os.path.join(dvczDir, listFile))
 
-    # confirm that whatever is in the BuildList is now in uDir
-    if uDir:
-        unmatched = lg.tree.checkInUDir(uDir)
+    # confirm that whatever is in the BuildList is now in uPath
+    if uPath:
+        unmatched = bl.tree.checkInUDir(uPath)
         if unmatched:
             for u in unmatched:
                 print("NOT IN UDIR: ", u)
@@ -52,9 +51,9 @@ def main():
     NOW = timestampNow()
 
     __version__ = re.search("__version__\s*=\s*'(.*)'",
-                            open('buildList/__init__.py').read()).group(1)
+                            open(__file__).read()).group(1)
     __version_date__ = re.search("__version_date__\s*=\s*'(.*)'",
-                                 open('buildList/__init__.py').read()).group(1)
+                                 open(__file__).read()).group(1)
 
     appName = 'blListGen %s' % __version__
     APP_NAME = 'blListGen %s' % __version__
@@ -63,7 +62,7 @@ def main():
 
     # parse the command line ----------------------------------------
 
-    DESC = 'generate build list for directory, optionally populating uDir'
+    DESC = 'generate build list for directory, optionally populating uPath'
     parser = ArgumentParser(description=DESC)
 
     parser.add_argument('-1', '--usingSHA1', action='store_true',
@@ -100,8 +99,8 @@ def main():
     parser.add_argument('-t', '--title',
                         help='title for build list')
 
-    parser.add_argument('-u', '--uDir', type=str,
-                        help='path to uDir (relative to tmp/ if testing)')
+    parser.add_argument('-u', '--uPath', type=str,
+                        help='path to uPath (relative to tmp/ if testing)')
 
     parser.add_argument('-V', '--showVersion', action='store_true',
                         help='display version number and exit')
@@ -167,17 +166,17 @@ def main():
             else:
                 generateRSAKey(args.keyFile, 2048)
 
-    # uDir ------------------------------------------------
+    # uPath ------------------------------------------------
     if args.testing:
-        if args.uDir:
-            if args.uDir[0] == '/':
-                args.uDir = args.uDir[1:]
-            args.uDir = os.path.join('tmp', args.uDir)
-            if os.path.exists(args.uDir):
-                rm_f_dirContents(args.uDir)
+        if args.uPath:
+            if args.uPath[0] == '/':
+                args.uPath = args.uPath[1:]
+            args.uPath = os.path.join('tmp', args.uPath)
+            if os.path.exists(args.uPath):
+                rm_f_dirContents(args.uPath)
 
-    if args.uDir:
-        os.makedirs(args.uDir, 0o755, exist_ok=True)
+    if args.uPath:
+        os.makedirs(args.uPath, 0o755, exist_ok=True)
 
     # title -----------------------------------------------
     if args.dataDir:
@@ -208,7 +207,7 @@ def main():
         print('timestamp    = ' + str(args.now))
         print('testing      = ' + str(args.testing))
         print('title        = ' + str(args.title))
-        print('uDir         = ' + str(args.uDir))
+        print('uPath        = ' + str(args.uPath))
         print('usingSHA1    = ' + str(args.usingSHA1))
         print('verbose      = ' + str(args.verbose))
 

@@ -2,14 +2,15 @@
 #
 # ~/dev/py/buildList/blCheck
 
-import base64
-import hashlib
 import os
+import re
 import sys
+
 from argparse import ArgumentParser
 from nlhtree import NLHTree
 from xlattice.util import getExclusions, makeExRE
-from buildList import *
+
+from buildList import __file__, BuildList
 
 
 def checkBuildList(args):
@@ -83,6 +84,11 @@ def main():
     """
 
     # program defaults ----------------------------------------------
+
+    __version__ = re.search("__version__\s*=\s*'(.*)'",
+                            open(__file__).read()).group(1)
+    __version_date__ = re.search("__version_date__\s*=\s*'(.*)'",
+                                 open(__file__).read()).group(1)
 
     # parse the command line ----------------------------------------
 

@@ -2,11 +2,11 @@
 #
 # ~/dev/py/buildList/blBootstrap
 
-import base64
-import hashlib
 import os
+import re
 import shutil
 import sys
+
 from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
 from nlhtree import NLHLeaf, NLHTree
@@ -14,7 +14,7 @@ from xlattice.lfs import touch
 from xlattice.util import makeExRE
 from rnglib import SimpleRNG
 
-from buildList import *
+from buildList import __file__, BuildList
 
 
 def makedir_p(path, mode):
@@ -87,7 +87,8 @@ def doIt(args):
 
     exRE = makeExRE(['build', ])
     bl = BuildList.createFromFileSystem(title, dataDir, sk,
-                                        usingSHA1=True, exRE, matchRE=None)
+                                        True,               # usingSHA1
+                                        exRE, matchRE=None)
     bl.sign(skPriv)
     blSer = bl.toString()
     with open(listFile, 'w') as f:
@@ -162,6 +163,10 @@ def main():
     example/datadir/ and those under example/uDir/
 
     """
+    __version__ = re.search("__version__\s*=\s*'(.*)'",
+                            open(__file__).read()).group(1)
+    __version_date__ = re.search("__version_date__\s*=\s*'(.*)'",
+                                 open(__file__).read()).group(1)
 
     # parse the command line ----------------------------------------
 
