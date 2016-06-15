@@ -7,34 +7,34 @@ zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
 H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
 GQIDAQAB
 -----END RSA PUBLIC KEY-----
-buildList v0.4.24
-2016-05-25 20:04:30
+buildList v0.4.26
+2016-06-15 00:32:54
 # START CONTENT #
 buildList
  .copyright 803f3e50518123ef8a08d34f2238e89b62d0c9a2
  .dvcz
-  builds 22edb55f179db1173448c698d363a4b3d165e579
-  lastBuildList 72c6b20233914284ed1e35087d191437e49f4d29
-  projCfg cd501e15810e86044b7418a9b5afe9e03bdd55d5
-  projCfg.local 659960cd22d114f726ac1c90453d16207405e9d9
-  version 270f8ab57ee19279bf275c988488ae1fa27687db
- .gitignore 274228c81d7b75ce1888567cdfb763aacfcd74db
- CHANGES ac03cc8841c1ec2d35d9089aa62cb0d624c159ed
+  builds a3904681313056a07e73a2561df5c5634c8009c4
+  lastBuildList 2026ccd5c10112e509108606f7770a4cd3f61a6c
+  projCfg 126d6ed835d0af4a520704965c97bf7e7e4e24c6
+  projCfg.local 92bcb76dbb01e44ba21a91e49c94be17fe76cb4a
+  version 388c3598d94862e56026958f67aaab24aba012af
+ .gitignore 5f1a04317952b671c5828218c6efe88c2594f8fb
+ CHANGES 8fe99a0db5441fffbac18d1939907aafd070368c
  LICENSE.md d1cecfadc47b23486f6bc8a863cfdde348c3eb46
  MANIFEST.in 0faaebb5df7d0d418f90e80a771e2a1c57f371a5
  README.md a977f33155033c4e92694af8484bfa52a2732e7f
- TODO 2628a80d648b0cfda96b467f57161826cb8a69d9
- bkp2U 6a1a5dbb3ae8be789760ebb2cf13dece8216795a
+ TODO cf70ff0b4f9e381e17c5185ac675d358caa4f20a
+ bkp2U 88a8cc0ed6ccd76467106a64d294535aacfe33ed
  blBootstrap a1282494be51c7c0834e56048733d00d769bd3b1
  blCheck 30081de92b303a811ba441246a0033cbfab8a5b2
- blListGen d6598054f6cb2296a41b9d8d4ce0b92390451ad0
+ blListGen 9f456e2cc531b6803e4a245193b99306cda0e6e7
  blSrcGen 195c159706a5f8ceabffc2b2909aac605c919f41
  buildList
-  __init__.py ec6edeede08b19841af84ca097851560c58b3fb2
+  __init__.py 4d4ca1fdaf6aa217edc2ced4b842a85ea0c0fcfd
  checkBlSrcGen ddfbda1aa91cd552beb99aa9305631cc041891bc
  checkExample f13d8d6928bce388dcb781ef249c828b036d7650
  checkExample2 e82aa5dcf4a5677ae0973533066bf13855f4a9c5
- countem d06d9941f16240a7e1949ecde487b5302469a460
+ countem 302167f865f149d01f61355adfc773a3516fb952
  dist
   buildList-0.1.0.tar.gz aae011231fa591fd83dca1bf9d289c14e5cc2ed3
   buildList-0.1.3.tar.gz 58297b3cc0aa7cfddee9d9a3a8c9ec6e7d6d21e6
@@ -75,6 +75,8 @@ buildList
   buildList-0.4.22.tar.gz b4ff6e0494f7f70fe17a3d3543ff2689b7599270
   buildList-0.4.23.tar.gz ce9a04e6cd07ad5f87b0c254b6285e5e99de7186
   buildList-0.4.24.tar.gz a2bb79eac45eeb8c3b727f50db4749c4a945bb29
+  buildList-0.4.25.tar.gz 4dc2505e443b615bb72cd796fe5ab6613a7d0c8a
+  buildList-0.4.26.tar.gz 6c503eabbe28b54a77f4f2f190f043a628653558
   buildList-0.4.3.tar.gz d0f7d62d7c804e8acfc028a93367c9750eb1cf49
   buildList-0.4.5.tar.gz 0a6cba16bf57a5d0bc8e34727f2a69d73bde3b48
   buildList-0.4.6.tar.gz bc8eeac969b5ffd434b5f5d7b7fa41b9c32e5abb
@@ -126,10 +128,10 @@ buildList
  sampleRun aad7774c254290e4179bfbe0f4d93bdb6b92ea25
  setup.py b987d5f073a7d2656d03106a43fb796327d2e47b
  styleit 75766ee1977d9e38cfa91d4e4aa193e56fdd8c8d
- test.all 3c15b130c9cb43128341a44a3de22b9f6056f516
+ test.all d1e0b8ac48419f780868f32d5d09cb64b913fd37
  testBuildList.py 657a56cf926d9ba022924fe48bfcdb3a1ce745be
- testRandomDir.py 1011b68becfab8638f850c69eaa83444644fe32c
- testTimestamp.py 6d08c2496861020e6edb42e4bfa1205f563b876b
+ testRandomDir.py ee9c82cce81a5740443767a2d95a13538c9b2991
+ testTimestamp.py 46e3c0eaad5853d3075e7e1a9902624c9a8da80e
 # END CONTENT #
 
-eqGO/z3gMKhxkGyJA+240HxPwa1opOUyyrtVDkurROXzQ/yDbZc7qLMh1jvWnWlc/+Ps0HYFYzz3rxjGYTZBmdV1+SZ8YI1qWEyDadLdoHzRfECyB1UKC+tqxXuvyepvlkgea833p2RdOnlcsQfPR0VBoAfnoxxdAIeRvv3KD+vU/SBFMnWsVi8krL3Gd6wZKEVOJubzlvTXxGLsjOPrP75/mcFYJevg3iNjV3LcLiLcpqfdl85V/7W/jQcZArzBNYvfNGghmvJGMlaeOzBq/dkDAtsykhyFTq8aleUjKmnGh9sp5MopikILw9HVvN2xdZ+47SDgow/GNSbhfJ1l+Q==
+L4+rcCKwirzx0MMyTqiQUQwp0LMWa7qlcI2ixFhFbmwOA+zmx5I6tIZSN0l32n33AdHSsnby8/2k2kIR77YtktVt8nwHr8MB8XUgvUMPwUmlDGYX3B6ubHDnRr6NCcI+VyyhMrX2m5gixov3HpAxSWGC8mFi9/0Z/UL34EUo5U8n76Ox6XaY8UBbnDNre7ic4Re8T4PPZgV6hF3gQte/+0/uW799Og7Xa12p8BdXd1L+OW1tuX7xsXprZEsSO9wuzVdwhNZH6XQKA8cDpv/UlrZw2/HMOmHPSwt3gkdRX2KxJvImF9D4iQu6HCrFiYCJrUIwBTxqyBkAE3Sp0wd3Ng==

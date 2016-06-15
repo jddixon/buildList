@@ -13,7 +13,7 @@ from Crypto.Hash import SHA    # presumably 1
 
 from merkletree import MerkleDoc
 from xlattice.util import getExclusions, makeExRE, timestampNow
-from buildList import *
+from buildList import BuildList
 
 
 def doit(options):
@@ -28,13 +28,13 @@ def doit(options):
     usingSHA1 = options.usingSHA1
 
     bl = BuildList.listGen(title, dataDir, dvczDir, listFile, keyFile,
-                           excl, logging, uDir, usingSHA1)
+                    excl, logging, uDir, usingSHA1)
 
     print("BuildList written to %s" % os.path.join(dvczDir, listFile))
 
     # confirm that whatever is in the BuildList is now in uDir
     if uDir:
-        unmatched = bl.tree.checkInUDir(uDir)
+        unmatched = lg.tree.checkInUDir(uDir)
         if unmatched:
             for u in unmatched:
                 print("NOT IN UDIR: ", u)
@@ -49,9 +49,17 @@ def main():
 
     # program defaults ----------------------------------------------
 
-    now = timestampNow()
+    NOW = timestampNow()
+
+    __version__ = re.search("__version__\s*=\s*'(.*)'",
+                            open('buildList/__init__.py').read()).group(1)
+    __version_date__ = re.search("__version_date__\s*=\s*'(.*)'",
+                                 open('buildList/__init__.py').read()).group(1)
+
     appName = 'blListGen %s' % __version__
-    keyPath = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
+    APP_NAME = 'blListGen %s' % __version__
+    KEY_PATH = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
+    UDIR = os.environ['DVCZ_UDIR']
 
     # parse the command line ----------------------------------------
 
@@ -76,7 +84,7 @@ def main():
     parser.add_argument('-j', '--justShow', action='store_true',
                         help='show options and exit')
 
-    parser.add_argument('-k', '--keyFile', default=keyPath,
+    parser.add_argument('-k', '--keyFile', default=KEY_PATH,
                         help='path to RSA private key for signing')
 
     parser.add_argument('-L', '--logging', action='store_true',
@@ -107,7 +115,7 @@ def main():
     args = parser.parse_args()
 
     if args.showVersion:
-        print(appName)
+        print(APP_NAME)
         sys.exit(0)
 
     # fixups --------------------------------------------------------
@@ -124,7 +132,7 @@ def main():
     if args.exclusions:
         args.excl.extend(args.exclusions)
 
-    args.now = now
+    args.now = NOW
 
     if args.testing:
         args.dvczDir = os.path.join('tmp/dvcz')
@@ -185,7 +193,7 @@ def main():
 
     # maybe show options and such -----------------------------------
     if args.verbose or args.justShow:
-        print("%s %s" % (appName, __version_date__))
+        print("%s %s" % (APP_NAME, __version_date__))
 
     if args.verbose or args.justShow:
         print('dataDir      = ' + str(args.dataDir))

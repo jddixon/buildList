@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.4.26
+    2016-06-14
+        * minor changes to command line handling                    SLOC 1504
 v0.4.25
     2016-05-31
         * correct two typos                                         SLOC 1462
@@ -164,6 +167,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

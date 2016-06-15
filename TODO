@@ -1,5 +1,8 @@
 ~/dev/py/buildList/TODO
 
+2016-06-03
+    * modify to use xlattice.u.UDir
+s
 2016-05-25
     * need -X/--exclusions option                                       * DONE
     * checkExample should be in test.all
