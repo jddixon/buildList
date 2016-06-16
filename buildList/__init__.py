@@ -37,8 +37,8 @@ __all__ = ['__version__', '__version_date__',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.4.27'
-__version_date__ = '2016-06-15'
+__version__ = '0.4.28'
+__version_date__ = '2016-06-16'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
@@ -554,18 +554,6 @@ class BuildList(object):
         sha.update(newData)
         newHash = sha.hexdigest()
         pathToListing = os.path.join(dvczDir, listFile)
-
-#       # WHOLLY REDUNDANT ================================
-#       # get the SHA1 or SHA256 hash of the last BuildList
-#       with open(pathToListing, 'rb') as f:
-#           data = f.read()
-#       if usingSHA1:
-#           sha = hashlib.sha1()
-#       else:
-#           sha = hashlib.sha256()
-#       sha.update(data)
-#       oldHash = sha.hexdigest()
-#       # END REDUNDANT BLOCK =============================
 
         if uPath:
 
