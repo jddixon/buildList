@@ -1,5 +1,9 @@
 ~/dev/py/buildList/CHANGES
 
+v0.4.28
+    2016-06-16
+        * generated new example/ directory/
+        * make blBootstrap require explicit manual confirmation     SLOC 1535
 v0.4.27
     2016-06-15
         * bkp2U bugs corrected
@@ -171,6 +175,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

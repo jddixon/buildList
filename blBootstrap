@@ -35,10 +35,17 @@ def doIt(args):
     nodeDir = args.nodeDir
     testing = args.testing
     title = args.title
-    uDir = args.uDir
+    uPath = args.uPath
     verbose = args.verbose
 
-    uTmp = os.path.join(uDir, 'tmp')
+    print("This will destroy %s" % exDir)
+    ok = input("OK to proceed? (Y/n)")
+    if ok:
+        ok = ok.capitalize()
+        if not ok.startswith('Y'):
+            sys.exit(0)
+
+    uTmp = os.path.join(uPath, 'tmp')
 
     if os.path.exists(exDir):
         print("deleting existing directory %s" % exDir)
@@ -51,7 +58,7 @@ def doIt(args):
     subDir41 = os.path.join(subDir4, 'subDir41')
     subDir411 = os.path.join(subDir41, 'subDir411')
 
-    for d in [dataDir, nodeDir, uDir, uTmp]:
+    for d in [dataDir, nodeDir, uPath, uTmp]:
         makedir_p(d, 0o755)
     for d in [subDir1, subDir2, subDir3, subDir4]:
         makedir_p(d, 0o755)
@@ -96,10 +103,10 @@ def doIt(args):
 
     # XXX WORKING HERE
 
-    # XXX need checks on uDir
+    # XXX need checks on uPath
 
-    bl.tree.saveToUDir(dataDir, uDir)
-    unmatched = bl.checkInUDir(dataDir, uDir)    # all leaf nodes present ?
+    bl.tree.saveToUDir(dataDir, uPath)
+    unmatched = bl.tree.checkInUDir(uPath)    # all leaf nodes present ?
     if unmatched:
         print("check walk on example/ failed")
         for u in unmatched:
@@ -221,7 +228,7 @@ def main():
     args.listFile = os.path.join(args.exDir, 'example.bld')
     args.nodeDir = os.path.join(args.exDir, 'node')
     args.title = 'sample build list'
-    args.uDir = os.path.join(args.exDir, 'uDir')
+    args.uPath = os.path.join(args.exDir, 'uDir')
 
     # complete setup ------------------------------------------------
     appName = 'blBootstrap %s' % __version__
@@ -238,7 +245,7 @@ def main():
         print('nodeDir      = ' + str(args.nodeDir))
         print('testing      = ' + str(args.testing))
         print('title        = ' + str(args.title))
-        print('uDir         = ' + str(args.uDir))
+        print('uPath        = ' + str(args.uPath))
         print('verbose      = ' + str(args.verbose))
 
     if args.justShow:
