@@ -77,7 +77,7 @@ def main():
     parser.add_argument('-d', '--dataDir', default='.',
                         help='data directory for build list (default=./)')
 
-    parser.add_argument('-i', '--ignoreFile', default='.gitignore',
+    parser.add_argument('-i', '--ignoreFile', default='.dvczignore',
                         help='file containing wildcards (globs) for files to ignore')
 
     parser.add_argument('-j', '--justShow', action='store_true',
