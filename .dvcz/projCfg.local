@@ -4,22 +4,10 @@ dir:pkg:buildList
 dir:clr:tmp
 dir:local:example
 
-# standardard config files and bash scripts
-code:std:.dvcz/projCfg
-code:std:.dvcz/projCfg.local
-code:std:.gitignore
-code:std:MANIFEST.in
- 
-bash:std:bkp2U
-bash:std:countem
-bash:std:installit
-bash:std:styleit
-bash:std:test.all
-
-# other scripts -
 ##################################################################
 # probably all 'check' scripts belong in test.all
 ##################################################################
+
 bash:local:checkBlSrcGen
 bash:local:checkExample
 bash:local:checkExample2

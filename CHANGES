@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.4.29
+    2016-06-19
+        * default ignore file is .dvczignore; add css/ and img/     SLOC 1946
 v0.4.28
     2016-06-16
         * generated new example/ directory/
@@ -175,6 +178,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

@@ -37,8 +37,8 @@ __all__ = ['__version__', '__version_date__',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.4.28'
-__version_date__ = '2016-06-16'
+__version__ = '0.4.29'
+__version_date__ = '2016-06-19'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
