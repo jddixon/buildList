@@ -2,10 +2,7 @@
 #
 # ~/dev/py/buildList/blBootstrap
 
-import os
-import re
-import shutil
-import sys
+import os, re, shutil, sys
 
 from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
@@ -17,33 +14,32 @@ from rnglib import SimpleRNG
 from buildList import __file__, BuildList
 
 
-def makedir_p(path, mode):
-    try:
-        os.makedirs(path, mode)
-    except OSError as e:
-        if e.errno == errno.EEXIST and os.path.isdir(path):
-            pass
-        else:
-            raise
-
-
 def doIt(args):
-    dataDir = args.dataDir
     exDir = args.exDir
-    force = args.force
-    listFile = args.listFile
-    nodeDir = args.nodeDir
-    testing = args.testing
-    title = args.title
-    uPath = args.uPath
-    verbose = args.verbose
-
-    print("This will destroy %s" % exDir)
+    print("This will destroy %s1 and %s2" % (exDir, exDir))
     ok = input("OK to proceed? (Y/n)")
     if ok:
         ok = ok.capitalize()
         if not ok.startswith('Y'):
             sys.exit(0)
+
+    reallyDoIt(args, True)     # use SHA1
+    reallyDoIt(args, False)    # use SHA256
+
+def reallyDoIt(args, usingSHA1):
+    exDir = args.exDir
+    if usingSHA1:
+        exDir += '1'
+    else:
+        exDir += '2'
+    force = args.force
+    verbose = args.verbose
+
+    dataDir = os.path.join(exDir, 'dataDir')
+    listFile = os.path.join(exDir, 'example.bld')
+    nodeDir = os.path.join(exDir, 'node')
+    title = 'sample build list'
+    uPath = os.path.join(exDir, 'uDir')
 
     uTmp = os.path.join(uPath, 'tmp')
 
@@ -59,11 +55,11 @@ def doIt(args):
     subDir411 = os.path.join(subDir41, 'subDir411')
 
     for d in [dataDir, nodeDir, uPath, uTmp]:
-        makedir_p(d, 0o755)
+        os.makedirs(d, mode=0o755)
     for d in [subDir1, subDir2, subDir3, subDir4]:
-        makedir_p(d, 0o755)
-    makedir_p(subDir41, 0o755)
-    makedir_p(subDir411, 0o755)
+        os.makedirs(d, mode=0o755)
+    os.makedirs(subDir41,  mode=0o755)
+    os.makedirs(subDir411, mode=0o755)
 
     # files to be populaed with random data
     rng = SimpleRNG()
@@ -93,8 +89,7 @@ def doIt(args):
     sk = skPriv.publickey()
 
     exRE = makeExRE(['build', ])
-    bl = BuildList.createFromFileSystem(title, dataDir, sk,
-                                        True,               # usingSHA1
+    bl = BuildList.createFromFileSystem(title, dataDir, sk, usingSHA1,
                                         exRE, matchRE=None)
     bl.sign(skPriv)
     blSer = bl.toString()
@@ -105,7 +100,7 @@ def doIt(args):
 
     # XXX need checks on uPath
 
-    bl.tree.saveToUDir(dataDir, uPath)
+    bl.tree.saveToUDir(dataDir, uPath, usingSHA1=usingSHA1)
     unmatched = bl.tree.checkInUDir(uPath)    # all leaf nodes present ?
     if unmatched:
         print("check walk on example/ failed")
@@ -118,9 +113,9 @@ def main():
     Expect a command like
         blBootstrap [options]
 
-    This program creates a directory tree like
+    This program creates two directory tree like
 
-        example/
+        exampleN/               # where N is 1 or 2
             node                # was .xlattice
                 skPriv          # PEM serialization
             dataDir/
@@ -143,10 +138,13 @@ def main():
                 ff
                 tmp/
 
+    The example1 directory uses SHA1; the example2 directory uses
+    SHA256.
+
     skPriv is the RSA private key used to sign the example.bld
     build list.
 
-    The information under example/dataDir is a small directory tree.
+    The information under exampleN/dataDir is a small directory tree.
     The data* are data files containing quasi-random data.  Both the
     file length and the contents are random.  data12 is an empty file.
     Subdirectory subDir2 is an empty subdirectory.
@@ -165,9 +163,9 @@ def main():
     instead of being organized by name it is organized by content
     key, by the SHA1 hash of the file.
 
-    The data under example/ is sufficient to verify the correctness of
+    The data under exampleN/ is sufficient to verify the correctness of
     the build list and the 1-to-1 relationship between the files under
-    example/datadir/ and those under example/uDir/
+    exampleN/datadir/ and those under exampleN/uDir/
 
     """
     __version__ = re.search("__version__\s*=\s*'(.*)'",
@@ -190,19 +188,10 @@ def main():
     parser.add_argument('-j', '--justShow', action='store_true',
                         help='show options and exit')
 
-    parser.add_argument('-T', '--testing', action='store_true',
-                        help='this is a test run')
-
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='be chatty')
 
     args = parser.parse_args()
-
-    # fixups --------------------------------------------------------
-    if args.testing and args.exDir:
-        if args.exDir[0] == '/':
-            args.exDir = args.exDir[1:]
-        args.exDir = os.path.join('tmp', args.exDir)
 
     # sanity chesks -------------------------------------------------
     if args.exDir[0] == '/':
@@ -222,13 +211,6 @@ def main():
         sys.exit(1)
 
     # fixups --------------------------------------------------------
-    if args.testing:
-        args.exDir = os.path.join('test', args.exDir)
-    args.dataDir = os.path.join(args.exDir, 'dataDir')
-    args.listFile = os.path.join(args.exDir, 'example.bld')
-    args.nodeDir = os.path.join(args.exDir, 'node')
-    args.title = 'sample build list'
-    args.uPath = os.path.join(args.exDir, 'uDir')
 
     # complete setup ------------------------------------------------
     appName = 'blBootstrap %s' % __version__
@@ -238,14 +220,8 @@ def main():
         print("%s %s" % (appName, __version_date__))
 
     if args.verbose or args.justShow:
-        print('dataDir      = ' + str(args.dataDir))
         print('exDir        = ' + str(args.exDir))
         print('force        = ' + str(args.force))
-        print('listFile     = ' + str(args.listFile))
-        print('nodeDir      = ' + str(args.nodeDir))
-        print('testing      = ' + str(args.testing))
-        print('title        = ' + str(args.title))
-        print('uPath        = ' + str(args.uPath))
         print('verbose      = ' + str(args.verbose))
 
     if args.justShow:

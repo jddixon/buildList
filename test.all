@@ -5,6 +5,7 @@ then
   cd $DEV_BASE/py/buildList
   
   ./testBuildList.py
+  ./testPopulateDataDir.py
   ./testRandomDir.py
   ./testTimestamp.py
   
