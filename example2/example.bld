@@ -1,0 +1,25 @@
+-----BEGIN RSA PUBLIC KEY-----
+MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDP1c2E2tFjPsO3iarVxEBN5Uv4
+vyEWuubhZf+KdK8RbD/tPnz55uNJe/moxy5ttrkxLHEmT4dWk/tUeTybVqtpoRHg
+7qujsvQtse/mDb0MJ2V1nC9g8eWu2oxfrbmrWichkxobTMn19BnmlY4WtDbmMpcV
+ydoHVfEISxmxW9coBQIDAQAB
+-----END RSA PUBLIC KEY-----
+sample build list
+2016-06-22 22:23:58
+# START CONTENT #
+dataDir
+ data1 93c4feb737c20fa6428f130cf531997c8680f0cf6487d84b2fbafd4bac1f1b69
+ data2 c8eda98bb28d17b280e1c5209668ec70788855e2ff2711e16adc087e9bd7f7c1
+ subDir1
+  data11 2b0fef7f8a1820fbaf01e5649d153a3f01877ca5ade6f8b548da94eac693934f
+  data12 e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+ subDir2
+ subDir3
+  data31 a5a2cc9b232d0b0efecbdf7801172da7cd2bc1df301076297e5cb45032ecadde
+ subDir4
+  subDir41
+   subDir411
+    data31 6be91186acce7baa87df8f7cc3a57f716fe9864ec928cf0eb27f53c9d427bed6
+# END CONTENT #
+
+R0FKq+L2syqTA8oMX3baEyw5MD2+znH8pi/R8CgIel3/hMz+9qbG9+Fn7jKJfw3K32nYn5qqScIxdNN51cgno77mmqbv9HmPf7oAekcVTnLRexIjKf/ifON5rghqWwzZW36iHUB6p/uKDJ3MWqfxvOECBzQVvkk19kxjE2v9l1M=

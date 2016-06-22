@@ -1,5 +1,9 @@
 ~/dev/py/buildList/TODO
 
+2016-06-21
+    * implement BuildList.populateDataDir(uDir, pathToDataDir)
+    * write tests
+
 2016-06-15
     * the code specific to blBootstrap should be in __init__.py         * SKIP
         - preferably with code requiring manual confirmation            * DONE

@@ -37,8 +37,8 @@ __all__ = ['__version__', '__version_date__',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.4.29'
-__version_date__ = '2016-06-19'
+__version__      = '0.4.30'
+__version_date__ = '2016-06-22'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
@@ -154,17 +154,17 @@ def expectStr(f, str):
     # END
 
 
-def acceptContentLine(f, digest, str, rootDir, uDir):
+def acceptContentLine(f, digest, str, rootPath, uPath):
     """
     Accept either a content line or a delimiter (str).  Anything else
     raises an exception.  Returns True if content line matched, False
     if delimiter detected; otherwise raises a BLParseFailed.
 
-    NOT IMPLEMENTED: If rootDir is not None, compares the content hash
+    NOT IMPLEMENTED: If rootPath is not None, compares the content hash
     with that of the file at the relative path.
 
-    NOT IMPLEMENTED: If uDir is not None, verifies that the content key
-    matches that of a file present in uDir.
+    NOT IMPLEMENTED: If uPath is not None, verifies that the content key
+    matches that of a file present in uPath.
     """
     line = acceptListLine(f)        # may raise BLParseFailed
     if line == str:
@@ -185,8 +185,8 @@ def acceptContentLine(f, digest, str, rootDir, uDir):
     b64Hash = parts[0]
     path = parts[1]
 
-    # XXX NO CHECK AGAINST rootDir
-    # XXX NO CHECK AGAINST uDir
+    # XXX NO CHECK AGAINST rootPath
+    # XXX NO CHECK AGAINST uPath
 
     return True
 
@@ -584,3 +584,40 @@ class BuildList(object):
                 f.write("%s v%s %s\n" % (bl.timestamp, version, newHash))
 
         return bl
+
+    def populateDataDir(self, uPath, dataPath):
+        # uPath path to U, including directory name
+        # dataPath, path to dataDir, including directory name (which
+        #   must be the same as the name of the tree)
+
+        if not os.path.exists(uPath):
+            raise RuntimeError("uPath %s does not exist" % uPath)
+
+        relPath, junk, name = dataPath.rpartition('/')
+        if name != self.tree.name:
+            raise RuntimeError(
+                "name mismatch: tree name %s but dataDir name %s" % (
+                        self.tree.name, name))
+
+        os.makedirs(relPath, exist_ok=True, mode=0o755)
+        self.tree.populateDataDir(uPath, relPath)
+
+    # OTHER METHODS =================================================
+
+    def checkInDataDir(self, dataPath):
+        """ 
+        Whether the BuildList's component files are present in the
+        data directory named.  Returns a list of content hashes for
+        files not found.
+        """
+        return self.tree.checkInDataDir(dataPath)
+
+    def checkInUDir(self, uPath):
+        """ 
+        Whether the BuildList's component files are present in the
+        U directory named.  Returns a list of content hashes for
+        files not found.
+        """
+        return self.tree.checkInUDir(uPath)
+
+

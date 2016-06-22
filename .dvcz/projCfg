@@ -2,16 +2,16 @@
 project:buildList
 package:buildList
 mainlang:py
-version:0.4.28
-versionDate:2016-06-16
+version:0.4.29
+versionDate:2016-06-19
 :?dirs?:
 dir:std:ghpDoc
 dir:std:dist
 dir:std:.dvcz
 dir:pkg:buildList
 dir:local:example
-dir:local:css
-dir:local:img
+dir:local:example1
+dir:local:example2
 dir:clr:build
 dir:clr:tmp
 :?files?:
@@ -49,5 +49,6 @@ py:global:blCheck
 py:global:blListGen
 py:global:blSrcGen
 py:test:testBuildList.py
+py:test:testPopulateDataDir.py
 py:test:testRandomDir.py
 py:test:testTimestamp.py
