@@ -15,7 +15,7 @@ from nlhtree import NLHNode, NLHTree, NLHLeaf
 
 from xlattice.crypto import collectPEMRSAPublicKey
 from xlattice.lfs import touch
-from xlattice.u import UDir
+from xlattice.u import UDir, dirStrucToName
 from xlattice.util import makeExRE, parseTimestamp, timestamp, timestampNow
 
 __all__ = ['__version__', '__version_date__',
@@ -37,8 +37,8 @@ __all__ = ['__version__', '__version_date__',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__      = '0.4.30'
-__version_date__ = '2016-06-22'
+__version__ = '0.4.31'
+__version_date__ = '2016-07-18'
 
 BLOCK_SIZE = 2**18         # 256KB, for no particular reason
 CONTENT_END = '# END CONTENT #'
@@ -563,7 +563,13 @@ class BuildList(object):
             # DEBUG
             print("writing BuildList with hash %s into %s" % (newHash, uPath))
             # END
-            uDir = UDir(uPath)
+            uDir = UDir.discover(uPath)
+            # DEBUG
+            print("listGen:")
+            print("  uDir:      %s" % uPath)
+            print("  dirStruc:  %s" % dirStrucToName(uDir.dirStruc))
+            print("  usingSHA1: %s" % uDir.usingSHA1)
+            # END
             (length, hashBack) = uDir.putData(newData, newHash)
             if hashBack != newHash:
                 print("WARNING: wrote %s to %s, but actual hash is %s" % (
@@ -597,7 +603,7 @@ class BuildList(object):
         if name != self.tree.name:
             raise RuntimeError(
                 "name mismatch: tree name %s but dataDir name %s" % (
-                        self.tree.name, name))
+                    self.tree.name, name))
 
         os.makedirs(relPath, exist_ok=True, mode=0o755)
         self.tree.populateDataDir(uPath, relPath)
@@ -605,7 +611,7 @@ class BuildList(object):
     # OTHER METHODS =================================================
 
     def checkInDataDir(self, dataPath):
-        """ 
+        """
         Whether the BuildList's component files are present in the
         data directory named.  Returns a list of content hashes for
         files not found.
@@ -613,11 +619,9 @@ class BuildList(object):
         return self.tree.checkInDataDir(dataPath)
 
     def checkInUDir(self, uPath):
-        """ 
+        """
         Whether the BuildList's component files are present in the
         U directory named.  Returns a list of content hashes for
         files not found.
         """
         return self.tree.checkInUDir(uPath)
-
-

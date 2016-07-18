@@ -10,9 +10,9 @@ from Crypto.PublicKey import RSA
 
 from argparse import ArgumentParser
 
-from rnglib         import SimpleRNG
-from xlattice.u     import UDir
-from xlattice.util  import timestamp
+from rnglib import SimpleRNG
+from xlattice.u import UDir
+from xlattice.util import timestamp
 from buildList import *
 
 
@@ -47,10 +47,10 @@ class TestPopulateDataDir (unittest.TestCase):
 
         if usingSHA1:
             originalData = os.path.join('example1', 'dataDir')
-            originalU    = os.path.join('example1', 'uDir')
+            originalU = os.path.join('example1', 'uDir')
         else:
             originalData = os.path.join('example2', 'dataDir')
-            originalU    = os.path.join('example2', 'uDir')
+            originalU = os.path.join('example2', 'uDir')
 
         bl = BuildList.createFromFileSystem(
             'name_of_the_list', originalData, sk, usingSHA1)
@@ -64,7 +64,7 @@ class TestPopulateDataDir (unittest.TestCase):
             for un in unmatched:
                 print("    %s %s" % (un[1], un[0]))
         # END
-        self.assertEqual(len(unmatched),0)
+        self.assertEqual(len(unmatched), 0)
 
         # should return an empty list: a basic sanity check
         unmatched = bl.checkInUDir(originalU)
@@ -75,7 +75,7 @@ class TestPopulateDataDir (unittest.TestCase):
             for un in unmatched:
                 print("    %s %s" % (un[1], un[0]))
         # END
-        self.assertEqual(len(unmatched),0)
+        self.assertEqual(len(unmatched), 0)
 
         self.assertEqual(bl.title, 'name_of_the_list')
         self.assertEqual(bl.publicKey, sk)
@@ -91,7 +91,7 @@ class TestPopulateDataDir (unittest.TestCase):
         self.assertTrue(bl.verify())    # it has been signed
 
         self.assertEqual(bl, bl)
-        
+
         # BL2: we build testDir and the new dataDir and uDir --------
 
         s = bl.toString()
@@ -103,8 +103,8 @@ class TestPopulateDataDir (unittest.TestCase):
 
         # create empty test directories -------------------
         testPath = self.makeUnique('tmp')
-        uPath    = os.path.join(testPath, 'uDir')
-        uDir     = UDir.discover(uPath, usingSHA1=usingSHA1)# creates empty UDir
+        uPath = os.path.join(testPath, 'uDir')
+        uDir = UDir.discover(uPath, usingSHA1=usingSHA1)  # creates empty UDir
         dvczPath = os.path.join(testPath, 'dvcz')
         os.mkdir(dvczPath)
 
@@ -122,19 +122,19 @@ class TestPopulateDataDir (unittest.TestCase):
 
         bl2.tree.saveToUDir(dataPath, uPath, usingSHA1)
         self.assertEqual(len(bl2.checkInUDir(uPath)), 0)
-       
-        # BL3: 
+
+        # BL3:
 
         # this writes the buildList to dvczPath/lastBuildList:
-        bl3 = BuildList.listGen("title", dataPath, dvczPath, 
-                uPath=uPath, usingSHA1=usingSHA1) 
+        bl3 = BuildList.listGen("title", dataPath, dvczPath,
+                                uPath=uPath, usingSHA1=usingSHA1)
         pathToList = os.path.join(dvczPath, 'lastBuildList')
         with open(pathToList, 'r') as f:
             s4 = f.read()
         bl4 = BuildList.parse(s4, usingSHA1)
         s41 = bl4.toString()
         self.assertEqual(s41, s4)
-      
+
         # DEBUG
         print('BL  TREE:\n%s' % bl.tree)
         print('BL2 TREE:\n%s' % bl2.tree)
@@ -143,7 +143,7 @@ class TestPopulateDataDir (unittest.TestCase):
         # END
 
         self.assertEqual(bl4.tree, bl.tree)
-                
+
     def testPopulateDataDir(self):
         self.doPopTest('SHA1 test', True)
         self.doPopTest('SHA2 test', False)

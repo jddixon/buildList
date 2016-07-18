@@ -2,7 +2,10 @@
 #
 # ~/dev/py/buildList/blBootstrap
 
-import os, re, shutil, sys
+import os
+import re
+import shutil
+import sys
 
 from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
@@ -25,6 +28,7 @@ def doIt(args):
 
     reallyDoIt(args, True)     # use SHA1
     reallyDoIt(args, False)    # use SHA256
+
 
 def reallyDoIt(args, usingSHA1):
     exDir = args.exDir
@@ -58,7 +62,7 @@ def reallyDoIt(args, usingSHA1):
         os.makedirs(d, mode=0o755)
     for d in [subDir1, subDir2, subDir3, subDir4]:
         os.makedirs(d, mode=0o755)
-    os.makedirs(subDir41,  mode=0o755)
+    os.makedirs(subDir41, mode=0o755)
     os.makedirs(subDir411, mode=0o755)
 
     # files to be populaed with random data
