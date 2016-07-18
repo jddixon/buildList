@@ -10,6 +10,7 @@ from argparse import ArgumentParser
 from shutil import rmtree
 from buildList import __file__, BuildList
 
+
 def makeDataDir(options):
 
     dataPath = options.dataPath
@@ -32,6 +33,7 @@ def makeDataDir(options):
 
     bl.populateDataDir(uPath, path)
 
+
 def main():
     """
     Expect a command like
@@ -48,7 +50,7 @@ def main():
 
     APP_NAME = 'blSrcGen %s' % __version__
     KEY_PATH = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
-    U_PATH   = os.environ['DVCZ_UDIR']
+    U_PATH = os.environ['DVCZ_UDIR']
 
     # parse the command line ----------------------------------------
 

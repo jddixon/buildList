@@ -2,7 +2,10 @@
 
 # testBuildList.py
 
-import os, sys, time, unittest
+import os
+import sys
+import time
+import unittest
 from Crypto.PublicKey import RSA
 
 from argparse import ArgumentParser
@@ -93,7 +96,7 @@ class TestBuildList (unittest.TestCase):
         self.assertEqual(bl, bl2)
 
     def testBuildList(self):
-#       self.doTestBadParts()
+        #       self.doTestBadParts()
         self.doBuildTest('SHA1 test', True)
         self.doBuildTest('SHA2 test', False)
 

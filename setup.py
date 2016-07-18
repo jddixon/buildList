@@ -17,5 +17,9 @@ setup(name='buildList',
       packages=['buildList'],
       # following could be in scripts/ subdir
       scripts=['blCheck', 'blListGen', 'blSrcGen', ],
-      # MISSING url
+      # MISSING description
+      classifiers=[
+          'License :: OSI Approved :: MIT License',
+          'Programming Language :: Python :: 3',
+      ],
       )
