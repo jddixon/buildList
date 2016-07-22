@@ -6,10 +6,10 @@ import hashlib
 import os
 import time
 import unittest
-from xlattice import u
 
+from buildList import BuildList
 from rnglib import SimpleRNG
-from buildList import *
+from xlattice import u
 
 
 class TestRandomDir (unittest.TestCase):
@@ -31,7 +31,8 @@ class TestRandomDir (unittest.TestCase):
 
         blkCount = 1 + self.rng.nextInt16(3)     # so 1 to 3
         # last block will usually be only partically populated
-        maxLen = BLOCK_SIZE * (blkCount - 1) + self.rng.nextInt16(BLOCK_SIZE)
+        maxLen = BuildList.BLOCK_SIZE * (blkCount - 1) + \
+            self.rng.nextInt16(BuildList.BLOCK_SIZE)
         minLen = 1
 
         # we want the directory name to be unique
