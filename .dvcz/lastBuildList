@@ -7,19 +7,19 @@ zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
 H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
 GQIDAQAB
 -----END RSA PUBLIC KEY-----
-buildList v0.4.31
-2016-07-18 23:34:29
+buildList v0.5.0
+2016-07-22 21:39:08
 # START CONTENT #
 buildList
  .copyright 803f3e50518123ef8a08d34f2238e89b62d0c9a2
  .dvcz
-  builds b55c25ff2ee27cc9c18d99bc2dfb1df59cf08ee3
-  lastBuildList 26a6081ea499c7042f7df743ee90422cc812cd63
+  builds d770bffee43f9391c40175043b38346e22066905
+  lastBuildList ca2a5f7cef53bdd1d8534c7096c1b159e5e8e1c2
   projCfg 6de19acdfbd33047b1673742c0f6e8fdd4433107
   projCfg.local 607374df0faed5bd4486f002added6803518af92
-  version db63707db0c0f5b4eaeda7f8109e429b945aa4af
+  version c765d7bc6c0cf73adb5ad2a48d3c575b6c58e81d
  .gitignore 5f1a04317952b671c5828218c6efe88c2594f8fb
- CHANGES e0bdef4890aa10a004deabf52558dbb8ce83b7b8
+ CHANGES a0737718a64a57bee5fd76a42e4a521634733aa2
  LICENSE.md d1cecfadc47b23486f6bc8a863cfdde348c3eb46
  MANIFEST.in 0faaebb5df7d0d418f90e80a771e2a1c57f371a5
  README.md a977f33155033c4e92694af8484bfa52a2732e7f
@@ -30,7 +30,7 @@ buildList
  blListGen d5d22d7ed43bfcfbcfa82f88984b0aeaf8307126
  blSrcGen 0a17e9976aee69c82be545d747f0ea09e2df0f80
  buildList
-  __init__.py 24b92f242b130e36f15a6ceddf4c253526e47f65
+  __init__.py 8df7653d2fd3467df82d97fead7f5de960e42240
  checkBlSrcGen ddfbda1aa91cd552beb99aa9305631cc041891bc
  checkExample f13d8d6928bce388dcb781ef249c828b036d7650
  checkExample2 e82aa5dcf4a5677ae0973533066bf13855f4a9c5
@@ -87,6 +87,7 @@ buildList
   buildList-0.4.7.tar.gz bbee115abab819f032deed9cd395ed29638c94c0
   buildList-0.4.8.tar.gz 89f71851671c56c228079f5619c0781f36b9e332
   buildList-0.4.9.tar.gz 678d34ae2c53106bbb9f2963714b10de411a425d
+  buildList-0.5.0.tar.gz 8bae3a8deae68398a608b97bcaced879db7e5880
  doListGen b9a5e29395bd2146edfb8a5e68a0c696c1de5a04
  doSrcGen 0cd617de76fcbcc6f782d34904ec218739e5c1b4
  example1
@@ -162,8 +163,8 @@ buildList
  test.all 9bc20b0c6f942c6a04d68714ae37a38d66d21f5b
  testBuildList.py f727e6b60ff63f9947fde4b582c217872681fced
  testPopulateDataDir.py 3f572d960738c27ae02f4ae91a1070b162eb63d1
- testRandomDir.py ee9c82cce81a5740443767a2d95a13538c9b2991
- testTimestamp.py 46e3c0eaad5853d3075e7e1a9902624c9a8da80e
+ testRandomDir.py 428fc58c1f63e4f92a32787ca7e6068a43659b7b
+ testTimestamp.py 2cebbbffd24b3eb39802ade493584a9fd9d9e5f7
 # END CONTENT #
 
-Ukx0OlWp7+AzhAPFToA8vpsfhjOqULEEN3vZftsDQ7pHyCp5hrKI3pE2Iim7qFHByHHd7kMSEnEPENiGCHxR5L0A552NPN3NaZwK/JzUl1nL7ys9eRid190N9DFXPxeCkGY4S5C+YgKCcavk7KuxdXfMX5E0yfw3N+ZRMESZzTD7fVMIoGX1JHz3y5aI54opcw2kwhzTiRCvlujVRI+LK3JTn4Sdd13Mv4g1ujY1J//YD/fNFlnP+0m1Otdap5lCwAQoZ1bXOww0J/FQJjJmkdYB7qF86toDpJkn7Tu5mYat+bqUqw6nBYpcUfCGIaQeBQM0UwlojglTQcE0QIp/4A==
+UzzXif3OQfc1oJKjBAVGVTui+s80wOAPfBOJmGLAVo8wpxkHpq0xapMiNX75PKQetNenuCZxktyfFpTOA3702ljyVOOQmQpMVPG2AmdGhWjQcwMpLxe8dFE5CD8ITZqLhKvpQYpUoPMHUjP/DmS735u8BWULzpqjdBaKP+pO4178GkolORztecHdcLGC4jYiW4wl9LUJ4noZZL1S87le/iKLRg+kqiz2kzYjynpr3i99zaMjENGokHydAAIIrB2faQsJra57VQ3rcQe+2ien1Hi3d+TaIIqcDcCF5m025sBegQC7HP57O2rSX2fo29QI1dtovFhxcwATXdMKOyu04A==

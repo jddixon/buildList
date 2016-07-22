@@ -9,7 +9,7 @@ import unittest
 
 from rnglib import SimpleRNG
 from xlattice import u
-from buildList import *
+from buildList import BuildList
 
 
 class TestTimestamp (unittest.TestCase):
@@ -31,8 +31,8 @@ class TestTimestamp (unittest.TestCase):
 
         blkCount = 1 + self.rng.nextInt16(3)     # so 1 to 3
         # last block will usually be only partically populated
-        byteCount = BLOCK_SIZE * (blkCount - 1) + \
-            self.rng.nextInt16(BLOCK_SIZE)
+        byteCount = BuildList.BLOCK_SIZE * (blkCount - 1) + \
+            self.rng.nextInt16(BuildList.BLOCK_SIZE)
 
         data = bytearray(byteCount)     # that many null bytes
         self.rng.nextBytes(data)             # fill with random data

@@ -15,13 +15,10 @@ from nlhtree import NLHNode, NLHTree, NLHLeaf
 
 from xlattice.crypto import collectPEMRSAPublicKey
 from xlattice.lfs import touch
-from xlattice.u import UDir, dirStrucToName
+from xlattice.u import UDir
 from xlattice.util import makeExRE, parseTimestamp, timestamp, timestampNow
 
 __all__ = ['__version__', '__version_date__',
-           # OTHER EXPORTED CONSTANTS
-           'BLOCK_SIZE', 'CONTENT_END', 'CONTENT_START',
-           'LF',
            # FUNCTIONS
            'checkDirsInPath',
            "generateRSAKey",
@@ -37,13 +34,8 @@ __all__ = ['__version__', '__version_date__',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.4.31'
-__version_date__ = '2016-07-18'
-
-BLOCK_SIZE = 2**18         # 256KB, for no particular reason
-CONTENT_END = '# END CONTENT #'
-CONTENT_START = '# START CONTENT #'
-LF = '\n'.encode('utf-8')
+__version__ = '0.5.0'
+__version_date__ = '2016-07-22'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -210,6 +202,12 @@ class BuildList(object):
     public key.
     """
 
+    # constants
+    BLOCK_SIZE = 2**18         # 256KB, for no particular reason
+    CONTENT_END = '# END CONTENT #'
+    CONTENT_START = '# START CONTENT #'
+    LF = '\n'.encode('utf-8')
+
     def __init__(self, title, sk, tree):
 
         self._title = title
@@ -261,27 +259,27 @@ class BuildList(object):
         # add public key and then LF to hash
         pemCK = self._publicKey.exportKey('PEM')
         h.update(pemCK)
-        h.update(LF)
+        h.update(BuildList.LF)
 
         # add title and LF to hash
         h.update(self._title.encode('utf-8'))
-        h.update(LF)
+        h.update(BuildList.LF)
 
         # add timestamp and LF to hash
         h.update(self.timestamp.encode('utf-8'))
-        h.update(LF)
+        h.update(BuildList.LF)
 
         # add CONTENT_START and LF line to hash
-        h.update((CONTENT_START + '\n').encode('utf-8'))
+        h.update((BuildList.CONTENT_START + '\n').encode('utf-8'))
 
         # add serialized NLHTree to hash, each line terminated by LF
         h.update(self._tree.__str__().encode('utf-8'))
 
         # add CONTENT_END and LF line to hash
-        h.update((CONTENT_END + '\n').encode('utf-8'))
+        h.update((BuildList.CONTENT_END + '\n').encode('utf-8'))
 
         # add LF to hash
-        h.update(LF)
+        h.update(BuildList.LF)
         return h
 
     def sign(self, skPriv):
@@ -422,7 +420,7 @@ class BuildList(object):
 
         # expect CONTENT-START
         startLine, n = BuildList._expectField(ss, n)
-        if startLine != CONTENT_START:
+        if startLine != BuildList.CONTENT_START:
             # DEBUG
             print("Expected CONTENT START, got '%s'" % startLine)
             # END
@@ -432,7 +430,7 @@ class BuildList(object):
         mtLines = []
         while True:
             line, n = BuildList._expectField(ss, n)
-            if line == CONTENT_END:
+            if line == BuildList.CONTENT_END:
                 break
             else:
                 mtLines.append(line)
@@ -478,7 +476,7 @@ class BuildList(object):
         ss.append(self.timestamp)
 
         # content start line
-        ss.append(CONTENT_START)
+        ss.append(BuildList.CONTENT_START)
 
         # NLHTree
         ssTree = self.tree.__str__().split('\n')
@@ -487,7 +485,7 @@ class BuildList(object):
         ss += ssTree
 
         # content end line
-        ss.append(CONTENT_END)
+        ss.append(BuildList.CONTENT_END)
 
         # empty line
         ss.append('')
@@ -567,7 +565,7 @@ class BuildList(object):
             # DEBUG
             print("listGen:")
             print("  uDir:      %s" % uPath)
-            print("  dirStruc:  %s" % dirStrucToName(uDir.dirStruc))
+            print("  dirStruc:  %s" % UDir.dirStrucToName(uDir.dirStruc))
             print("  usingSHA1: %s" % uDir.usingSHA1)
             # END
             (length, hashBack) = uDir.putData(newData, newHash)
