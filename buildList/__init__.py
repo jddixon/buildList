@@ -34,8 +34,8 @@ __all__ = ['__version__', '__version_date__',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.5.0'
-__version_date__ = '2016-07-22'
+__version__ = '0.6.0'
+__version_date__ = '2016-08-06'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -205,8 +205,12 @@ class BuildList(object):
     # constants
     BLOCK_SIZE = 2**18         # 256KB, for no particular reason
     CONTENT_END = '# END CONTENT #'
-    CONTENT_START = '# START CONTENT #'
+    CONTENT_START = '# BEGIN CONTENT #'
     LF = '\n'.encode('utf-8')
+
+    # XXX DROP by v1.0.0
+    OLD_CONTENT_START = '# START CONTENT #'
+    # XXX END DROP
 
     def __init__(self, title, sk, tree):
 
@@ -420,11 +424,12 @@ class BuildList(object):
 
         # expect CONTENT-START
         startLine, n = BuildList._expectField(ss, n)
-        if startLine != BuildList.CONTENT_START:
+        if (startLine != BuildList.CONTENT_START) and \
+                (startLine != BuildLisst.OLD_CONTENT_START):
             # DEBUG
             print("Expected CONTENT START, got '%s'" % startLine)
             # END
-            raise BLParseFailed("expected CONTENT_START line")
+            raise BLParseFailed("expected BEGIN CONTENT line")
 
         # expect a serialized NLHTree followed by a CONTENT END
         mtLines = []

@@ -1,10 +1,14 @@
 ~/dev/py/buildList/TODO
 
-2017-07-18
+2016-08-06
+    * verify that command line formats specified in README.md are
+        current
+
+2016-07-18
     * fix bug in listGen(): failed to discover() uDir, so assumed       * DONE
         flat when inserting BuildList                                   * DONE
 
-2017-07-18 (edited from -15)
+2016-07-18 (edited from -15)
     * write blDropFromU -b PATH_TO_BUILDLIST -u PATH_TO_U and
         __thoroughly test it__ 
         - blDrop should use the lower-level nlhTree function
