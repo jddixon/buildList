@@ -7,30 +7,29 @@ zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
 H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
 GQIDAQAB
 -----END RSA PUBLIC KEY-----
-buildList v0.5.0
-2016-07-22 21:39:08
-# START CONTENT #
+buildList v0.6.0
+2016-08-06 23:21:54
+# BEGIN CONTENT #
 buildList
  .copyright 803f3e50518123ef8a08d34f2238e89b62d0c9a2
  .dvcz
-  builds d770bffee43f9391c40175043b38346e22066905
-  lastBuildList ca2a5f7cef53bdd1d8534c7096c1b159e5e8e1c2
-  projCfg 6de19acdfbd33047b1673742c0f6e8fdd4433107
+  builds 8665e923b334be648884ce81bd638f5a5a9259f1
+  projCfg d232ace0498bef044d3619335aaa8e956bf2c4c2
   projCfg.local 607374df0faed5bd4486f002added6803518af92
-  version c765d7bc6c0cf73adb5ad2a48d3c575b6c58e81d
+  version d0b61ed96df64ef8ec9130a06f45f6a3aa24d088
  .gitignore 5f1a04317952b671c5828218c6efe88c2594f8fb
- CHANGES a0737718a64a57bee5fd76a42e4a521634733aa2
+ CHANGES 6b5b41e3c935b751590b275da5413e439ca4a6eb
  LICENSE.md d1cecfadc47b23486f6bc8a863cfdde348c3eb46
  MANIFEST.in 0faaebb5df7d0d418f90e80a771e2a1c57f371a5
- README.md a977f33155033c4e92694af8484bfa52a2732e7f
- TODO 0b08b8ecb1c8aa4b13083850cf83ae4b3ecbab12
+ README.md 5cfcc5e5c4510eac44af38090cf6c80b248c4f6e
+ TODO 82a87722510849a98da81d85d079fc67b20e8c67
  bkp2U 88a8cc0ed6ccd76467106a64d294535aacfe33ed
  blBootstrap 1b99bd335d8957ec7b15317eedc430f403504b88
  blCheck 982bae7be166ba7580592ad0f28b40f00bae4ed9
  blListGen d5d22d7ed43bfcfbcfa82f88984b0aeaf8307126
  blSrcGen 0a17e9976aee69c82be545d747f0ea09e2df0f80
  buildList
-  __init__.py 8df7653d2fd3467df82d97fead7f5de960e42240
+  __init__.py b8bef2e36569bfa17c556b2a9bade95e1171b8c5
  checkBlSrcGen ddfbda1aa91cd552beb99aa9305631cc041891bc
  checkExample f13d8d6928bce388dcb781ef249c828b036d7650
  checkExample2 e82aa5dcf4a5677ae0973533066bf13855f4a9c5
@@ -88,6 +87,7 @@ buildList
   buildList-0.4.8.tar.gz 89f71851671c56c228079f5619c0781f36b9e332
   buildList-0.4.9.tar.gz 678d34ae2c53106bbb9f2963714b10de411a425d
   buildList-0.5.0.tar.gz 8bae3a8deae68398a608b97bcaced879db7e5880
+  buildList-0.6.0.tar.gz b3d320c29a2856e6580cc44a27562d586dabd1b1
  doListGen b9a5e29395bd2146edfb8a5e68a0c696c1de5a04
  doSrcGen 0cd617de76fcbcc6f782d34904ec218739e5c1b4
  example1
@@ -154,7 +154,7 @@ buildList
    simple-cluster.jpg 6b223ddd25937c1ef75ef328f36fc3436f10bd62
    xl-registration.jpg 15cbf951f9db173a45428b32dcec87aca83bbdf0
    xlattice-2014.jpg f185aaad06db71acd9454f31054c62c56d36f37f
-  index.md 352421974aff3087de25b1950ce66398c750fe5f
+  index.md 1efe310e1cc478539d7300efa8f8d9245b617672
  installit ece6c8b99a410db9a3477d28f706e47989b1e982
  make.bld.from.example.datadir 5d2df5fefae187821af2e85e57213034da1a8744
  sampleRun aad7774c254290e4179bfbe0f4d93bdb6b92ea25
@@ -167,4 +167,4 @@ buildList
  testTimestamp.py 2cebbbffd24b3eb39802ade493584a9fd9d9e5f7
 # END CONTENT #
 
-UzzXif3OQfc1oJKjBAVGVTui+s80wOAPfBOJmGLAVo8wpxkHpq0xapMiNX75PKQetNenuCZxktyfFpTOA3702ljyVOOQmQpMVPG2AmdGhWjQcwMpLxe8dFE5CD8ITZqLhKvpQYpUoPMHUjP/DmS735u8BWULzpqjdBaKP+pO4178GkolORztecHdcLGC4jYiW4wl9LUJ4noZZL1S87le/iKLRg+kqiz2kzYjynpr3i99zaMjENGokHydAAIIrB2faQsJra57VQ3rcQe+2ien1Hi3d+TaIIqcDcCF5m025sBegQC7HP57O2rSX2fo29QI1dtovFhxcwATXdMKOyu04A==
+D6WtrkYMvpcO0qfta1qBf3r0Vv4HSVycRP3OXZU/tPZWtOYBt9THW5zNRfDeDINpCPB42CJbUDPkevIXluYsGeAFZAB/j88sXjJyBEFr6DQXe3GzxGxua9/mfeTELPOcF6T1Wml/LyamDRocmRG2rav6FYUWpTSqisZgOtISvqp8lMyRpItWQqH5iXx4FJqHdbSQJsRvatGS1+Zdw5tpEwxYNccZimHYv/NmssOthW6iyWHQe+ZBeFfXaATZJvELkWAXhI7+ODkHGUk97AXapLvz3N+sBDjhk5zCdugZQqVuDz9OTrTQiyN6INgqlXrRSht0xUcD3PX/AHtq8CZ1ZQ==

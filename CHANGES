@@ -1,5 +1,9 @@
 ~/dev/py/buildList/CHANGES
 
+v0.6.0
+    2016-08-06
+        * change CONTENT_START to "BEGIN_CONTENT"
+        * edit README.md to link to xlattice BuildList spec         SLOC 1933
 v0.5.0
     2016-07-22
         * DIR_FLAT etc now UDir attributes
@@ -191,6 +195,8 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
+
 
 
 
