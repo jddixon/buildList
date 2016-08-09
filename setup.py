@@ -16,7 +16,7 @@ setup(name='buildList',
       py_modules=[],
       packages=['buildList'],
       # following could be in scripts/ subdir
-      scripts=['blCheck', 'blListGen', 'blSrcGen', ],
+      scripts=['blBootstrap', 'blCheck', 'blListGen', 'blSrcGen', ],
       # MISSING description
       classifiers=[
           'License :: OSI Approved :: MIT License',

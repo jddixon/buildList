@@ -34,8 +34,8 @@ __all__ = ['__version__', '__version_date__',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.6.0'
-__version_date__ = '2016-08-06'
+__version__ = '0.6.1'
+__version_date__ = '2016-08-09'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -425,7 +425,7 @@ class BuildList(object):
         # expect CONTENT-START
         startLine, n = BuildList._expectField(ss, n)
         if (startLine != BuildList.CONTENT_START) and \
-                (startLine != BuildLisst.OLD_CONTENT_START):
+                (startLine != BuildList.OLD_CONTENT_START):
             # DEBUG
             print("Expected CONTENT START, got '%s'" % startLine)
             # END
