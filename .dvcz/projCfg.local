@@ -4,6 +4,8 @@ dir:pkg:buildList
 dir:clr:tmp
 dir:local:example
 
+txt:std:LICENSE-MIT.md
+
 ##################################################################
 # probably all 'check' scripts belong in test.all
 ##################################################################
