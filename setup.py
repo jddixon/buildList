@@ -22,7 +22,6 @@ setup(name='buildList',
       classifiers=[
           'Development Status :: 4 - Beta',
           'Intended Audience :: Developers',
-          'License :: OSI Approved :: Apache Software License',
           'License :: OSI Approved :: MIT License',
           'Natural Language :: English',
           'Programming Language :: Python 3',

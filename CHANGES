@@ -1,6 +1,9 @@
 ~/dev/py/buildList/CHANGES
 
 
+v0.6.3
+    2016-08-23
+        * fix typos in gh-pages                                     SLOC 2118
 v0.6.2
     2016-08-18
         * drop leading and trailing spaces from title
@@ -204,6 +207,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 
