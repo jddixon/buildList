@@ -34,8 +34,8 @@ __all__ = ['__version__', '__version_date__',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.6.1'
-__version_date__ = '2016-08-09'
+__version__ = '0.6.3'
+__version_date__ = '2016-08-23'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -214,7 +214,7 @@ class BuildList(object):
 
     def __init__(self, title, sk, tree):
 
-        self._title = title
+        self._title = title.strip()
         if (not sk) or (not isinstance(sk, RSA._RSAobj)):
             raise BLError("sk is nil or not a valid RSA public key")
         self._publicKey = sk

@@ -17,9 +17,14 @@ setup(name='buildList',
       packages=['buildList'],
       # following could be in scripts/ subdir
       scripts=['blBootstrap', 'blCheck', 'blListGen', 'blSrcGen', ],
-      # MISSING description
+      description='digitally signed indented list of content keys',
+      url='https://jddixon.github.com/buildList',
       classifiers=[
+          'Development Status :: 4 - Beta',
+          'Intended Audience :: Developers',
           'License :: OSI Approved :: MIT License',
-          'Programming Language :: Python :: 3',
+          'Natural Language :: English',
+          'Programming Language :: Python 3',
+          'Topic :: Software Development :: Libraries :: Python Modules',
       ],
       )

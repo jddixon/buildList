@@ -4,8 +4,8 @@
     * running blCheck on example1 returns 'incompatible SHA types'
 
 2016-08-06
-    * verify that command line formats specified in README.md are
-        current
+    * verify that command line formats specified in README.md are       * DONE
+        current                                                         * DONE
 
 2016-07-18
     * fix bug in listGen(): failed to discover() uDir, so assumed       * DONE
