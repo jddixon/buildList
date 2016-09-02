@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from xlattice import Q    # FIX ME
 #
 # ~/dev/py/buildList/blSrcGen
 
@@ -29,7 +30,7 @@ def makeDataDir(options):
 
     with open(listFile, 'r') as f:
         data = f.read()
-    bl = BuildList.parse(data, usingSHA1=True)  # XXX HACK XXX
+    bl = BuildList.parse(data, usingSHA=True)  # XXX HACK XXX
 
     bl.populateDataDir(uPath, path)
 

@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+from xlattice import Q    # FIX ME
 #
 # ~/dev/py/buildList/blCheck
 
@@ -20,7 +21,7 @@ def checkBuildList(args):
     listFile = args.listFile
     verbose = args.verbose
     uDir = args.uDir
-    usingSHA1 = args.usingSHA1
+    usingSHA = args.usingSHA
 
     if dataDir and dataDir[-1] == '/':      # trailing slash
         dataDir = dataDir[:-1]
@@ -43,7 +44,7 @@ def checkBuildList(args):
     if ok:
         ok = False
         try:
-            bl = BuildList.parse(data, usingSHA1)
+            bl = BuildList.parse(data, usingSHA)
             ok = True
         except Exception as e:
             print("error parsing BuildList: '%s'" % e)
@@ -56,9 +57,9 @@ def checkBuildList(args):
                 print("dig sig verification fails")
 
     if ok:
-        usingSHA1 = bl.usingSHA1
+        usingSHA = bl.usingSHA
         # assume exRE can be ignored
-        myTree = NLHTree.createFromFileSystem(dataDir, usingSHA1, exRE)
+        myTree = NLHTree.createFromFileSystem(dataDir, usingSHA, exRE)
         ok = myTree == bl.tree
         if not ok:
             print("build list's NLHTree doesn't match %s" % dataDir)
@@ -95,7 +96,7 @@ def main():
     DESC = 'verify integrity of build list, optionally agains root dir and uDir"'
     parser = ArgumentParser(description=DESC)
 
-    parser.add_argument('-1', '--usingSHA1', action='store_true',
+    parser.add_argument('-1', '--usingSHA', action='store_true',
                         help='using the 160-bit SHA1 hash')
 
     parser.add_argument('-b', '--listFile',
