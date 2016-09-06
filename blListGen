@@ -11,6 +11,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA    # presumably 1
 
 from merkletree import MerkleDoc
+from xlattice import Q    
 from xlattice.util import getExclusions, makeExRE, timestampNow
 from buildList import __file__, BuildList
 
@@ -24,10 +25,10 @@ def doit(options):
     logging = options.logging
     title = options.title
     uPath = options.uPath      # if None, don't save to uPath
-    usingSHA1 = options.usingSHA1
+    usingSHA = options.usingSHA
 
     bl = BuildList.listGen(title, dataDir, dvczDir, listFile, keyFile,
-                           excl, logging, uPath, usingSHA1)
+                           excl, logging, uPath, usingSHA)
 
     print("BuildList written to %s" % os.path.join(dvczDir, listFile))
 
@@ -65,7 +66,7 @@ def main():
     DESC = 'generate build list for directory, optionally populating uPath'
     parser = ArgumentParser(description=DESC)
 
-    parser.add_argument('-1', '--usingSHA1', action='store_true',
+    parser.add_argument('-1', '--usingSHA', action='store_true',
                         help='use SHA1 in building merkletree (default=false=use SHA256)')
 
     parser.add_argument('-b', '--listFile', default='lastBuildList',
@@ -142,7 +143,8 @@ def main():
 
     # sanity checks -------------------------------------------------
     if not args.justShow:
-        if not args.usingSHA1:
+        if not args.usingSHA:
+            # FIX ME FIX ME FIX ME
             print("can't handle SHA2 or SHA3 yet")
             sys.exit(1)
 
@@ -208,7 +210,7 @@ def main():
         print('testing      = ' + str(args.testing))
         print('title        = ' + str(args.title))
         print('uPath        = ' + str(args.uPath))
-        print('usingSHA1    = ' + str(args.usingSHA1))
+        print('usingSHA    = ' + str(args.usingSHA))
         print('verbose      = ' + str(args.verbose))
 
         if args.matchPat and len(args.matchPat) > 0:

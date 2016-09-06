@@ -15,7 +15,7 @@ from nlhtree import NLHNode, NLHTree, NLHLeaf
 
 from xlattice.crypto import collectPEMRSAPublicKey
 from xlattice.lfs import touch
-from xlattice.u import UDir
+from xlattice.u import Q, UDir
 from xlattice.util import makeExRE, parseTimestamp, timestamp, timestampNow
 
 __all__ = ['__version__', '__version_date__',
@@ -34,8 +34,8 @@ __all__ = ['__version__', '__version_date__',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.6.3'
-__version_date__ = '2016-08-23'
+__version__ = '0.7.0'
+__version_date__ = '2016-09-01'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -224,7 +224,7 @@ class BuildList(object):
 
         self._tree = tree
 
-        self._usingSHA1 = tree.usingSHA1    # REDUNDANT
+        self._usingSHA = tree.usingSHA    # REDUNDANT
 
         self._when = 0         # seconds from the Epoch; a 64-bit value
         self._digSig = None
@@ -256,7 +256,7 @@ class BuildList(object):
     def tree(self): return self._tree
 
     @property
-    def usingSHA1(self): return self._usingSHA1
+    def usingSHA(self): return self._usingSHA
 
     def _getBuildListSHA1(self):
         h = SHA.new()
@@ -367,7 +367,7 @@ class BuildList(object):
     # SERIALIZATION -------------------------------------------------
     @staticmethod
     def createFromFileSystem(title, pathToDir, sk,
-                             usingSHA1=False, exRE=None, matchRE=None):
+                             usingSHA=False, exRE=None, matchRE=None):
 
         if (not pathToDir) or (not os.path.isdir(pathToDir)):
             raise BLError(
@@ -375,11 +375,11 @@ class BuildList(object):
 
         tree = NLHTree.createFromFileSystem(pathToDir,
                                             # accept default deltaIndent
-                                            usingSHA1=usingSHA1, exRE=exRE)
+                                            usingSHA=usingSHA, exRE=exRE)
         return BuildList(title, sk, tree)
 
     @staticmethod
-    def parse(s, usingSHA1):
+    def parse(s, usingSHA):
         """
         This relies upon the fact that all fields are separated by
         LF ('\n').
@@ -389,7 +389,7 @@ class BuildList(object):
         if not isinstance(s, str):
             s = str(s, 'utf-8')
         ss = s.split('\n')
-        return BuildList.parseFromStrings(ss, usingSHA1)
+        return BuildList.parseFromStrings(ss, usingSHA)
 
     @staticmethod
     def _expectField(ss, n):
@@ -404,7 +404,7 @@ class BuildList(object):
         return field, n
 
     @staticmethod
-    def parseFromStrings(ss, usingSHA1):
+    def parseFromStrings(ss, usingSHA):
         if ss is None:
             raise BLParseFailed("parseFromStrings: null argument")
 
@@ -440,7 +440,7 @@ class BuildList(object):
             else:
                 mtLines.append(line)
         # expect default indents
-        myTree = NLHTree.createFromStringArray(mtLines, usingSHA1)
+        myTree = NLHTree.createFromStringArray(mtLines, usingSHA)
 
         # expect an empty line
         space, n = BuildList._expectField(ss, n)
@@ -512,14 +512,14 @@ class BuildList(object):
                 excl=['build'],
                 logging=False,
                 uPath='',
-                usingSHA1=False):
+                usingSHA=False):
         """
         Create a BuildList for dataDir with the title indicated.
         Files matching the globs in excl will be skipped.  'build'
         should always be in the list.  If a private key is specified
         and signing is True, the BuildList will be digitally signed.
         If uPath is specified, the files in dataDir will be posted to uDir.
-        If usingSHA1 is True, an SHA1 hash will be used for the digital
+        If usingSHA is True, an SHA1 hash will be used for the digital
         signature.  Otherwise SHA2 will be used
 
         If there is a title, we try to read the version number from
@@ -545,14 +545,15 @@ class BuildList(object):
         else:
             sk = None
         bl = cls.createFromFileSystem(title, dataDir, sk,
-                                      usingSHA1, exRE, matchRE=None)
+                                      usingSHA, exRE, matchRE=None)
         if signing:
             bl.sign(skPriv)
 
         newData = bl.__str__().encode('utf-8')
-        if usingSHA1:
+        if usingSHA == Q.USING_SHA1:
             sha = hashlib.sha1()
         else:
+            # FIX ME FIX ME FIX ME
             sha = hashlib.sha256()
         sha.update(newData)
         newHash = sha.hexdigest()
@@ -560,7 +561,7 @@ class BuildList(object):
 
         if uPath:
 
-            bl.tree.saveToUDir(dataDir, uPath, usingSHA1)
+            bl.tree.saveToUDir(dataDir, uPath, usingSHA)
 
             # insert this BuildList into U
             # DEBUG
@@ -571,7 +572,7 @@ class BuildList(object):
             print("listGen:")
             print("  uDir:      %s" % uPath)
             print("  dirStruc:  %s" % UDir.dirStrucToName(uDir.dirStruc))
-            print("  usingSHA1: %s" % uDir.usingSHA1)
+            print("  usingSHA: %s" % uDir.usingSHA)
             # END
             (length, hashBack) = uDir.putData(newData, newHash)
             if hashBack != newHash:

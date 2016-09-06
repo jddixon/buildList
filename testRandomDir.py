@@ -9,7 +9,7 @@ import unittest
 
 from buildList import BuildList
 from rnglib import SimpleRNG
-from xlattice import u
+from xlattice import Q, u
 
 
 class TestRandomDir (unittest.TestCase):
@@ -24,7 +24,7 @@ class TestRandomDir (unittest.TestCase):
 
     # actual unit tests #############################################
 
-    def doTestRandomDir(self, usingSHA1):
+    def doTestRandomDir(self, usingSHA):
 
         depth = 1 + self.rng.nextInt16(3)       # so 1 to 3
         width = 1 + self.rng.nextInt16(16)      # so 1 to 16
@@ -44,9 +44,10 @@ class TestRandomDir (unittest.TestCase):
 
         data = bytearray(maxLen)            # that many null bytes
         self.rng.nextBytes(data)            # fill with random data
-        if usingSHA1:
+        if usingSHA == Q.USING_SHA1:
             d = hashlib.new('sha1')
         else:
+            # FIX ME FIX ME FIX ME
             d = hashlib.new('sha256')
         d.update(data)
         hash = d.hexdigest()
@@ -54,9 +55,10 @@ class TestRandomDir (unittest.TestCase):
         pathToFile = os.path.join('tmp', fileName)
         with open(pathToFile, 'wb') as f:
             f.write(data)
-        if usingSHA1:
+        if usingSHA == Q.USING_SHA1:
             fileHash = u.fileSHA1Hex(pathToFile)
         else:
+            # FIX ME FIX ME FIX ME
             fileHash = u.fileSHA2Hex(pathToFile)
         self.assertEqual(hash, fileHash)
 
