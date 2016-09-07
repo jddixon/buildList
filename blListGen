@@ -11,7 +11,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA    # presumably 1
 
 from merkletree import MerkleDoc
-from xlattice import Q    
+from xlattice import Q
 from xlattice.util import getExclusions, makeExRE, timestampNow
 from buildList import __file__, BuildList
 

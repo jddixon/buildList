@@ -7,20 +7,20 @@ zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
 H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
 GQIDAQAB
 -----END RSA PUBLIC KEY-----
-buildList v0.7.0
-2016-09-02 02:54:43
+buildList v0.7.1
+2016-09-07 21:30:21
 # BEGIN CONTENT #
 buildList
  .dvcz
-  builds e663ceb4293ff4c9ca663bf5b7818306fb586ae1
+  builds 32257198033fecf2b3e6bc80a4851403701a5578
   copyright 803f3e50518123ef8a08d34f2238e89b62d0c9a2
-  lastBuildList caefa37f1aa991520dfed31d87d80d01167755a8
+  lastBuildList e5f571165a9376237ac99f79dd151c4d3f9e5885
   license 5977a55c75bb4612004451a56b0b4c22d9d3311d
   projCfg fb13d085984aaa51ca8605a1fa03dd38e44107a1
   projCfg.local 733e097e7e8c593de238bfa89e63ea0ec2219521
-  version 96ec5a11185f23a176c0d6f255ce90236eb7ab50
+  version 70222338b6d5e3bddeb699b798fbb99303c63e78
  .gitignore 2bc4bcb7826ea9b5fb999444fe18f6785df1de72
- CHANGES 886d739afcf86bdd9d31b706dd80844171f37ee9
+ CHANGES 1923353e7d4656036728b7dd1b85899128c7ef82
  LICENSE-MIT.md d1cecfadc47b23486f6bc8a863cfdde348c3eb46
  MANIFEST.in 0faaebb5df7d0d418f90e80a771e2a1c57f371a5
  README.md e3fbd5cd0ce340a5ebac9f3d341da9f0909791c8
@@ -28,10 +28,10 @@ buildList
  bkp2U 88a8cc0ed6ccd76467106a64d294535aacfe33ed
  blBootstrap b7dc7e51e10ecfcaa59abbd1b896271cccc78043
  blCheck 62e40b11b72d6f621ebde081852639e505186398
- blListGen 7290041e314ddce1e05f96a8fc9d7b319b23f656
+ blListGen ac9e59952a37f2373eb2abae4a3c2e7fe288b5a7
  blSrcGen 8b5951f91c63825e7be78dccf34f7d6de4ba6af8
  buildList
-  __init__.py 8fb3eac6c061fb1f6ca0314e7fee53a2541e98e3
+  __init__.py 1fa96cf07b7728023d5299a22d885c4844c18665
  checkBlSrcGen ddfbda1aa91cd552beb99aa9305631cc041891bc
  checkExample f13d8d6928bce388dcb781ef249c828b036d7650
  checkExample2 e82aa5dcf4a5677ae0973533066bf13855f4a9c5
@@ -94,6 +94,7 @@ buildList
   buildList-0.6.2.tar.gz 6421ed94e9464b9c759e89bb4e02362cf9fa452c
   buildList-0.6.3.tar.gz f5fb446c99cd7a28b5b531369a3e782367913796
   buildList-0.7.0.tar.gz cd4922be9b33fdb2fc11a2c4b933ebbc23b6b511
+  buildList-0.7.1.tar.gz 2145a840a97399da11d1bc7575e24a534ceb56bb
  doListGen 7832075726e25d564b4b2768bb75d9a5ee3a1b1a
  doSrcGen fab4b95000c135656f7be3416171df24138cdc2b
  example1
@@ -167,10 +168,10 @@ buildList
  setup.py 26a9f0e760c0144219f1b6ff14e4a4da5190eaff
  styleit 0c91684cc86fe3c6f80e9e65097606297095ecd8
  test.all 9bc20b0c6f942c6a04d68714ae37a38d66d21f5b
- testBuildList.py e8a673975f5d7111b108f74e1bad9e521d0191cf
- testPopulateDataDir.py aa75d27a7470c124418f73e72ad620ceb87deeed
+ testBuildList.py 3f5680e7eebe9c1072483e413cb466eca8e01a68
+ testPopulateDataDir.py 3917d2cd9a42d7ce02fd96c706488f655c64bbc1
  testRandomDir.py 83018d673f50eedd343af41f3c082e8266578ef4
  testTimestamp.py 2cebbbffd24b3eb39802ade493584a9fd9d9e5f7
 # END CONTENT #
 
-I2xo8ozO7yDAP1luzFsR5ZyhwwR2zfCL1Y+sF6WVfdpfyu0TPWrBWM+I+8SfKbE5co7xqCCQ76xFs/JwCl00RqfJZu/hU/9qDWPjbTHXp1U27lASkz5VQJ4WSB3D5KC6ixddC1biiYPEGD4bFk+e2iiu/y0FTXnDDpflHJCqinmSuKfYVtyxMf1yspu0xH6HtjevmX76qzdRr1KbHL2Ih4NhzXDsf3Jz2PMQP/CE3F5fdyg+IuXcY9RlJsw19ZcCfb7N151fo4AOqGck0KbkimeADyKm4iU/Eh2W3DIv6dakkgPiR44rzPLtwU1yn84Umn87cf2TlrHQxejk7NMFhg==
+FgEzjCxb0p/ZXHJRlTchL/CMfdDCdjl+Cc7k5RMbRrIxXHT1G+ro0Dwjm4V9gXIllr6pSX0M4AUr/6cs+YqRL43fCbwmJmuIo6ITJZVovIGUqP5gikJ4ZK92GOoi3DeGUk1smXf+zRiL3WsOcIA0PKRu8GC/4dak3u7G6g8mcQ6NXjT3snU4qu1hwkh0E3rEP5sKp/RRf3Cnt8u3DMsyVBK+2HXRJnF9zZSZp68xr3+WWSsYwb2xcg/6NaP8BKds7Sq/zjYam/H8qZmd8PgZUHN3f6pqDoAhJygXU0ECq9S0Z+7yxBSxJ1ojzs06nAWDI32L/GU5gkZUE4TdYSW3EQ==
