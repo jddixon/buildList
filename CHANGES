@@ -1,6 +1,9 @@
 ~/dev/py/buildList/CHANGES
 
 
+v0.7.1
+    2016-09-07
+        * cleanup; all tests succeed                                SLOC 2099
 v0.7.0
     2016-09-01
         * usingSHA1 -> usingSHA (PARTIAL)                           SLOC 2132
@@ -210,6 +213,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

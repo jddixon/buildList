@@ -34,8 +34,8 @@ __all__ = ['__version__', '__version_date__',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.7.0'
-__version_date__ = '2016-09-01'
+__version__ = '0.7.1'
+__version_date__ = '2016-09-07'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -122,7 +122,7 @@ def expectListLine(f, errMsg):
 def expectTitle(f, digest):
     line = expectListLine(f, "missing title")
     # DEBUG
-    print("TITLE: %s" % line)
+    # print("TITLE: %s" % line)
     # END
     digest.update(line)
 
@@ -131,7 +131,7 @@ def expectTimestamp(f, digest):
     line = expectListLine(f, "missing timestamp")
     t = parseTimestamp(line)        # can raise ValueError
     # DEBUG
-    print("TIMESTAMP: %s" % line)
+    #print("TIMESTAMP: %s" % line)
     # END
     digest.update(line)
 
@@ -142,7 +142,7 @@ def expectStr(f, str):
     if line != str:
         raise ParseFailure('expected ' + str)
     # DEBUG
-    print("STR: %s" % str)
+    # print("STR: %s" % str)
     # END
 
 
@@ -161,7 +161,7 @@ def acceptContentLine(f, digest, str, rootPath, uPath):
     line = acceptListLine(f)        # may raise BLParseFailed
     if line == str:
         # DEBUG
-        print("STR: " + line)
+        # print("STR: " + line)
         # END
         return False
 
@@ -171,7 +171,7 @@ def acceptContentLine(f, digest, str, rootPath, uPath):
         errMsg = "bad content line: '%s'" % line
         raise ParseFailure(errMsg)
     # DEBUG
-    print("CONTENT: %s" % line)
+    # print("CONTENT: %s" % line)
     # END
     digest.update(line)
     b64Hash = parts[0]
@@ -334,23 +334,23 @@ class BuildList(object):
     def __eq__(self, other):
         if (not other) or (not isinstance(other, BuildList)):
             # DEBUG
-            if not other:
-                print("other is None")
-            else:
-                print("other is %s" % type(other))
+            # if not other:
+            #    print("other is None")
+            # else:
+            #    print("other is %s" % type(other))
             # END
             return False
         if self.title != other.title:
             # DEBUG
-            print("my title is '%s' but other's is '%s'" % (
-                self.title, other.title))
+            # print("my title is '%s' but other's is '%s'" % (
+            #    self.title, other.title))
             # END
             return False
         if self.publicKey != other.publicKey:
             return False
         if not (self.tree == other.tree):
             # DEBUG
-            print("NLHTrees differ")
+            # print("NLHTrees differ")
             # END
             return False
         if self._when != other._when:
@@ -367,7 +367,7 @@ class BuildList(object):
     # SERIALIZATION -------------------------------------------------
     @staticmethod
     def createFromFileSystem(title, pathToDir, sk,
-                             usingSHA=False, exRE=None, matchRE=None):
+                             usingSHA=Q.USING_SHA2, exRE=None, matchRE=None):
 
         if (not pathToDir) or (not os.path.isdir(pathToDir)):
             raise BLError(
@@ -405,10 +405,13 @@ class BuildList(object):
 
     @staticmethod
     def parseFromStrings(ss, usingSHA):
+        # DEBUG
+        # print("parseFromStrings: usingSHA = %s" % usingSHA)
+        # END
         if ss is None:
             raise BLParseFailed("parseFromStrings: null argument")
 
-        # expect a PEM-encoded publid key with embedded newlines
+        # expect a PEM-encoded public key with embedded newlines
         firstLine = ss[0]
         ss = ss[1:]
         serCK, ss = collectPEMRSAPublicKey(firstLine, ss)
@@ -427,7 +430,7 @@ class BuildList(object):
         if (startLine != BuildList.CONTENT_START) and \
                 (startLine != BuildList.OLD_CONTENT_START):
             # DEBUG
-            print("Expected CONTENT START, got '%s'" % startLine)
+            # print("Expected CONTENT START, got '%s'" % startLine)
             # END
             raise BLParseFailed("expected BEGIN CONTENT line")
 
@@ -512,7 +515,7 @@ class BuildList(object):
                 excl=['build'],
                 logging=False,
                 uPath='',
-                usingSHA=False):
+                usingSHA=Q.USING_SHA2):
         """
         Create a BuildList for dataDir with the title indicated.
         Files matching the globs in excl will be skipped.  'build'
@@ -533,7 +536,7 @@ class BuildList(object):
                 version = f.readline().strip()
                 title = title + ' v' + version
                 # DEBUG
-                print("title with version is '%s'" % title)
+                # print("title with version is '%s'" % title)
                 # END
 
         exRE = makeExRE(excl)
@@ -565,14 +568,14 @@ class BuildList(object):
 
             # insert this BuildList into U
             # DEBUG
-            print("writing BuildList with hash %s into %s" % (newHash, uPath))
+            # print("writing BuildList with hash %s into %s" % (newHash, uPath))
             # END
             uDir = UDir.discover(uPath)
             # DEBUG
-            print("listGen:")
-            print("  uDir:      %s" % uPath)
-            print("  dirStruc:  %s" % UDir.dirStrucToName(uDir.dirStruc))
-            print("  usingSHA: %s" % uDir.usingSHA)
+            # print("listGen:")
+            #print("  uDir:      %s" % uPath)
+            #print("  dirStruc:  %s" % UDir.dirStrucToName(uDir.dirStruc))
+            #print("  usingSHA: %s" % uDir.usingSHA)
             # END
             (length, hashBack) = uDir.putData(newData, newHash)
             if hashBack != newHash:
@@ -586,7 +589,7 @@ class BuildList(object):
             f.write(newData)
 
         # DEBUG
-        print("hash of buildList at %s is %s" % (pathToListing, newHash))
+        # print("hash of buildList at %s is %s" % (pathToListing, newHash))
         # END
         if logging:
             pathToLog = os.path.join(dvczDir, 'builds')

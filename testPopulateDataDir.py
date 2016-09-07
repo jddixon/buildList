@@ -36,13 +36,17 @@ class TestPopulateDataDir (unittest.TestCase):
         tmpDir = os.makedirs(dirPath, mode=0o755)
 
         # DEBUG
-        print("dirPath: %s" % dirPath)
+        # print("dirPath: %s" % dirPath)
         # END
         return dirPath
 
     # actual unit tests #############################################
 
-    def doPopTest(self, title, usingSHA):
+    def doPopTest(self, usingSHA):
+        # DEBIG
+        # print("doPopTest: %s" % usingSHA)
+        # EMD
+
         skPriv = RSA.generate(1024)
         sk = skPriv.publickey()
 
@@ -60,11 +64,11 @@ class TestPopulateDataDir (unittest.TestCase):
         # should return an empty list: a basic sanity check
         unmatched = bl.checkInDataDir(originalData)
         # DEBUG
-        if len(unmatched) > 0:
-            print("BL:\n%s" % bl.__str__())
-            print("in the buildList, but not in uData:")
-            for un in unmatched:
-                print("    %s %s" % (un[1], un[0]))
+        # if len(unmatched) > 0:
+        #    print("BL:\n%s" % bl.__str__())
+        #    print("in the buildList, but not in uData:")
+        #    for un in unmatched:
+        #        print("    %s %s" % (un[1], un[0]))
         # END
         self.assertEqual(len(unmatched), 0)
 
@@ -112,9 +116,9 @@ class TestPopulateDataDir (unittest.TestCase):
 
         dataPath = os.path.join(testPath, bl.tree.name)
         # DEBUG
-        print("DATA_PATH: %s" % dataPath)
-        print("DVCZ_DIR:  %s" % dvczPath)
-        print("U_PATH:    %s" % uPath)
+        # print("DATA_PATH: %s" % dataPath)
+        # print("DVCZ_DIR:  %s" % dvczPath)
+        # print("U_PATH:    %s" % uPath)
         # END
 
         # populate the new dataDir and then the new uDir --
@@ -138,17 +142,18 @@ class TestPopulateDataDir (unittest.TestCase):
         self.assertEqual(s41, s4)
 
         # DEBUG
-        print('BL  TREE:\n%s' % bl.tree)
-        print('BL2 TREE:\n%s' % bl2.tree)
-        print('BL3 TREE:\n%s' % bl3.tree)
-        print('BL4 TREE:\n%s' % bl4.tree)
+        # print('BL  TREE:\n%s' % bl.tree)
+        # print('BL2 TREE:\n%s' % bl2.tree)
+        # print('BL3 TREE:\n%s' % bl3.tree)
+        # print('BL4 TREE:\n%s' % bl4.tree)
         # END
 
         self.assertEqual(bl4.tree, bl.tree)
 
     def testPopulateDataDir(self):
-        self.doPopTest('SHA1 test', True)
-        self.doPopTest('SHA2 test', False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, ]:
+            # FIX ME FIX ME
+            self.doPopTest(using)
 
     def testNameSpace(self):
         parser = ArgumentParser(description='oh hello')

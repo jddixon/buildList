@@ -30,7 +30,7 @@ class TestBuildList (unittest.TestCase):
 
     def expectException(self, pathToDir):
         # DEBUG
-        print("ENTERING expectException, path = '%s'" % pathToDir)
+        # print("ENTERING expectException, path = '%s'" % pathToDir)
         # END
         try:
             BuildList.createFromFileSystem('anything', pathToDir, None)
@@ -89,7 +89,7 @@ class TestBuildList (unittest.TestCase):
         self.assertEqual(bl, bl)
         s = bl.toString()
         # DEBUG
-        print("SIGNED BUILD LIST:\n%s" % s)
+        # print("SIGNED BUILD LIST:\n%s" % s)
         # END
         bl2 = BuildList.parse(s, usingSHA)
         s2 = bl2.toString()
