@@ -1,6 +1,9 @@
 ~/dev/py/buildList/CHANGES
 
 
+v0.7.2
+    2016-09-11
+        * FIX_MEs fixed; checkExample{1,2,3} work                   SLOC 2098
 v0.7.1
     2016-09-07
         * cleanup; all tests succeed                                SLOC 2099
@@ -213,6 +216,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

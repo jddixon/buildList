@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from xlattice import Q    # FIX ME
 #
 # ~/dev/py/buildList/blCheck
 
@@ -9,6 +8,8 @@ import sys
 
 from argparse import ArgumentParser
 from nlhtree import NLHTree
+from xlattice import (Q, checkUsingSHA,
+                      parseUsingSHA, fixUsingSHA, showUsingSHA, checkUPath)
 from xlattice.util import getExclusions, makeExRE
 
 from buildList import __file__, BuildList
@@ -20,13 +21,13 @@ def checkBuildList(args):
     exRE = makeExRE(args.excl)
     listFile = args.listFile
     verbose = args.verbose
-    uDir = args.uDir
+    uPath = args.uPath
     usingSHA = args.usingSHA
 
     if dataDir and dataDir[-1] == '/':      # trailing slash
         dataDir = dataDir[:-1]
-    if uDir and uDir[-1] == '/':            # trailing slash
-        uDir = uDir[:-1]
+    if uPath and uPath[-1] == '/':            # trailing slash
+        uPath = uPath[:-1]
 
     bl = None
     data = None
@@ -66,12 +67,12 @@ def checkBuildList(args):
             print("NLHTree for %s:\n%s" % (dataDir, myTree))
             print("NLHTree for BuildList:\n%s" % bl.tree)
 
-    if ok and uDir:
-        unmatched = bl.tree.checkInUDir(uDir)
+    if ok and uPath:
+        unmatched = bl.tree.checkInUDir(uPath)
         if unmatched:
-            print("BuildList, dataDir, and uDir are inconsistent")
+            print("BuildList, dataDir, and uPath are inconsistent")
             for u in unmatched:
-                print("  %s is in the tree but not found in uDir" % u)
+                print("  %s is in the tree but not found in uPath" % u)
 
     if ok:
         print("ok")
@@ -93,11 +94,8 @@ def main():
 
     # parse the command line ----------------------------------------
 
-    DESC = 'verify integrity of build list, optionally agains root dir and uDir"'
+    DESC = 'verify integrity of build list, optionally agains root dir and uPath"'
     parser = ArgumentParser(description=DESC)
-
-    parser.add_argument('-1', '--usingSHA', action='store_true',
-                        help='using the 160-bit SHA1 hash')
 
     parser.add_argument('-b', '--listFile',
                         help='root directory for build list')
@@ -111,15 +109,15 @@ def main():
     parser.add_argument('-j', '--justShow', action='store_true',
                         help='show options and exit')
 
-    parser.add_argument('-u', '--uDir',
-                        help='path to uDir')
-
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help='be chatty')
+    # -1,-2,-3, usingSHA, -v/--verbose
+    parseUsingSHA(parser)
 
     args = parser.parse_args()
 
     # fixups --------------------------------------------------------
+
+    fixUsingSHA(args)
+
     args.curDir = os.getcwd()
     if os.path.exists(args.ignoreFile):
         args.excl = getExclusions(args.curDir)
@@ -130,6 +128,7 @@ def main():
         args.excl.append('build')
 
     # sanity checks -------------------------------------------------
+    checkUsingSHA(args.usingSHA)
     if (not args.justShow):
         if not args.listFile or (not os.path.isfile(args.listFile)):
             print("list file %s does not exist" % args.listFile)
@@ -146,10 +145,7 @@ def main():
             parser.print_usage()
             sys.exit(1)
 
-        if args.uDir and not os.path.isdir(args.uDir):
-            print("uDir directory %s is not a directory" % args.uDir)
-            parser.print_usage()
-            sys.exit(1)
+        checkUPath(parser, args, mustExist=True)
 
     # complete setup ------------------------------------------------
     appName = 'blCheck %s' % __version__
@@ -162,8 +158,7 @@ def main():
         print('dataDir      = ' + str(args.dataDir))
         print('ignoreFile   = ' + str(args.ignoreFile))
         print('listFile     = ' + str(args.listFile))
-        print('uDir         = ' + str(args.uDir))
-        print('verbose      = ' + str(args.verbose))
+        showUsingSHA(args)
 
     if args.justShow:
         sys.exit(0)

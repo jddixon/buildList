@@ -11,7 +11,9 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA    # presumably 1
 
 from merkletree import MerkleDoc
-from xlattice import Q
+from xlattice import (Q, checkUsingSHA, parseUsingSHA, fixUsingSHA,
+                      showUsingSHA)
+
 from xlattice.util import getExclusions, makeExRE, timestampNow
 from buildList import __file__, BuildList
 
@@ -66,9 +68,6 @@ def main():
     DESC = 'generate build list for directory, optionally populating uPath'
     parser = ArgumentParser(description=DESC)
 
-    parser.add_argument('-1', '--usingSHA', action='store_true',
-                        help='use SHA1 in building merkletree (default=false=use SHA256)')
-
     parser.add_argument('-b', '--listFile', default='lastBuildList',
                         help='path to build list')
 
@@ -100,14 +99,11 @@ def main():
     parser.add_argument('-t', '--title',
                         help='title for build list')
 
-    parser.add_argument('-u', '--uPath', type=str,
-                        help='path to uPath (relative to tmp/ if testing)')
-
     parser.add_argument('-V', '--showVersion', action='store_true',
                         help='display version number and exit')
 
-    parser.add_argument('-v', '--verbose', action='store_true',
-                        help='be chatty')
+    # -1,-2,-3, usingSHA, -v/--verbose
+    parseUsingSHA(parser)
 
     parser.add_argument('-X', '--exclusions', action='append',
                         help='do not include files/directories matching this pattern')
@@ -119,8 +115,9 @@ def main():
         sys.exit(0)
 
     # fixups --------------------------------------------------------
-    args.curDir = os.getcwd()
+    fixUsingSHA(args)
 
+    args.curDir = os.getcwd()
     if os.path.exists(args.ignoreFile):
         args.excl = getExclusions(args.curDir)
     else:
@@ -143,10 +140,7 @@ def main():
 
     # sanity checks -------------------------------------------------
     if not args.justShow:
-        if not args.usingSHA:
-            # FIX ME FIX ME FIX ME
-            print("can't handle SHA2 or SHA3 yet")
-            sys.exit(1)
+        checkUsingSHA(args.usingSHA)
 
         if (not args.dataDir) or (args.dataDir == ''):
             print("no root directory specified")
@@ -211,7 +205,7 @@ def main():
         print('title        = ' + str(args.title))
         print('uPath        = ' + str(args.uPath))
         print('usingSHA    = ' + str(args.usingSHA))
-        print('verbose      = ' + str(args.verbose))
+        showUsingSHA(args)
 
         if args.matchPat and len(args.matchPat) > 0:
             print("match:")

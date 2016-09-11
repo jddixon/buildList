@@ -11,7 +11,7 @@ from Crypto.PublicKey import RSA
 from argparse import ArgumentParser
 
 from rnglib import SimpleRNG
-from xlattice import Q
+from xlattice import Q, checkUsingSHA
 from xlattice.util import timestamp
 from buildList import *
 
@@ -58,14 +58,16 @@ class TestBuildList (unittest.TestCase):
 #       self.expectException('b/../c')
 
     def doBuildTest(self, title, usingSHA):
+        checkUsingSHA(usingSHA)
         skPriv = RSA.generate(1024)
         sk = skPriv.publickey()
 
         if usingSHA == Q.USING_SHA1:
             pathToData = os.path.join('example1', 'dataDir')
-        else:
-            # FIX ME FIX ME FIX ME
+        elif usingSHA == Q.USING_SHA2:
             pathToData = os.path.join('example2', 'dataDir')
+        elif usingSHA == Q.USING_SHA3:
+            pathToData = os.path.join('example3', 'dataDir')
         bl = BuildList.createFromFileSystem(
             'a trial list', pathToData, sk, usingSHA)
 
@@ -98,9 +100,8 @@ class TestBuildList (unittest.TestCase):
         self.assertEqual(bl, bl2)
 
     def testBuildList(self):
-        #       self.doTestBadParts()
-        self.doBuildTest('SHA1 test', True)
-        self.doBuildTest('SHA2 test', False)
+        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+            self.doBuildTest('SHA1 test', using)
 
     def testNameSpace(self):
         parser = ArgumentParser(description='oh hello')

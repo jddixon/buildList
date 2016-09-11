@@ -1,17 +1,8 @@
 #!/bin/bash
 
-./blListGen \
-    -1                                  \
-    -b  tmp/junk.bld                    \
-    -k  example/node/skPriv.pem         \
-    -r  example/dataDir                 \
-    -s                                  \
-    -u  tmp/uDir                        \
-    $@
-
 ./blCheck  \
-            -1                          \
-            -b tmp/junk.bld             \
-            -r example/dataDir          \
-            -u tmp/uDir                 \
+            -2                          \
+            -b example2/example.bld      \
+            -d example2/dataDir          \
+            -u example2/uDir             \
             $@

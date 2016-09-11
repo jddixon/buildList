@@ -11,7 +11,7 @@ from Crypto.PublicKey import RSA
 from argparse import ArgumentParser
 
 from rnglib import SimpleRNG
-from xlattice import Q    # FIX ME
+from xlattice import Q, checkUsingSHA
 from xlattice.u import UDir
 from xlattice.util import timestamp
 from buildList import *
@@ -43,6 +43,7 @@ class TestPopulateDataDir (unittest.TestCase):
     # actual unit tests #############################################
 
     def doPopTest(self, usingSHA):
+        checkUsingSHA(usingSHA)
         # DEBIG
         # print("doPopTest: %s" % usingSHA)
         # EMD
@@ -53,10 +54,12 @@ class TestPopulateDataDir (unittest.TestCase):
         if usingSHA == Q.USING_SHA1:
             originalData = os.path.join('example1', 'dataDir')
             originalU = os.path.join('example1', 'uDir')
-        else:
-            # FIX ME FIX ME FIX ME
+        elif usingSHA == Q.USING_SHA2:
             originalData = os.path.join('example2', 'dataDir')
             originalU = os.path.join('example2', 'uDir')
+        elif usingSHA == Q.USING_SHA3:
+            originalData = os.path.join('example3', 'dataDir')
+            originalU = os.path.join('example3', 'uDir')
 
         bl = BuildList.createFromFileSystem(
             'name_of_the_list', originalData, sk, usingSHA)
@@ -152,7 +155,6 @@ class TestPopulateDataDir (unittest.TestCase):
 
     def testPopulateDataDir(self):
         for using in [Q.USING_SHA1, Q.USING_SHA2, ]:
-            # FIX ME FIX ME
             self.doPopTest(using)
 
     def testNameSpace(self):

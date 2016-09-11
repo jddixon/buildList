@@ -1,8 +1,0 @@
-#!/bin/bash
-
-./blCheck  \
-            -1                          \
-            -b example/example.bld      \
-            -d example/dataDir          \
-            -u example/uDir             \
-            $@
