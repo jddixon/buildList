@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-from xlattice import Q    # FIX ME
 #
 # ~/dev/py/buildList/blSrcGen
 
@@ -10,6 +9,7 @@ import sys
 from argparse import ArgumentParser
 from shutil import rmtree
 from buildList import __file__, BuildList
+from xlattice import checkUPath
 
 
 def makeDataDir(options):
@@ -110,6 +110,8 @@ def main():
         args.uPath = os.path.join('tmp', args.uPath)
 
     # sanity checks -------------------------------------------------
+    checkUPath(args.uPath)
+
     def giveUp(msg):
         print(msg)
         parser.print_usage()
@@ -144,11 +146,11 @@ def main():
                     "data directory '%s' already exists; add -f to continue" %
                     dataDir)
 
-        # uDir --------------------------------------------
+        # uPath --------------------------------------------
         if not args.uPath:
-            giveUp("you must specify uDir")
+            giveUp("you must specify uPath")
         elif os.path.exists(args.uPath) and not os.path.isdir(args.uPath):
-            giveUp("uDir %s is not a directory" % args.uPath)
+            giveUp("uPath %s is not a directory" % args.uPath)
 
         if not os.path.exists(args.uPath):
             # XXX could/should check path
@@ -189,7 +191,6 @@ def main():
 
     # do what's required --------------------------------------------
     makeDataDir(args)
-
 
 if __name__ == '__main__':
     main()

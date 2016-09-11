@@ -3,9 +3,11 @@
 import base64
 import binascii
 import calendar
-import hashlib
 import os
 import time
+
+import hashlib
+import sha3         # XXX should be conditional
 
 from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA, SHA256
@@ -15,7 +17,7 @@ from nlhtree import NLHNode, NLHTree, NLHLeaf
 
 from xlattice.crypto import collectPEMRSAPublicKey
 from xlattice.lfs import touch
-from xlattice.u import Q, UDir
+from xlattice.u import Q, UDir, checkUsingSHA
 from xlattice.util import makeExRE, parseTimestamp, timestamp, timestampNow
 
 __all__ = ['__version__', '__version_date__',
@@ -34,8 +36,8 @@ __all__ = ['__version__', '__version_date__',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.7.1'
-__version_date__ = '2016-09-07'
+__version__ = '0.7.2'
+__version_date__ = '2016-09-11'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -224,8 +226,6 @@ class BuildList(object):
 
         self._tree = tree
 
-        self._usingSHA = tree.usingSHA    # REDUNDANT
-
         self._when = 0         # seconds from the Epoch; a 64-bit value
         self._digSig = None
 
@@ -256,7 +256,7 @@ class BuildList(object):
     def tree(self): return self._tree
 
     @property
-    def usingSHA(self): return self._usingSHA
+    def usingSHA(self): return self._tree._usingSHA
 
     def _getBuildListSHA1(self):
         h = SHA.new()
@@ -384,6 +384,7 @@ class BuildList(object):
         This relies upon the fact that all fields are separated by
         LF ('\n').
         """
+
         if s is None:
             raise BLParseFailed('BuildList.parse: empty input')
         if not isinstance(s, str):
@@ -405,6 +406,9 @@ class BuildList(object):
 
     @staticmethod
     def parseFromStrings(ss, usingSHA):
+
+        checkUsingSHA(usingSHA)
+
         # DEBUG
         # print("parseFromStrings: usingSHA = %s" % usingSHA)
         # END
@@ -555,9 +559,10 @@ class BuildList(object):
         newData = bl.__str__().encode('utf-8')
         if usingSHA == Q.USING_SHA1:
             sha = hashlib.sha1()
-        else:
-            # FIX ME FIX ME FIX ME
+        elif usingSHA == Q.USING_SHA2:
             sha = hashlib.sha256()
+        elif usingSHA == Q.USING_SHA3:
+            sha = hashlib.sha3_256()
         sha.update(newData)
         newHash = sha.hexdigest()
         pathToListing = os.path.join(dvczDir, listFile)

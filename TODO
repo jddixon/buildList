@@ -1,7 +1,11 @@
 ~/dev/py/buildList/TODO
 
+2016-09-11
+    * checkUPath needs some refinement: used in blCheck, blListGen,
+        blSrcGen
+
 2016-08-09
-    * running blCheck on example1 returns 'incompatible SHA types'
+    * running blCheck on example1 returns 'incompatible SHA types'      * FIXED
 
 2016-08-06
     * verify that command line formats specified in README.md are       * DONE

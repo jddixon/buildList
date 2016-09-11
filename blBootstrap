@@ -14,30 +14,33 @@ from nlhtree import NLHLeaf, NLHTree
 from xlattice.lfs import touch
 from xlattice.util import makeExRE
 from rnglib import SimpleRNG
+from xlattice import Q, checkUsingSHA
 
 from buildList import __file__, BuildList
 
 
 def doIt(args):
     exDir = args.exDir
-    print("This will destroy %s1 and %s2" % (exDir, exDir))
+    print("This will destroy %s1, %s2, and %s2" % (exDir, exDir, exDir))
     ok = input("OK to proceed? (Y/n)")
     if ok:
         ok = ok.capitalize()
         if not ok.startswith('Y'):
             sys.exit(0)
 
-    reallyDoIt(args, True)     # use SHA1
-    reallyDoIt(args, False)    # use SHA256
+    for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+        reallyDoIt(args, using)
 
 
 def reallyDoIt(args, usingSHA):
+    checkUsingSHA(usingSHA)
     exDir = args.exDir
     if usingSHA == Q.USING_SHA1:
         exDir += '1'
-    else:
-        # FIX ME FIX ME FIX ME
+    elif usingSHA == Q.USING_SHA2:
         exDir += '2'
+    elif usingSHA == Q.USING_SHA3:
+        exDir += '3'
     force = args.force
     verbose = args.verbose
 
@@ -119,9 +122,9 @@ def main():
     Expect a command like
         blBootstrap [options]
 
-    This program creates two directory tree like
+    This program creates three directory tree like
 
-        exampleN/               # where N is 1 or 2
+        exampleN/               # where N is 1 or 2 or 3
             node                # was .xlattice
                 skPriv          # PEM serialization
             dataDir/
@@ -144,8 +147,8 @@ def main():
                 ff
                 tmp/
 
-    The example1 directory uses SHA1; the example2 directory uses
-    SHA256.
+    The example1 directory uses SHA1; example2 uses SHA2 aka SHA-256,
+    and example3 uses SHA3, aka SHA3-256 aka KECCAK-256.
 
     skPriv is the RSA private key used to sign the example.bld
     build list.
