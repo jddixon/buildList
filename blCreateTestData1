@@ -1,0 +1,266 @@
+#!/usr/bin/python3
+from xlattice import Q
+#
+# ~/dev/py/buildList/blCreateTestData1
+
+import os
+import re
+import shutil
+import sys
+
+from argparse import ArgumentParser
+from Crypto.PublicKey import RSA
+from nlhtree import NLHLeaf, NLHTree
+from xlattice.lfs import touch
+from xlattice.util import makeExRE
+from rnglib import SimpleRNG
+from xlattice import Q, check_using_sha
+
+from buildList import __file__, BuildList
+
+DEFAULT_OUT_DIR = '../../dat/xl_test_data/treeData/binExample_1'
+
+
+def doIt(args):
+    outPath = args.outPath
+    if os.path.exists(outPath):
+        print("deleting existing directory %s" % outPath)
+        shutil.rmtree(outPath)
+    # creates ../xl_test_data/treeData/binExample_1
+    os.makedirs(outPath)
+
+    # for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+
+    # NODE_DIR ------------------------------------------------------
+    # Creates RSA key skPriv and its public part sk; and writes
+    # node/skPriv.pem.
+    # ---------------------------------------------------------------
+    outPath = args.outPath
+    nodeDir = os.path.join(outPath, 'node')
+    os.makedirs(nodeDir, mode=0o755)
+
+    # should be >= 2048, but this is just testing
+    skPriv = RSA.generate(1024)
+    pathToKey = os.path.join(nodeDir, "skPriv.pem")
+    with open(pathToKey, 'wb') as f:
+        f.write(skPriv.exportKey('PEM'))
+    sk = skPriv.publickey()
+
+    # DATA_DIR ------------------------------------------------------
+    #
+    # ---------------------------------------------------------------
+
+    dataPath = os.path.join(outPath, 'dataDir')
+    subDir1 = os.path.join(dataPath, 'subDir1')
+    subDir2 = os.path.join(dataPath, 'subDir2')
+    subDir3 = os.path.join(dataPath, 'subDir3')
+    subDir4 = os.path.join(dataPath, 'subDir4')
+    subDir41 = os.path.join(subDir4, 'subDir41')
+    subDir411 = os.path.join(subDir41, 'subDir411')
+
+    for d in [dataPath, subDir1, subDir2, subDir3, subDir4,
+              subDir41, subDir411, ]:
+        os.makedirs(d, mode=0o755)
+
+    # files to be populaed with random data
+    rng = SimpleRNG()
+    data1 = os.path.join(dataPath, 'data1')
+    data11 = os.path.join(subDir1, 'data11')
+    data2 = os.path.join(dataPath, 'data2')
+    data31 = os.path.join(subDir3, 'data31')
+    data4111 = os.path.join(subDir411, 'data31')
+
+    for path in [data1, data11, data2, data31, data4111]:
+        count = 16 + rng.nextInt16(2048)
+        data = bytearray(count)
+        rng.nextBytes(data)
+        with open(path, 'wb') as f:
+            f.write(data)
+
+    # empty file(s)
+    data12 = os.path.join(subDir1, 'data12')
+    for path in [data12]:
+        touch(path)
+
+    # NLH_TREE ------------------------------------------------------
+    #
+    # ---------------------------------------------------------------
+    nlhPath = os.path.join(outPath, 'nlhTree')
+
+    for using_sha in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3]:
+        ndx = int(using_sha)
+        ndxPath = os.path.join(nlhPath, str(ndx))
+        os.makedirs(ndxPath, mode=0o755)
+        tree = NLHTree.createFromFileSystem(dataPath, using_sha)
+
+        uPath = os.path.join(ndxPath, 'uDir')
+        uIn = os.path.join(uPath, 'in')
+        uTmp = os.path.join(uPath, 'tmp')
+        for d in [uPath, uIn, uTmp]:
+            os.makedirs(d, mode=0o755)
+        tree.saveToUDir(dataPath, uPath, using_sha)
+
+    # BUILD LIST ----------------------------------------------------
+    #
+    # ---------------------------------------------------------------
+    blPath = os.path.join(outPath, 'buildList')
+
+    for using_sha in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3]:
+        ndx = int(using_sha)
+        ndxPath = os.path.join(blPath, str(ndx))
+        os.makedirs(ndxPath, mode=0o755)
+
+        listFile = os.path.join(ndxPath, 'example.bld')
+        title = 'sample build list % d' % ndx
+        exRE = makeExRE(['build', ])
+        bl = BuildList.createFromFileSystem(title, dataPath, sk, using_sha,
+                                            exRE, matchRE=None)
+        bl.sign(skPriv)
+        blSer = bl.toString()
+        with open(listFile, 'w+') as f:
+            f.write(blSer)
+
+        # XXX MISSING: hex hash of BuildList
+
+#       unmatched = bl.tree.checkInUDir(uPath)    # all leaf nodes present ?
+#       if unmatched:
+#           print("check walk on example %d failed" % ndx)
+#           for u in unmatched:
+#               print("  %s is not in uDir" % u)
+
+
+def main():
+    """
+    Expect a command like
+        blCreateTestData1 [options]
+
+    This program creates a quasi-random directory tree like
+
+        ../xl_test_data/
+            treeData
+                binExample.1
+                    node
+                        skPriv          # PEM serialization of private RSA key
+                    dataDir/
+                        data1
+                        subDir1/
+                            data11
+                            data12      # empty
+                        data2
+                        subDir2/
+                        subDir3/
+                            data31
+                        subDir4/
+                            subDir41
+                                subDir411
+                                    data4111
+                    nlhTree
+                        {1,2,3}         # three subdirectories: 1/, 2/, 3/
+                            example.nlh # serialization of NLHTree
+                            uDir/
+                                00/
+                                ...
+                                ff/
+                                in/
+                                tmp/
+                    buildList
+                        {1,2,3}
+                            example.bld     # serialized BuildList
+                            hex             # BuildList.hash()
+                    merkleTree
+                        {1,2,3}
+                            example.tree    # serialized
+                            hex             # returned by merkleize -x
+
+
+    skPriv is the RSA private key used to sign the example.bld
+    build list.
+
+    The information under dataDir/ is a small directory tree.
+    The data* are data files containing quasi-random data.  Both the
+    file length and the contents are random.  data12 is an empty file.
+    Subdirectory subDir2 is an empty subdirectory.
+
+    example.bld is a build list for dataDir.  The build list contains
+    the public part of the RSA key used to sign the list, its title,
+    and a UTC timestamp, the time at which the list was signed.  The
+    body of the list is an indented list of the files under dataDir/,
+    with a line for each file, each line containing the SHA content
+    hash of the document and its title.  The build list ends with a
+    digital signature over the earlier part of the document.  In this
+    example, the RSA private key used in signing the document in
+    contained in node/skPriv.
+
+    nlhTree/{1,2,3}/uDir/ contains the same set of files as under dataDir/,
+    but instead of being organized by name it is organized by content
+    key, by the SHA{1,2,3} hash of the file, where SHA2 means SHA256
+    and SHA3 means SHA3-256, the 256-bit version of Keccak.
+
+    The notation '{1,2,3}' is an abbreviation for "each of the sequence
+    of values 1, 2, and 3, taken in turn."
+
+    The data under binExample.1/ is sufficient to verify the correctness of
+    the build list and the 1-to-1 relationship between the files under
+    binExample.1/datadir/ and those under binExample.1/nlhTree/{1,2,3}/uDir/
+
+    For MerkleTrees, there are three serializations, indented lists
+    created using SHA1, SHA2, and SHA3 under 1/, 2/, and 3 respectively;
+    and also the value returned by merkleize -x, the hash value for the
+    entire MerkleTree.
+    """
+
+    __version__ = re.search("__version__\s*=\s*'(.*)'",
+                            open(__file__).read()).group(1)
+    __version_date__ = re.search("__version_date__\s*=\s*'(.*)'",
+                                 open(__file__).read()).group(1)
+
+    # parse the command line ----------------------------------------
+
+    DESC = 'generate a sample data tree, write a build list, and create a corresponding content-keyed store'
+
+    parser = ArgumentParser(description=DESC)
+
+    parser.add_argument('-f', '--force', action='store_true',
+                        help='overwrite any existing example/ directory')
+
+    parser.add_argument('-j', '--justShow', action='store_true',
+                        help='show options and exit')
+
+    parser.add_argument('-o', '--outPath', default=DEFAULT_OUT_DIR,
+                        help="example directory, defaults to '%s'" % DEFAULT_OUT_DIR)
+
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='be chatty')
+
+    args = parser.parse_args()
+
+    # sanity chesks -------------------------------------------------
+    if (not args.force) and os.path.exists(args.outPath):
+        print(
+            "target directory %s exists but force (-f) not specified" %
+            args.outPath)
+        parser.print_usage()
+        sys.exit(1)
+
+    # fixups --------------------------------------------------------
+
+    # complete setup ------------------------------------------------
+    appName = 'blCreateTestData1 %s' % __version__
+
+    # maybe show options and such -----------------------------------
+    if args.verbose or args.justShow:
+        print("%s %s" % (appName, __version_date__))
+
+    if args.verbose or args.justShow:
+        print('force        = ' + str(args.force))
+        print('outPath      = ' + str(args.outPath))
+        print('verbose      = ' + str(args.verbose))
+
+    if args.justShow:
+        sys.exit(0)
+
+    # do what's required --------------------------------------------
+    doIt(args)
+
+if __name__ == '__main__':
+    main()

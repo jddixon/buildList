@@ -4,9 +4,9 @@ if [ ! -z "${DEV_BASE// }" ]
 then
   cd $DEV_BASE/py/buildList
   
-  rm -rf build/* tmp/* 
+  rm -rf build/* 
   
-  pySloc -L py blBootstrap blCheck blListGen blSrcGen  -X dist -v $@
+  pySloc -L py blBootstrap blCheck blListGen blSrcGen  -X cover -X htmlcov -X dist -v $@
 else
   echo "DEV_BASE is not defined"
 fi

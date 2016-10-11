@@ -11,7 +11,7 @@ from Crypto.PublicKey import RSA
 from argparse import ArgumentParser
 
 from rnglib import SimpleRNG
-from xlattice import Q, checkUsingSHA
+from xlattice import Q, check_using_sha
 from xlattice.util import timestamp
 from buildList import *
 
@@ -57,25 +57,25 @@ class TestBuildList (unittest.TestCase):
 #       self.expectException('a/./b')
 #       self.expectException('b/../c')
 
-    def doBuildTest(self, title, usingSHA):
-        checkUsingSHA(usingSHA)
+    def doBuildTest(self, title, using_sha):
+        check_using_sha(using_sha)
         skPriv = RSA.generate(1024)
         sk = skPriv.publickey()
 
-        if usingSHA == Q.USING_SHA1:
+        if using_sha == Q.USING_SHA1:
             pathToData = os.path.join('example1', 'dataDir')
-        elif usingSHA == Q.USING_SHA2:
+        elif using_sha == Q.USING_SHA2:
             pathToData = os.path.join('example2', 'dataDir')
-        elif usingSHA == Q.USING_SHA3:
+        elif using_sha == Q.USING_SHA3:
             pathToData = os.path.join('example3', 'dataDir')
         bl = BuildList.createFromFileSystem(
-            'a trial list', pathToData, sk, usingSHA)
+            'a trial list', pathToData, sk, using_sha)
 
         # check properties ------------------------------------------
         self.assertEqual(bl.title, 'a trial list')
         self.assertEqual(bl.publicKey, sk)
         self.assertEqual(bl.timestamp, timestamp(0))
-        self.assertEqual(bl.usingSHA, usingSHA)
+        self.assertEqual(bl.using_sha, using_sha)
 
         # check sign() and verify() ---------------------------------
 
@@ -93,7 +93,7 @@ class TestBuildList (unittest.TestCase):
         # DEBUG
         # print("SIGNED BUILD LIST:\n%s" % s)
         # END
-        bl2 = BuildList.parse(s, usingSHA)
+        bl2 = BuildList.parse(s, using_sha)
         s2 = bl2.toString()
         self.assertEqual(s, s2)
         self.assertEqual(bl, bl)  # same list, but signed now

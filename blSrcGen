@@ -9,7 +9,7 @@ import sys
 from argparse import ArgumentParser
 from shutil import rmtree
 from buildList import __file__, BuildList
-from xlattice import checkUPath
+from xlattice import checkUPath, Q
 
 
 def makeDataDir(options):
@@ -30,7 +30,7 @@ def makeDataDir(options):
 
     with open(listFile, 'r') as f:
         data = f.read()
-    bl = BuildList.parse(data, usingSHA=True)  # XXX HACK XXX
+    bl = BuildList.parse(data, using_sha=Q.USING_SHA1)  # XXX THINK
 
     bl.populateDataDir(uPath, path)
 

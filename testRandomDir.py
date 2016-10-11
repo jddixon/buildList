@@ -9,7 +9,7 @@ import unittest
 
 from buildList import BuildList
 from rnglib import SimpleRNG
-from xlattice import Q, u, checkUsingSHA
+from xlattice import Q, u, check_using_sha
 
 
 class TestRandomDir (unittest.TestCase):
@@ -24,8 +24,8 @@ class TestRandomDir (unittest.TestCase):
 
     # actual unit tests #############################################
 
-    def doTestRandomDir(self, usingSHA):
-        checkUsingSHA(usingSHA)
+    def doTestRandomDir(self, using_sha):
+        check_using_sha(using_sha)
         depth = 1 + self.rng.nextInt16(3)       # so 1 to 3
         width = 1 + self.rng.nextInt16(16)      # so 1 to 16
 
@@ -44,11 +44,11 @@ class TestRandomDir (unittest.TestCase):
 
         data = bytearray(maxLen)            # that many null bytes
         self.rng.nextBytes(data)            # fill with random data
-        if usingSHA == Q.USING_SHA1:
+        if using_sha == Q.USING_SHA1:
             d = hashlib.sha1()
-        elif usingSHA == Q.USING_SHA2:
+        elif using_sha == Q.USING_SHA2:
             d = hashlib.sha256()
-        elif usingSHA == Q.USING_SHA3:
+        elif using_sha == Q.USING_SHA3:
             d = hashlib.sha3_256()
         d.update(data)
         hash = d.hexdigest()
@@ -56,11 +56,11 @@ class TestRandomDir (unittest.TestCase):
         pathToFile = os.path.join('tmp', fileName)
         with open(pathToFile, 'wb') as f:
             f.write(data)
-        if usingSHA == Q.USING_SHA1:
+        if using_sha == Q.USING_SHA1:
             fileHash = u.fileSHA1Hex(pathToFile)
-        elif usingSHA == Q.USING_SHA2:
+        elif using_sha == Q.USING_SHA2:
             fileHash = u.fileSHA2Hex(pathToFile)
-        elif usingSHA == Q.USING_SHA3:
+        elif using_sha == Q.USING_SHA3:
             fileHash = u.fileSHA3Hex(pathToFile)
         self.assertEqual(hash, fileHash)
 

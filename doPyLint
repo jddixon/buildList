@@ -1,0 +1,4 @@
+pylint setup.py buildList
+    blBootstrap blCheck blCreateTestData1 blListGen blSrcGen    \
+    test*.py
+

@@ -1,5 +1,20 @@
 ~/dev/py/buildList/TODO
 
+2016-09-19
+    * Need a function BuildList.documentHash() which returns the 
+        usingSHA hash of the pubkey and the title (so that all versions 
+        of the BuildList will have the same hash, but are differentiated 
+        by their timestamp).   This needs to be brought in line with the 
+        Java version, SignedList.getHash(), and the Go version, 
+        SignedBList.GetHash()
+
+2016-09-13
+    * need to clear up the confusion: the digital signature on  
+        BuildList must always use SHA1, but must the BuildList do so
+        otherwise?                                                      * NO
+    * should the usingSHA option be part of the BuildList object?       * YES
+        - ah! but there is currently :qno way to serialize this
+
 2016-09-11
     * checkUPath needs some refinement: used in blCheck, blListGen,
         blSrcGen
