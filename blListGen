@@ -11,7 +11,7 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA    # presumably 1
 
 from merkletree import MerkleDoc
-from xlattice import (Q, checkUsingSHA, parseUsingSHA, fixUsingSHA,
+from xlattice import (Q, check_using_sha, parseUsingSHA, fixUsingSHA,
                       showUsingSHA)
 
 from xlattice.util import getExclusions, makeExRE, timestampNow
@@ -27,10 +27,10 @@ def doit(options):
     logging = options.logging
     title = options.title
     uPath = options.uPath      # if None, don't save to uPath
-    usingSHA = options.usingSHA
+    using_sha = options.using_sha
 
     bl = BuildList.listGen(title, dataDir, dvczDir, listFile, keyFile,
-                           excl, logging, uPath, usingSHA)
+                           excl, logging, uPath, using_sha)
 
     print("BuildList written to %s" % os.path.join(dvczDir, listFile))
 
@@ -102,7 +102,7 @@ def main():
     parser.add_argument('-V', '--showVersion', action='store_true',
                         help='display version number and exit')
 
-    # -1,-2,-3, usingSHA, -v/--verbose
+    # -1,-2,-3, using_sha, -v/--verbose
     parseUsingSHA(parser)
 
     parser.add_argument('-X', '--exclusions', action='append',
@@ -140,7 +140,7 @@ def main():
 
     # sanity checks -------------------------------------------------
     if not args.justShow:
-        checkUsingSHA(args.usingSHA)
+        check_using_sha(args.using_sha)
 
         if (not args.dataDir) or (args.dataDir == ''):
             print("no root directory specified")
@@ -204,7 +204,6 @@ def main():
         print('testing      = ' + str(args.testing))
         print('title        = ' + str(args.title))
         print('uPath        = ' + str(args.uPath))
-        print('usingSHA    = ' + str(args.usingSHA))
         showUsingSHA(args)
 
         if args.matchPat and len(args.matchPat) > 0:

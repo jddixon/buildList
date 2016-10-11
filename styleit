@@ -4,10 +4,11 @@ if [ ! -z "${DEV_BASE// }" ]
 then
   cd $DEV_BASE/py/buildList
   
-  autopep8 -ai -r buildList blBootstrap doListGen doSrcGen blCheck blListGen blSrcGen *.py
+  autopep8 -ai -r buildList blBootstrap doListGen doSrcGen blCreateTestData1 blCheck blListGen blSrcGen *.py
   echo "not styling example/ subdir"
   echo "not styling example1/ subdir"
   echo "not styling example2/ subdir"
+  echo "not styling example3/ subdir"
   
 else
   echo "DEV_BASE is not defined"

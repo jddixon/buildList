@@ -14,7 +14,7 @@ from nlhtree import NLHLeaf, NLHTree
 from xlattice.lfs import touch
 from xlattice.util import makeExRE
 from rnglib import SimpleRNG
-from xlattice import Q, checkUsingSHA
+from xlattice import Q, check_using_sha
 
 from buildList import __file__, BuildList
 
@@ -32,14 +32,14 @@ def doIt(args):
         reallyDoIt(args, using)
 
 
-def reallyDoIt(args, usingSHA):
-    checkUsingSHA(usingSHA)
+def reallyDoIt(args, using_sha):
+    check_using_sha(using_sha)
     exDir = args.exDir
-    if usingSHA == Q.USING_SHA1:
+    if using_sha == Q.USING_SHA1:
         exDir += '1'
-    elif usingSHA == Q.USING_SHA2:
+    elif using_sha == Q.USING_SHA2:
         exDir += '2'
-    elif usingSHA == Q.USING_SHA3:
+    elif using_sha == Q.USING_SHA3:
         exDir += '3'
     force = args.force
     verbose = args.verbose
@@ -98,7 +98,7 @@ def reallyDoIt(args, usingSHA):
     sk = skPriv.publickey()
 
     exRE = makeExRE(['build', ])
-    bl = BuildList.createFromFileSystem(title, dataDir, sk, usingSHA,
+    bl = BuildList.createFromFileSystem(title, dataDir, sk, using_sha,
                                         exRE, matchRE=None)
     bl.sign(skPriv)
     blSer = bl.toString()
@@ -109,7 +109,7 @@ def reallyDoIt(args, usingSHA):
 
     # XXX need checks on uPath
 
-    bl.tree.saveToUDir(dataDir, uPath, usingSHA=usingSHA)
+    bl.tree.saveToUDir(dataDir, uPath, using_sha=using_sha)
     unmatched = bl.tree.checkInUDir(uPath)    # all leaf nodes present ?
     if unmatched:
         print("check walk on example/ failed")

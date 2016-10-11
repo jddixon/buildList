@@ -1,7 +1,7 @@
 # buildList/.dvcz/projCfg.local
 
+dir:ign:cover
 dir:pkg:buildList
-dir:clr:tmp
 dir:local:example
 
 txt:std:LICENSE-MIT.md

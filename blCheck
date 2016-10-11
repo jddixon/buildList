@@ -8,7 +8,7 @@ import sys
 
 from argparse import ArgumentParser
 from nlhtree import NLHTree
-from xlattice import (Q, checkUsingSHA,
+from xlattice import (Q, check_using_sha,
                       parseUsingSHA, fixUsingSHA, showUsingSHA, checkUPath)
 from xlattice.util import getExclusions, makeExRE
 
@@ -21,12 +21,12 @@ def checkBuildList(args):
     exRE = makeExRE(args.excl)
     listFile = args.listFile
     verbose = args.verbose
-    uPath = args.uPath
-    usingSHA = args.usingSHA
+    uPath = args.u_path
+    using_sha = args.using_sha
 
     if dataDir and dataDir[-1] == '/':      # trailing slash
         dataDir = dataDir[:-1]
-    if uPath and uPath[-1] == '/':            # trailing slash
+    if uPath and uPath[-1] == '/':          # trailing slash
         uPath = uPath[:-1]
 
     bl = None
@@ -45,7 +45,7 @@ def checkBuildList(args):
     if ok:
         ok = False
         try:
-            bl = BuildList.parse(data, usingSHA)
+            bl = BuildList.parse(data, using_sha)
             ok = True
         except Exception as e:
             print("error parsing BuildList: '%s'" % e)
@@ -58,9 +58,9 @@ def checkBuildList(args):
                 print("dig sig verification fails")
 
     if ok:
-        usingSHA = bl.usingSHA
+        using_sha = bl.using_sha
         # assume exRE can be ignored
-        myTree = NLHTree.createFromFileSystem(dataDir, usingSHA, exRE)
+        myTree = NLHTree.createFromFileSystem(dataDir, using_sha, exRE)
         ok = myTree == bl.tree
         if not ok:
             print("build list's NLHTree doesn't match %s" % dataDir)
@@ -109,7 +109,7 @@ def main():
     parser.add_argument('-j', '--justShow', action='store_true',
                         help='show options and exit')
 
-    # -1,-2,-3, usingSHA, -v/--verbose
+    # -1,-2,-3, using_sha, -v/--verbose
     parseUsingSHA(parser)
 
     args = parser.parse_args()
@@ -128,7 +128,7 @@ def main():
         args.excl.append('build')
 
     # sanity checks -------------------------------------------------
-    checkUsingSHA(args.usingSHA)
+    check_using_sha(args.using_sha)
     if (not args.justShow):
         if not args.listFile or (not os.path.isfile(args.listFile)):
             print("list file %s does not exist" % args.listFile)
