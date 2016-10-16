@@ -18,7 +18,7 @@ def makeDataDir(options):
     keyFile = options.keyFile
     listFile = options.listFile
     testing = options.testing
-    uPath = options.uPath
+    uPath = options.u_path
     verbose = options.verbose
 
     verifying = keyFile != ''

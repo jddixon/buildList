@@ -26,7 +26,7 @@ def doit(options):
     listFile = options.listFile
     logging = options.logging
     title = options.title
-    uPath = options.uPath      # if None, don't save to uPath
+    uPath = options.u_path      # if None, don't save to uPath
     using_sha = options.using_sha
 
     bl = BuildList.listGen(title, dataDir, dvczDir, listFile, keyFile,
@@ -164,15 +164,15 @@ def main():
 
     # uPath ------------------------------------------------
     if args.testing:
-        if args.uPath:
-            if args.uPath[0] == '/':
-                args.uPath = args.uPath[1:]
-            args.uPath = os.path.join('tmp', args.uPath)
-            if os.path.exists(args.uPath):
-                rm_f_dirContents(args.uPath)
+        if args.u_path:
+            if args.u_path[0] == '/':
+                args.u_path = args.u_path[1:]
+            args.u_path = os.path.join('tmp', args.u_path)
+            if os.path.exists(args.u_path):
+                rm_f_dirContents(args.u_path)
 
-    if args.uPath:
-        os.makedirs(args.uPath, 0o755, exist_ok=True)
+    if args.u_path:
+        os.makedirs(args.u_path, 0o755, exist_ok=True)
 
     # title -----------------------------------------------
     if args.dataDir:
@@ -203,7 +203,7 @@ def main():
         print('timestamp    = ' + str(args.now))
         print('testing      = ' + str(args.testing))
         print('title        = ' + str(args.title))
-        print('uPath        = ' + str(args.uPath))
+        print('uPath        = ' + str(args.u_path))
         showUsingSHA(args)
 
         if args.matchPat and len(args.matchPat) > 0:

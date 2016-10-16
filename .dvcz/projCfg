@@ -2,8 +2,8 @@
 project:buildList
 package:buildList
 mainlang:py
-version:0.7.2
-versionDate:2016-09-11
+version:0.7.3
+versionDate:2016-10-11
 :?dirs?:
 dir:std:ghpDoc
 dir:std:dist
@@ -55,7 +55,7 @@ py:local:blCreateTestData1
 py:global:blCheck
 py:global:blListGen
 py:global:blSrcGen
-py:test:testBuildList.py
-py:test:testPopulateDataDir.py
-py:test:testRandomDir.py
-py:test:testTimestamp.py
+py:test:test_build_list.py
+py:test:test_populate_data_dir.py
+py:test:test_random_dir.py
+py:test:test_timestamp.py

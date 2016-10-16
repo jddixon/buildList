@@ -1,5 +1,8 @@
 ~/dev/py/buildList/TODO
 
+2016-10-15
+    * README command summaries are out of date
+
 2016-09-19
     * Need a function BuildList.documentHash() which returns the 
         usingSHA hash of the pubkey and the title (so that all versions 

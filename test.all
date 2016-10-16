@@ -4,10 +4,10 @@ if [ ! -z "${DEV_BASE// }" ]
 then
   cd $DEV_BASE/py/buildList
   
-  ./testBuildList.py
-  ./testPopulateDataDir.py
-  ./testRandomDir.py
-  ./testTimestamp.py
+  ./test_build_list.py
+  ./test_populate_data_dir.py
+  ./test_random_dir.py
+  ./test_timestamp.py
   
 else
   echo "DEV_BASE is not defined"

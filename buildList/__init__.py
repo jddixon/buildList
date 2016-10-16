@@ -36,8 +36,8 @@ __all__ = ['__version__', '__version_date__',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.7.3'
-__version_date__ = '2016-10-11'
+__version__ = '0.7.5'
+__version_date__ = '2016-10-13'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -148,7 +148,7 @@ def expectStr(f, str):
     # END
 
 
-def acceptContentLine(f, digest, str, rootPath, uPath):
+def acceptContentLine(f, digest, str, rootPath, u_path):
     """
     Accept either a content line or a delimiter (str).  Anything else
     raises an exception.  Returns True if content line matched, False
@@ -157,8 +157,8 @@ def acceptContentLine(f, digest, str, rootPath, uPath):
     NOT IMPLEMENTED: If rootPath is not None, compares the content hash
     with that of the file at the relative path.
 
-    NOT IMPLEMENTED: If uPath is not None, verifies that the content key
-    matches that of a file present in uPath.
+    NOT IMPLEMENTED: If u_path is not None, verifies that the content key
+    matches that of a file present in u_path.
     """
     line = acceptListLine(f)        # may raise BLParseFailed
     if line == str:
@@ -180,7 +180,7 @@ def acceptContentLine(f, digest, str, rootPath, uPath):
     path = parts[1]
 
     # XXX NO CHECK AGAINST rootPath
-    # XXX NO CHECK AGAINST uPath
+    # XXX NO CHECK AGAINST u_path
 
     return True
 
@@ -518,14 +518,14 @@ class BuildList(object):
                         os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem'),
                 excl=['build'],
                 logging=False,
-                uPath='',
+                u_path='',
                 using_sha=Q.USING_SHA1):     # NOTE default is SHA1
         """
         Create a BuildList for dataDir with the title indicated.
         Files matching the globs in excl will be skipped.  'build'
         should always be in the list.  If a private key is specified
         and signing is True, the BuildList will be digitally signed.
-        If uPath is specified, the files in dataDir will be posted to uDir.
+        If u_path is specified, the files in dataDir will be posted to uDir.
         By default SHA1 hash will be used for the digital
         signature.
 
@@ -567,27 +567,27 @@ class BuildList(object):
         newHash = sha.hexdigest()
         pathToListing = os.path.join(dvczDir, listFile)
 
-        if uPath:
+        if u_path:
 
-            bl.tree.saveToUDir(dataDir, uPath, using_sha)
+            bl.tree.saveToUDir(dataDir, u_path, using_sha)
 
             # insert this BuildList into U
             # DEBUG
-            # print("writing BuildList with hash %s into %s" % (newHash, uPath))
+            # print("writing BuildList with hash %s into %s" % (newHash, u_path))
             # END
-            uDir = UDir.discover(uPath)
+            uDir = UDir.discover(u_path)
             # DEBUG
             # print("listGen:")
-            #print("  uDir:      %s" % uPath)
+            #print("  uDir:      %s" % u_path)
             #print("  dirStruc:  %s" % UDir.dirStrucToName(uDir.dirStruc))
             #print("  using_sha: %s" % uDir.using_sha)
             # END
             (length, hashBack) = uDir.putData(newData, newHash)
             if hashBack != newHash:
                 print("WARNING: wrote %s to %s, but actual hash is %s" % (
-                    newHash, uPath, hashBack))
+                    newHash, u_path, hashBack))
 
-        # CHANGES TO DATADIR AFTER UPDATING uPath ===================
+        # CHANGES TO DATADIR AFTER UPDATING u_path ===================
 
         # serialize the BuildList, typically to .dvcz/lastBuildList
         with open(pathToListing, 'wb+') as f:
@@ -603,13 +603,13 @@ class BuildList(object):
 
         return bl
 
-    def populateDataDir(self, uPath, dataPath):
-        # uPath path to U, including directory name
+    def populateDataDir(self, u_path, dataPath):
+        # u_path path to U, including directory name
         # dataPath, path to dataDir, including directory name (which
         #   must be the same as the name of the tree)
 
-        if not os.path.exists(uPath):
-            raise RuntimeError("uPath %s does not exist" % uPath)
+        if not os.path.exists(u_path):
+            raise RuntimeError("u_path %s does not exist" % u_path)
 
         relPath, junk, name = dataPath.rpartition('/')
         if name != self.tree.name:
@@ -618,7 +618,7 @@ class BuildList(object):
                     self.tree.name, name))
 
         os.makedirs(relPath, exist_ok=True, mode=0o755)
-        self.tree.populateDataDir(uPath, relPath)
+        self.tree.populateDataDir(u_path, relPath)
 
     # OTHER METHODS =================================================
 
@@ -630,10 +630,10 @@ class BuildList(object):
         """
         return self.tree.checkInDataDir(dataPath)
 
-    def checkInUDir(self, uPath):
+    def checkInUDir(self, u_path):
         """
         Whether the BuildList's component files are present in the
         U directory named.  Returns a list of content hashes for
         files not found.
         """
-        return self.tree.checkInUDir(uPath)
+        return self.tree.checkInUDir(u_path)

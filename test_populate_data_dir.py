@@ -27,29 +27,29 @@ class TestPopulateDataDir (unittest.TestCase):
 
     # utility functions #############################################
 
-    def makeUnique(self, below):
+    def make_unique(self, below):
         """ create a unique subdirectory of the directory named """
 
-        dirPath = os.path.join(below, self.rng.nextFileName(8))
-        while os.path.exists(dirPath):
-            dirPath = os.path.join(below, self.rng.nextFileName(8))
-        tmpDir = os.makedirs(dirPath, mode=0o755)
+        dir_path = os.path.join(below, self.rng.nextFileName(8))
+        while os.path.exists(dir_path):
+            dir_path = os.path.join(below, self.rng.nextFileName(8))
+        tmpDir = os.makedirs(dir_path, mode=0o755)
 
         # DEBUG
-        # print("dirPath: %s" % dirPath)
+        # print("dir_path: %s" % dir_path)
         # END
-        return dirPath
+        return dir_path
 
     # actual unit tests #############################################
 
-    def doPopTest(self, using_sha):
+    def do_pop_test(self, using_sha):
         check_using_sha(using_sha)
         # DEBIG
-        # print("doPopTest: %s" % using_sha)
+        # print("do_pop_test: %s" % using_sha)
         # EMD
 
-        skPriv = RSA.generate(1024)
-        sk = skPriv.publickey()
+        sk_priv = RSA.generate(1024)
+        sk = sk_priv.publickey()
 
         if using_sha == Q.USING_SHA1:
             originalData = os.path.join('example1', 'dataDir')
@@ -80,7 +80,7 @@ class TestPopulateDataDir (unittest.TestCase):
         # DEBUG
         if len(unmatched) > 0:
             print("BL:\n%s" % bl.__str__())
-            print("in the buildList, but not in uDir:")
+            print("in the buildList, but not in u_dir:")
             for un in unmatched:
                 print("    %s %s" % (un[1], un[0]))
         # END
@@ -94,14 +94,14 @@ class TestPopulateDataDir (unittest.TestCase):
         self.assertEqual(bl, bl)
         self.assertFalse(bl.verify())   # not signed yet
 
-        bl.sign(skPriv)
+        bl.sign(sk_priv)
         sig = bl.digSig                 # this is the base64-encoded value
         self.assertTrue(sig is not None)
         self.assertTrue(bl.verify())    # it has been signed
 
         self.assertEqual(bl, bl)
 
-        # BL2: we build testDir and the new dataDir and uDir --------
+        # BL2: we build testDir and the new dataDir and u_dir --------
 
         s = bl.toString()
         bl2 = BuildList.parse(s, using_sha)     # round-tripped build list
@@ -111,34 +111,35 @@ class TestPopulateDataDir (unittest.TestCase):
         self.assertEqual(bl, bl2)
 
         # create empty test directories -------------------
-        testPath = self.makeUnique('tmp')
-        uPath = os.path.join(testPath, 'uDir')
-        uDir = UDir.discover(uPath, using_sha=using_sha)  # creates empty UDir
+        testPath = self.make_unique('tmp')
+        u_path = os.path.join(testPath, 'u_dir')
+        u_dir = UDir.discover(
+            u_path, using_sha=using_sha)  # creates empty UDir
         dvczPath = os.path.join(testPath, 'dvcz')
         os.mkdir(dvczPath)
 
-        dataPath = os.path.join(testPath, bl.tree.name)
+        data_path = os.path.join(testPath, bl.tree.name)
         # DEBUG
-        # print("DATA_PATH: %s" % dataPath)
+        # print("DATA_PATH: %s" % data_path)
         # print("DVCZ_DIR:  %s" % dvczPath)
-        # print("U_PATH:    %s" % uPath)
+        # print("U_PATH:    %s" % u_path)
         # END
 
-        # populate the new dataDir and then the new uDir --
-        #bl2.populateDataDir(originalU, dataPath)
-        bl.populateDataDir(originalU, dataPath)
-        self.assertEqual(len(bl2.checkInDataDir(dataPath)), 0)
+        # populate the new dataDir and then the new u_dir --
+        #bl2.populateDataDir(originalU, data_path)
+        bl.populateDataDir(originalU, data_path)
+        self.assertEqual(len(bl2.checkInDataDir(data_path)), 0)
 
-        bl2.tree.saveToUDir(dataPath, uPath, using_sha)
-        self.assertEqual(len(bl2.checkInUDir(uPath)), 0)
+        bl2.tree.saveToUDir(data_path, u_path, using_sha)
+        self.assertEqual(len(bl2.checkInUDir(u_path)), 0)
 
         # BL3:
 
         # this writes the buildList to dvczPath/lastBuildList:
-        bl3 = BuildList.listGen("title", dataPath, dvczPath,
-                                uPath=uPath, using_sha=using_sha)
-        pathToList = os.path.join(dvczPath, 'lastBuildList')
-        with open(pathToList, 'r') as f:
+        bl3 = BuildList.listGen("title", data_path, dvczPath,
+                                u_path=u_path, using_sha=using_sha)
+        path_to_list = os.path.join(dvczPath, 'lastBuildList')
+        with open(path_to_list, 'r') as f:
             s4 = f.read()
         bl4 = BuildList.parse(s4, using_sha)
         s41 = bl4.toString()
@@ -153,11 +154,11 @@ class TestPopulateDataDir (unittest.TestCase):
 
         self.assertEqual(bl4.tree, bl.tree)
 
-    def testPopulateDataDir(self):
+    def test_populate_data_dir(self):
         for using in [Q.USING_SHA1, Q.USING_SHA2, ]:
-            self.doPopTest(using)
+            self.do_pop_test(using)
 
-    def testNameSpace(self):
+    def test_name_space(self):
         parser = ArgumentParser(description='oh hello')
         args = parser.parse_args()
         args.junk = 'trash'
