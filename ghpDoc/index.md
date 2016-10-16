@@ -46,7 +46,7 @@ directory must be present.
 
     optional arguments:
       -h, --help            show this help message and exit
-      -1, --usingSHA1       using the 160-bit SHA1 hash
+      -1, --using_sha1       using the 160-bit SHA1 hash
       -b LISTFILE, --listFile LISTFILE
                             root directory for build list
       -d DATADIR, --dataDir DATADIR
@@ -77,7 +77,7 @@ specified with the `-X` option.
 
     optional arguments:
       -h, --help            show this help message and exit
-      -1, --usingSHA1       use SHA1 in building merkletree (default=false=use
+      -1, --using_sha1       use SHA1 in building merkletree (default=false=use
                             SHA256)
       -b LISTFILE, --listFile LISTFILE
                             path to build list
