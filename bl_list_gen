@@ -11,10 +11,10 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA    # presumably 1
 
 from merkletree import MerkleDoc
-from xlattice import (Q, check_using_sha, parseUsingSHA, fixUsingSHA,
-                      showUsingSHA)
+from xlattice import (Q, check_using_sha, parseUsingSHA, fix_using_sha,
+                      show_using_sha)
 
-from xlattice.util import getExclusions, makeExRE, timestampNow
+from xlattice.util import get_exclusions, make_ex_re, timestamp_now
 from buildList import __file__, BuildList
 
 
@@ -26,17 +26,17 @@ def doit(options):
     listFile = options.listFile
     logging = options.logging
     title = options.title
-    uPath = options.u_path      # if None, don't save to uPath
+    u_path = options.u_path      # if None, don't save to uPath
     using_sha = options.using_sha
 
     bl = BuildList.listGen(title, dataDir, dvczDir, listFile, keyFile,
-                           excl, logging, uPath, using_sha)
+                           excl, logging, u_path, using_sha)
 
     print("BuildList written to %s" % os.path.join(dvczDir, listFile))
 
     # confirm that whatever is in the BuildList is now in uPath
-    if uPath:
-        unmatched = bl.tree.checkInUDir(uPath)
+    if u_path:
+        unmatched = bl.tree.check_in_u_dir(u_path)
         if unmatched:
             for u in unmatched:
                 print("NOT IN UDIR: ", u)
@@ -51,7 +51,7 @@ def main():
 
     # program defaults ----------------------------------------------
 
-    NOW = timestampNow()
+    NOW = timestamp_now()
 
     __version__ = re.search("__version__\s*=\s*'(.*)'",
                             open(__file__).read()).group(1)
@@ -115,11 +115,11 @@ def main():
         sys.exit(0)
 
     # fixups --------------------------------------------------------
-    fixUsingSHA(args)
+    fix_using_sha(args)
 
     args.curDir = os.getcwd()
     if os.path.exists(args.ignoreFile):
-        args.excl = getExclusions(args.curDir)
+        args.excl = get_exclusions(args.curDir)
     else:
         print("WARNING: ignore file '%s' NOT FOUND" % args.ignoreFile)
         args.excl = []
@@ -134,7 +134,7 @@ def main():
     if args.testing:
         args.dvczDir = os.path.join('tmp/dvcz')
         if os.path.exists(args.dvczDir):
-            rm_f_dirContents(args.dvczDir)      # empties the directory
+            rm_f_dir_contents(args.dvczDir)      # empties the directory
     os.makedirs(args.dvczDir, 0o755, exist_ok=True)
     # WE HAVE args.dvczDir
 
@@ -156,11 +156,11 @@ def main():
         if args.testing:
             args.keyFile = os.path.join(args.dvczDir, 'skPriv.pem')
         if not os.path.exists(args.keyFile):
-            checkDirsInPath(args.keyFile)
+            check_dirs_in_path(args.keyFile)
             if args.testing:
-                generateRSAKey(args.keyFile, 1024)
+                generate_rsa_key(args.keyFile, 1024)
             else:
-                generateRSAKey(args.keyFile, 2048)
+                generate_rsa_key(args.keyFile, 2048)
 
     # uPath ------------------------------------------------
     if args.testing:
@@ -169,7 +169,7 @@ def main():
                 args.u_path = args.u_path[1:]
             args.u_path = os.path.join('tmp', args.u_path)
             if os.path.exists(args.u_path):
-                rm_f_dirContents(args.u_path)
+                rm_f_dir_contents(args.u_path)
 
     if args.u_path:
         os.makedirs(args.u_path, 0o755, exist_ok=True)
@@ -204,7 +204,7 @@ def main():
         print('testing      = ' + str(args.testing))
         print('title        = ' + str(args.title))
         print('uPath        = ' + str(args.u_path))
-        showUsingSHA(args)
+        show_using_sha(args)
 
         if args.matchPat and len(args.matchPat) > 0:
             print("match:")

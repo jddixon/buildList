@@ -31,21 +31,21 @@ class TestTimestamp (unittest.TestCase):
 
         blkCount = 1 + self.rng.nextInt16(3)     # so 1 to 3
         # last block will usually be only partically populated
-        byteCount = BuildList.BLOCK_SIZE * (blkCount - 1) + \
+        byteCount = BuildList.BLOCK_SIZE * (blkCount - 1) +\
             self.rng.nextInt16(BuildList.BLOCK_SIZE)
 
         data = bytearray(byteCount)     # that many null bytes
         self.rng.nextBytes(data)             # fill with random data
-        d = hashlib.new('sha1')
-        d.update(data)
-        hash = d.hexdigest()
+        dVal = hashlib.new('sha1')
+        dVal.update(data)
+        hash = dVal.hexdigest()
 
         fileName = self.rng.nextFileName(8)
         pathToFile = os.path.join('tmp', fileName)
-        with open(pathToFile, 'wb') as f:
-            f.write(data)
+        with open(pathToFile, 'wb') as file:
+            file.write(data)
 
-        fileHash = u.fileSHA1Hex(pathToFile)
+        fileHash = u.file_sha1hex(pathToFile)
 
         self.assertEqual(hash, fileHash)
 

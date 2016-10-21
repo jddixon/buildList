@@ -12,14 +12,14 @@ from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
 from nlhtree import NLHLeaf, NLHTree
 from xlattice.lfs import touch
-from xlattice.util import makeExRE
+from xlattice.util import make_ex_re
 from rnglib import SimpleRNG
 from xlattice import Q, check_using_sha
 
 from buildList import __file__, BuildList
 
 
-def doIt(args):
+def do_it(args):
     exDir = args.exDir
     print("This will destroy %s1, %s2, and %s2" % (exDir, exDir, exDir))
     ok = input("OK to proceed? (Y/n)")
@@ -48,9 +48,9 @@ def reallyDoIt(args, using_sha):
     listFile = os.path.join(exDir, 'example.bld')
     nodeDir = os.path.join(exDir, 'node')
     title = 'sample build list'
-    uPath = os.path.join(exDir, 'uDir')
+    u_path = os.path.join(exDir, 'u_dir')
 
-    uTmp = os.path.join(uPath, 'tmp')
+    uTmp = os.path.join(u_path, 'tmp')
 
     if os.path.exists(exDir):
         print("deleting existing directory %s" % exDir)
@@ -63,10 +63,10 @@ def reallyDoIt(args, using_sha):
     subDir41 = os.path.join(subDir4, 'subDir41')
     subDir411 = os.path.join(subDir41, 'subDir411')
 
-    for d in [dataDir, nodeDir, uPath, uTmp]:
-        os.makedirs(d, mode=0o755)
-    for d in [subDir1, subDir2, subDir3, subDir4]:
-        os.makedirs(d, mode=0o755)
+    for dVal in [dataDir, nodeDir, u_path, uTmp]:
+        os.makedirs(dVal, mode=0o755)
+    for dVal in [subDir1, subDir2, subDir3, subDir4]:
+        os.makedirs(dVal, mode=0o755)
     os.makedirs(subDir41, mode=0o755)
     os.makedirs(subDir411, mode=0o755)
 
@@ -82,8 +82,8 @@ def reallyDoIt(args, using_sha):
         count = 16 + rng.nextInt16(2048)
         data = bytearray(count)
         rng.nextBytes(data)
-        with open(path, 'wb') as f:
-            f.write(data)
+        with open(path, 'wb') as file:
+            file.write(data)
 
     # empty file(s)
     data12 = os.path.join(subDir1, 'data12')
@@ -93,24 +93,24 @@ def reallyDoIt(args, using_sha):
     # should be >= 2048, but this is just testing
     skPriv = RSA.generate(1024)
     pathToKey = os.path.join(nodeDir, "skPriv.pem")
-    with open(pathToKey, 'wb') as f:
-        f.write(skPriv.exportKey('PEM'))
+    with open(pathToKey, 'wb') as file:
+        file.write(skPriv.exportKey('PEM'))
     sk = skPriv.publickey()
 
-    exRE = makeExRE(['build', ])
-    bl = BuildList.createFromFileSystem(title, dataDir, sk, using_sha,
-                                        exRE, matchRE=None)
+    exRE = make_ex_re(['build', ])
+    bl = BuildList.create_from_file_system(title, dataDir, sk, using_sha,
+                                           exRE, matchRE=None)
     bl.sign(skPriv)
     blSer = bl.toString()
-    with open(listFile, 'w') as f:
-        f.write(blSer)
+    with open(listFile, 'w') as file:
+        file.write(blSer)
 
     # XXX WORKING HERE
 
     # XXX need checks on uPath
 
-    bl.tree.saveToUDir(dataDir, uPath, using_sha=using_sha)
-    unmatched = bl.tree.checkInUDir(uPath)    # all leaf nodes present ?
+    bl.tree.save_to_u_dir(dataDir, u_path, using_sha=using_sha)
+    unmatched = bl.tree.check_in_u_dir(u_path)    # all leaf nodes present ?
     if unmatched:
         print("check walk on example/ failed")
         for u in unmatched:
@@ -237,7 +237,7 @@ def main():
         sys.exit(0)
 
     # do what's required --------------------------------------------
-    doIt(args)
+    do_it(args)
 
 if __name__ == '__main__':
     main()

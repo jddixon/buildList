@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 # testPopulateDataDir.py
 
 import base64
@@ -61,28 +60,30 @@ class TestPopulateDataDir (unittest.TestCase):
             originalData = os.path.join('example3', 'dataDir')
             originalU = os.path.join('example3', 'uDir')
 
-        bl = BuildList.createFromFileSystem(
+        bl = BuildList.create_from_file_system(
             'name_of_the_list', originalData, sk, using_sha)
 
         # should return an empty list: a basic sanity check
-        unmatched = bl.checkInDataDir(originalData)
+        unmatched = bl.check_in_data_dir(originalData)
         # DEBUG
+        #print("UNMATCHED IN DATA DIR: ", unmatched)
         # if len(unmatched) > 0:
-        #    print("BL:\n%s" % bl.__str__())
-        #    print("in the buildList, but not in uData:")
-        #    for un in unmatched:
-        #        print("    %s %s" % (un[1], un[0]))
+        #   print("BL:\n%s" % bl.__str__())
+        #   print("in the buildList, but not in uData:")
+        #   for un in unmatched:
+        #       print("    %s %s" % (un[1], un[0]))
         # END
         self.assertEqual(len(unmatched), 0)
 
         # should return an empty list: a basic sanity check
-        unmatched = bl.checkInUDir(originalU)
+        unmatched = bl.check_in_u_dir(originalU)
         # DEBUG
-        if len(unmatched) > 0:
-            print("BL:\n%s" % bl.__str__())
-            print("in the buildList, but not in u_dir:")
-            for un in unmatched:
-                print("    %s %s" % (un[1], un[0]))
+        #print("UNMATCHED IN U DIR: ", unmatched)
+        # if len(unmatched) > 0:
+        #    print("BL:\n%s" % bl.__str__())
+        #    print("in the buildList, but not in u_dir:")
+        #    for un in unmatched:
+        #        print("    %s %s" % (un[1], un[0]))
         # END
         self.assertEqual(len(unmatched), 0)
 
@@ -103,10 +104,10 @@ class TestPopulateDataDir (unittest.TestCase):
 
         # BL2: we build testDir and the new dataDir and u_dir --------
 
-        s = bl.toString()
-        bl2 = BuildList.parse(s, using_sha)     # round-tripped build list
+        string = bl.toString()
+        bl2 = BuildList.parse(string, using_sha)     # round-tripped build list
         s2 = bl2.toString()
-        self.assertEqual(s, s2)
+        self.assertEqual(string, s2)
         self.assertEqual(bl, bl)                # same list, but signed now
         self.assertEqual(bl, bl2)
 
@@ -128,10 +129,10 @@ class TestPopulateDataDir (unittest.TestCase):
         # populate the new dataDir and then the new u_dir --
         #bl2.populateDataDir(originalU, data_path)
         bl.populateDataDir(originalU, data_path)
-        self.assertEqual(len(bl2.checkInDataDir(data_path)), 0)
+        self.assertEqual(len(bl2.check_in_data_dir(data_path)), 0)
 
-        bl2.tree.saveToUDir(data_path, u_path, using_sha)
-        self.assertEqual(len(bl2.checkInUDir(u_path)), 0)
+        bl2.tree.save_to_u_dir(data_path, u_path, using_sha)
+        self.assertEqual(len(bl2.check_in_u_dir(u_path)), 0)
 
         # BL3:
 
@@ -139,8 +140,8 @@ class TestPopulateDataDir (unittest.TestCase):
         bl3 = BuildList.listGen("title", data_path, dvczPath,
                                 u_path=u_path, using_sha=using_sha)
         path_to_list = os.path.join(dvczPath, 'lastBuildList')
-        with open(path_to_list, 'r') as f:
-            s4 = f.read()
+        with open(path_to_list, 'r') as file:
+            s4 = file.read()
         bl4 = BuildList.parse(s4, using_sha)
         s41 = bl4.toString()
         self.assertEqual(s41, s4)

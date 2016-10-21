@@ -9,8 +9,8 @@ import sys
 from argparse import ArgumentParser
 from nlhtree import NLHTree
 from xlattice import (Q, check_using_sha,
-                      parseUsingSHA, fixUsingSHA, showUsingSHA, checkUPath)
-from xlattice.util import getExclusions, makeExRE
+                      parseUsingSHA, fix_using_sha, show_using_sha, check_u_path)
+from xlattice.util import get_exclusions, make_ex_re
 
 from buildList import __file__, BuildList
 
@@ -18,16 +18,16 @@ from buildList import __file__, BuildList
 def checkBuildList(args):
 
     dataDir = args.dataDir  # _without_ trailing slash
-    exRE = makeExRE(args.excl)
+    exRE = make_ex_re(args.excl)
     listFile = args.listFile
     verbose = args.verbose
-    uPath = args.u_path
+    u_path = args.u_path
     using_sha = args.using_sha
 
     if dataDir and dataDir[-1] == '/':      # trailing slash
         dataDir = dataDir[:-1]
-    if uPath and uPath[-1] == '/':          # trailing slash
-        uPath = uPath[:-1]
+    if u_path and u_path[-1] == '/':          # trailing slash
+        u_path = u_path[:-1]
 
     bl = None
     data = None
@@ -36,8 +36,8 @@ def checkBuildList(args):
 
     try:
         # can't use 'r' which converts CRLF to just LF
-        with open(listFile, 'rb') as f:
-            data = f.read()
+        with open(listFile, 'rb') as file:
+            data = file.read()
             ok = True     # no exceptions
     except Exception as e:
         print("error reading build list file: '%s'" % e)
@@ -60,15 +60,15 @@ def checkBuildList(args):
     if ok:
         using_sha = bl.using_sha
         # assume exRE can be ignored
-        myTree = NLHTree.createFromFileSystem(dataDir, using_sha, exRE)
+        myTree = NLHTree.create_from_file_system(dataDir, using_sha, exRE)
         ok = myTree == bl.tree
         if not ok:
             print("build list's NLHTree doesn't match %s" % dataDir)
             print("NLHTree for %s:\n%s" % (dataDir, myTree))
             print("NLHTree for BuildList:\n%s" % bl.tree)
 
-    if ok and uPath:
-        unmatched = bl.tree.checkInUDir(uPath)
+    if ok and u_path:
+        unmatched = bl.tree.check_in_u_dir(u_path)
         if unmatched:
             print("BuildList, dataDir, and uPath are inconsistent")
             for u in unmatched:
@@ -116,11 +116,11 @@ def main():
 
     # fixups --------------------------------------------------------
 
-    fixUsingSHA(args)
+    fix_using_sha(args)
 
     args.curDir = os.getcwd()
     if os.path.exists(args.ignoreFile):
-        args.excl = getExclusions(args.curDir)
+        args.excl = get_exclusions(args.curDir)
     else:
         print("WARNING: ignore file '%s' NOT FOUND" % ignoreFile)
         args.excl = []
@@ -145,7 +145,7 @@ def main():
             parser.print_usage()
             sys.exit(1)
 
-        checkUPath(parser, args, mustExist=True)
+        check_u_path(parser, args, mustExist=True)
 
     # complete setup ------------------------------------------------
     appName = 'blCheck %s' % __version__
@@ -158,7 +158,7 @@ def main():
         print('dataDir      = ' + str(args.dataDir))
         print('ignoreFile   = ' + str(args.ignoreFile))
         print('listFile     = ' + str(args.listFile))
-        showUsingSHA(args)
+        show_using_sha(args)
 
     if args.justShow:
         sys.exit(0)
