@@ -9,7 +9,7 @@ import sys
 from argparse import ArgumentParser
 from shutil import rmtree
 from buildList import __file__, BuildList
-from xlattice import checkUPath, Q
+from xlattice import check_u_path, Q
 
 
 def makeDataDir(options):
@@ -18,21 +18,21 @@ def makeDataDir(options):
     keyFile = options.keyFile
     listFile = options.listFile
     testing = options.testing
-    uPath = options.u_path
+    u_path = options.u_path
     verbose = options.verbose
 
     verifying = keyFile != ''
 
     if dataPath and dataPath[-1] == '/':      # trailing slash
         dataPath = dataPath[:-1]
-    if uPath and uPath[-1] == '/':            # trailing slash
-        uPath = uPath[:-1]
+    if u_path and u_path[-1] == '/':            # trailing slash
+        u_path = u_path[:-1]
 
-    with open(listFile, 'r') as f:
-        data = f.read()
+    with open(listFile, 'r') as file:
+        data = file.read()
     bl = BuildList.parse(data, using_sha=Q.USING_SHA1)  # XXX THINK
 
-    bl.populateDataDir(uPath, path)
+    bl.populateDataDir(u_path, path)
 
 
 def main():
@@ -104,13 +104,13 @@ def main():
             args.dataDir = args.dataDir[1:]
         args.dataDir = os.path.join('tmp', args.dataDir)
 
-    if args.testing and args.uPath:
-        if args.uPath[0] == '/':
-            args.uPath = args.uPath[1:]
-        args.uPath = os.path.join('tmp', args.uPath)
+    if args.testing and args.u_path:
+        if args.u_path[0] == '/':
+            args.u_path = args.u_path[1:]
+        args.u_path = os.path.join('tmp', args.u_path)
 
     # sanity checks -------------------------------------------------
-    checkUPath(args.uPath)
+    check_u_path(args.u_path)
 
     def giveUp(msg):
         print(msg)
@@ -147,14 +147,14 @@ def main():
                     dataDir)
 
         # uPath --------------------------------------------
-        if not args.uPath:
+        if not args.u_path:
             giveUp("you must specify uPath")
-        elif os.path.exists(args.uPath) and not os.path.isdir(args.uPath):
-            giveUp("uPath %s is not a directory" % args.uPath)
+        elif os.path.exists(args.u_path) and not os.path.isdir(args.u_path):
+            giveUp("uPath %s is not a directory" % args.u_path)
 
-        if not os.path.exists(args.uPath):
+        if not os.path.exists(args.u_path):
             # XXX could/should check path
-            os.mkdir(args.uPath, 0o755)
+            os.mkdir(args.u_path, 0o755)
 
         # listFile ----------------------------------------
         if not args.listFile or args.listFile == '':
@@ -182,7 +182,7 @@ def main():
         print('listFile     = ' + str(args.listFile))
         print('matchOn      = ' + str(args.matchOn))
         print('testing      = ' + str(args.testing))
-        print('uPath        = ' + str(args.uPath))
+        print('uPath        = ' + str(args.u_path))
         print('verbose      = ' + str(args.verbose))
         print('verifying    = %s' % (args.keyFile != ''))
 

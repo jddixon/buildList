@@ -7,38 +7,38 @@ zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
 H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
 GQIDAQAB
 -----END RSA PUBLIC KEY-----
-buildList v0.7.5
-2016-10-16 00:30:35
+buildList v0.8.0
+2016-10-21 23:11:55
 # BEGIN CONTENT #
 buildList
  .dvcz
-  builds ac34e487f7eb4f985175abf849d75b6195a73122
+  builds 5352fdba0e9eef06bd806be48bd2b83ac6a422f3
   copyright 803f3e50518123ef8a08d34f2238e89b62d0c9a2
-  lastBuildList 5030e9687dfeba17a3de7e67687eb014f35b7de4
+  lastBuildList ff8922afa99d876ada2119be5dc47573519b2155
   license 5977a55c75bb4612004451a56b0b4c22d9d3311d
-  projCfg 621ffb13095d2986140ace86596c0f9360a06289
+  projCfg 64c531d0ecd63d1f0cf8912036fae535575d36d3
   projCfg.local b39c309e5f7011831b7eb3d9effed2a02806535a
-  version c547d8ef6bd700a3157c30f577ddbe224583bd96
+  version 4527317fa3a76f64274ead19eed8acedee144b4b
  .gitignore 2bc4bcb7826ea9b5fb999444fe18f6785df1de72
- CHANGES d5cc92055aa4a52e3b659929755a96324413f206
+ CHANGES 4442fdc2c504c61c51c01ba21b40e8b0eef6cdb0
  LICENSE-MIT.md d1cecfadc47b23486f6bc8a863cfdde348c3eb46
  MANIFEST.in 0faaebb5df7d0d418f90e80a771e2a1c57f371a5
  README.md 876e0c6503c8a62375ee53b40eba3083ee87fd1c
  TODO 14178807a7a7fb0978092ad69db5016131073c93
- bkp2U 2624f7f314ef27fbde5e2a0e1286e75f0622a85a
- blBootstrap 225f981963f24e988fafb60448a6fb705684658a
- blCheck ecc14ceb384c9faf16a362dad59de13e649a354e
- blCreateTestData1 4c8c7cc5117166938a70e946e1b1f0fb83ca229b
- blListGen 9ad57f1d738106e8a99416079a986e487ba05e87
- blSrcGen 8af9bb81e71a3290315af972fd94319b7c79e5da
+ bkp2U 453d700c738006ba9c254416cac1450415572c6a
+ bl_bootstrap 2e7b715497463daf1a2502956e4525a3e832d863
+ bl_check 690afb71c31db6f76877e304cc61516dd26cd3e9
+ bl_create_test_data1 6e64bbdb0c3da1baf5a3ff2f541db7d326cb4e09
+ bl_list_gen d8b2314a5a29337084b723ea9047d3cc91720551
+ bl_src_gen e993006c7a58d85e26de8f06d967582f0aace837
  buildList
-  __init__.py 8a4161ada25fca3afd078717b07ed9079adde688
+  __init__.py f4dd837700a336ac2b618529cf465bd0b3316ae2
  checkBlSrcGen ddfbda1aa91cd552beb99aa9305631cc041891bc
  checkCoverage c17285d7affb7cc8249f8fc1f922faaa69962e6a
  checkExample1 916bba1865127d207256b1a7f423347db013f1cb
  checkExample2 07932fb844918277379bbc06f2e715a8dc8ba51a
  checkExample3 0d823039d8f18477845de94ace6615a90e42302e
- countem e029a228f2da4722ad0e7ecdb1d554af0b65df76
+ countem c241f1a04305e6f41b3984c9f3276b634c731be4
  dist
   buildList-0.1.0.tar.gz aae011231fa591fd83dca1bf9d289c14e5cc2ed3
   buildList-0.1.3.tar.gz 58297b3cc0aa7cfddee9d9a3a8c9ec6e7d6d21e6
@@ -102,6 +102,7 @@ buildList
   buildList-0.7.3.tar.gz 2f5d48cde9bee8cbff1f82ec1e4d4c369ee25188
   buildList-0.7.4.tar.gz c636fc4b6cb3c9068e17eeb60ae672b9300017ea
   buildList-0.7.5.tar.gz c100899f04a39a5193d7e9b2b720eba200a11616
+  buildList-0.8.0.tar.gz 1e7c0de9f714e3f7797cfd433ec8ae6febff9216
  doListGen 7832075726e25d564b4b2768bb75d9a5ee3a1b1a
  doPyLint f6c53dd3ccf7e09b2b4b5b2758846e127b54b48b
  doSrcGen fab4b95000c135656f7be3416171df24138cdc2b
@@ -129,9 +130,6 @@ buildList
    ca83a024cf4bb9c503f89c86b8819e012d64212d ca83a024cf4bb9c503f89c86b8819e012d64212d
    da39a3ee5e6b4b0d3255bfef95601890afd80709 da39a3ee5e6b4b0d3255bfef95601890afd80709
    e5ea2d73b3801b38e2add428fa98219c48c69e93 e5ea2d73b3801b38e2add428fa98219c48c69e93
-   in
-  u_dir
-   da39a3ee5e6b4b0d3255bfef95601890afd80709 da39a3ee5e6b4b0d3255bfef95601890afd80709
    in
  example2
   dataDir
@@ -200,15 +198,18 @@ buildList
   index.md 3a0b094e4ee1e14b03fbbd20bfe6d9f64e3521b9
  installit ece6c8b99a410db9a3477d28f706e47989b1e982
  make.bld.from.example.datadir 5d2df5fefae187821af2e85e57213034da1a8744
+ name-pairs-api b9ce80fda6e3f9ae9ca2c7645c6d61066ca3d7d2
  pylintrc dd234fda24a547a9071f1e4608a3c1f3b7de9aa0
+ renamePerAPI 36d0f5f717abad14b5949d2433fae2de71d58e3e
+ renamePerNLHTree 7c526c65d796406d5706695853d855d8a666de5d
  sampleRun aad7774c254290e4179bfbe0f4d93bdb6b92ea25
- setup.py 26a9f0e760c0144219f1b6ff14e4a4da5190eaff
- styleit d1ff409a80caf10d5544102290f61cabaeace13f
+ setup.py b5b527e8e0db36341212cfea49a8960c3100461f
+ styleit b29950688093d1c246768171af4957e1bb7eaaf3
  test.all dead5d949b20b5b5f557d48c125b98dfecceee34
- test_build_list.py 4ee775fee168f31ec8a655f69882655da20abb71
- test_populate_data_dir.py d0a1b232cff41748433cba1ef8cc005697e8e102
- test_random_dir.py 5659a88c7a79aeae635f0fa51f6146c8bf4580c9
- test_timestamp.py 2cebbbffd24b3eb39802ade493584a9fd9d9e5f7
+ test_build_list.py 02990770372ae2194364cc6a36ee3f55087b2f89
+ test_populate_data_dir.py db56657dbf9566c95b419c339fca3b026aa87a6e
+ test_random_dir.py db202762414726bd95a1d30e5e01caae0147ab0f
+ test_timestamp.py 1a7caca027dc2ebe50de6781b754b08078047163
 # END CONTENT #
 
-XlK929nigtfxwliYfqU2w91TcLyJPfTDjnanMChvbhhL4u/FvoUBEGaYk9GZWduvU8Ye92hXFtHyd3EkSXMGxEbbRZlRYSG+pAZn7VQBhz+cDRorU/yg/4cafboj75tSgecCIrvhOt6H0jCQ62pKt94g8afTsJVZQBwXwB87hkmH0kOu5SW3uMzoDCHSER9we/7Tg/PxY3g0eV6ATgNZ2s8CB4HLe2VeTvS8uaiQTJBVRstZEVFtPjUGU7KKmtBXQXAsSEGtPhVt0Dp/HC5vWpCMbzm+uzzRIA1gUcOzVdr/RwKEtvjOovKAZ63oMzWLGM9MRR8XrrYJhRmUPXlmQA==
+buLM/fghtDP7We971LLZVS1Y0nCjWFkRXOqpwmERvXnHzpy29tWg6nUXBkFRON4f6J1fqnwYWDgYiO/KDOMwHgEZh3ASa8PR141cT/XYtd8JMVZwS+FDWhKtsmyVzHVHlU2gqmzK8yxz8Uw585oQ4oT7g8PxdmFGoAvzm8R7kC2eOn5NN5/rD1xEMnMCSs43+7UwLh30mOmTcwQ57D0rrqsAYdhyDdM8SGCgElTqsuI6Z62SkJKIV04Edr6t7XR9/G6Pz+aYq+1pgLJokN9GeUu0YV1U0Cc9jFFVcvMMuxf15nWn2O8b2honzwdvw2eJ3UlayErVbEcpyoU372OqqQ==

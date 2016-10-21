@@ -33,7 +33,7 @@ class TestBuildList (unittest.TestCase):
         # print("ENTERING expectException, path = '%s'" % pathToDir)
         # END
         try:
-            BuildList.createFromFileSystem('anything', pathToDir, None)
+            BuildList.create_from_file_system('anything', pathToDir, None)
             self.fail("accepted '%s' as pathToDir")
         except RuntimeError as e:
             pass
@@ -68,7 +68,7 @@ class TestBuildList (unittest.TestCase):
             pathToData = os.path.join('example2', 'dataDir')
         elif using_sha == Q.USING_SHA3:
             pathToData = os.path.join('example3', 'dataDir')
-        bl = BuildList.createFromFileSystem(
+        bl = BuildList.create_from_file_system(
             'a trial list', pathToData, sk, using_sha)
 
         # check properties ------------------------------------------
@@ -89,13 +89,13 @@ class TestBuildList (unittest.TestCase):
 
         # equality, serialization, deserialization ------------------
         self.assertEqual(bl, bl)
-        s = bl.toString()
+        string = bl.toString()
         # DEBUG
         # print("SIGNED BUILD LIST:\n%s" % s)
         # END
-        bl2 = BuildList.parse(s, using_sha)
+        bl2 = BuildList.parse(string, using_sha)
         s2 = bl2.toString()
-        self.assertEqual(s, s2)
+        self.assertEqual(string, s2)
         self.assertEqual(bl, bl)  # same list, but signed now
         self.assertEqual(bl, bl2)
 

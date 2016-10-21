@@ -2,6 +2,9 @@
 
 
 
+v0.8.0
+    2016-10-21
+        * change file names, API per PEP 8                          SLOC 2368
 v0.7.5
     2016-10-13
         * correct options.uPath errors                              SLOC 2254
@@ -229,6 +232,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

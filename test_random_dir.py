@@ -31,7 +31,7 @@ class TestRandomDir (unittest.TestCase):
 
         blkCount = 1 + self.rng.nextInt16(3)     # so 1 to 3
         # last block will usually be only partically populated
-        maxLen = BuildList.BLOCK_SIZE * (blkCount - 1) + \
+        maxLen = BuildList.BLOCK_SIZE * (blkCount - 1) +\
             self.rng.nextInt16(BuildList.BLOCK_SIZE)
         minLen = 1
 
@@ -45,23 +45,23 @@ class TestRandomDir (unittest.TestCase):
         data = bytearray(maxLen)            # that many null bytes
         self.rng.nextBytes(data)            # fill with random data
         if using_sha == Q.USING_SHA1:
-            d = hashlib.sha1()
+            dVal = hashlib.sha1()
         elif using_sha == Q.USING_SHA2:
-            d = hashlib.sha256()
+            dVal = hashlib.sha256()
         elif using_sha == Q.USING_SHA3:
-            d = hashlib.sha3_256()
-        d.update(data)
-        hash = d.hexdigest()
+            dVal = hashlib.sha3_256()
+        dVal.update(data)
+        hash = dVal.hexdigest()
         fileName = self.rng.nextFileName(8)
         pathToFile = os.path.join('tmp', fileName)
-        with open(pathToFile, 'wb') as f:
-            f.write(data)
+        with open(pathToFile, 'wb') as file:
+            file.write(data)
         if using_sha == Q.USING_SHA1:
-            fileHash = u.fileSHA1Hex(pathToFile)
+            fileHash = u.file_sha1hex(pathToFile)
         elif using_sha == Q.USING_SHA2:
-            fileHash = u.fileSHA2Hex(pathToFile)
+            fileHash = u.file_sha2hex(pathToFile)
         elif using_sha == Q.USING_SHA3:
-            fileHash = u.fileSHA3Hex(pathToFile)
+            fileHash = u.file_sha3hex(pathToFile)
         self.assertEqual(hash, fileHash)
 
     def testRandomDir(self):

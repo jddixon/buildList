@@ -12,7 +12,7 @@ from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
 from nlhtree import NLHLeaf, NLHTree
 from xlattice.lfs import touch
-from xlattice.util import makeExRE
+from xlattice.util import make_ex_re
 from rnglib import SimpleRNG
 from xlattice import Q, check_using_sha
 
@@ -21,13 +21,13 @@ from buildList import __file__, BuildList
 DEFAULT_OUT_DIR = '../../dat/xl_test_data/treeData/binExample_1'
 
 
-def doIt(args):
-    outPath = args.outPath
-    if os.path.exists(outPath):
-        print("deleting existing directory %s" % outPath)
-        shutil.rmtree(outPath)
+def do_it(args):
+    out_path = args.out_path
+    if os.path.exists(out_path):
+        print("deleting existing directory %s" % out_path)
+        shutil.rmtree(out_path)
     # creates ../xl_test_data/treeData/binExample_1
-    os.makedirs(outPath)
+    os.makedirs(out_path)
 
     # for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
 
@@ -35,22 +35,22 @@ def doIt(args):
     # Creates RSA key skPriv and its public part sk; and writes
     # node/skPriv.pem.
     # ---------------------------------------------------------------
-    outPath = args.outPath
-    nodeDir = os.path.join(outPath, 'node')
+    out_path = args.out_path
+    nodeDir = os.path.join(out_path, 'node')
     os.makedirs(nodeDir, mode=0o755)
 
     # should be >= 2048, but this is just testing
     skPriv = RSA.generate(1024)
     pathToKey = os.path.join(nodeDir, "skPriv.pem")
-    with open(pathToKey, 'wb') as f:
-        f.write(skPriv.exportKey('PEM'))
+    with open(pathToKey, 'wb') as file:
+        file.write(skPriv.exportKey('PEM'))
     sk = skPriv.publickey()
 
     # DATA_DIR ------------------------------------------------------
     #
     # ---------------------------------------------------------------
 
-    dataPath = os.path.join(outPath, 'dataDir')
+    dataPath = os.path.join(out_path, 'dataDir')
     subDir1 = os.path.join(dataPath, 'subDir1')
     subDir2 = os.path.join(dataPath, 'subDir2')
     subDir3 = os.path.join(dataPath, 'subDir3')
@@ -58,9 +58,9 @@ def doIt(args):
     subDir41 = os.path.join(subDir4, 'subDir41')
     subDir411 = os.path.join(subDir41, 'subDir411')
 
-    for d in [dataPath, subDir1, subDir2, subDir3, subDir4,
-              subDir41, subDir411, ]:
-        os.makedirs(d, mode=0o755)
+    for dVal in [dataPath, subDir1, subDir2, subDir3, subDir4,
+                 subDir41, subDir411, ]:
+        os.makedirs(dVal, mode=0o755)
 
     # files to be populaed with random data
     rng = SimpleRNG()
@@ -74,8 +74,8 @@ def doIt(args):
         count = 16 + rng.nextInt16(2048)
         data = bytearray(count)
         rng.nextBytes(data)
-        with open(path, 'wb') as f:
-            f.write(data)
+        with open(path, 'wb') as file:
+            file.write(data)
 
     # empty file(s)
     data12 = os.path.join(subDir1, 'data12')
@@ -85,25 +85,25 @@ def doIt(args):
     # NLH_TREE ------------------------------------------------------
     #
     # ---------------------------------------------------------------
-    nlhPath = os.path.join(outPath, 'nlhTree')
+    nlhPath = os.path.join(out_path, 'nlhTree')
 
     for using_sha in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3]:
         ndx = int(using_sha)
         ndxPath = os.path.join(nlhPath, str(ndx))
         os.makedirs(ndxPath, mode=0o755)
-        tree = NLHTree.createFromFileSystem(dataPath, using_sha)
+        tree = NLHTree.create_from_file_system(dataPath, using_sha)
 
-        uPath = os.path.join(ndxPath, 'uDir')
-        uIn = os.path.join(uPath, 'in')
-        uTmp = os.path.join(uPath, 'tmp')
-        for d in [uPath, uIn, uTmp]:
-            os.makedirs(d, mode=0o755)
-        tree.saveToUDir(dataPath, uPath, using_sha)
+        u_path = os.path.join(ndxPath, 'u_dir')
+        uIn = os.path.join(u_path, 'in')
+        uTmp = os.path.join(u_path, 'tmp')
+        for dVal in [u_path, uIn, uTmp]:
+            os.makedirs(dVal, mode=0o755)
+        tree.save_to_u_dir(dataPath, u_path, using_sha)
 
     # BUILD LIST ----------------------------------------------------
     #
     # ---------------------------------------------------------------
-    blPath = os.path.join(outPath, 'buildList')
+    blPath = os.path.join(out_path, 'buildList')
 
     for using_sha in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3]:
         ndx = int(using_sha)
@@ -112,13 +112,13 @@ def doIt(args):
 
         listFile = os.path.join(ndxPath, 'example.bld')
         title = 'sample build list % d' % ndx
-        exRE = makeExRE(['build', ])
-        bl = BuildList.createFromFileSystem(title, dataPath, sk, using_sha,
-                                            exRE, matchRE=None)
+        exRE = make_ex_re(['build', ])
+        bl = BuildList.create_from_file_system(title, dataPath, sk, using_sha,
+                                               exRE, matchRE=None)
         bl.sign(skPriv)
         blSer = bl.toString()
-        with open(listFile, 'w+') as f:
-            f.write(blSer)
+        with open(listFile, 'w+') as file:
+            file.write(blSer)
 
         # XXX MISSING: hex hash of BuildList
 
@@ -235,10 +235,10 @@ def main():
     args = parser.parse_args()
 
     # sanity chesks -------------------------------------------------
-    if (not args.force) and os.path.exists(args.outPath):
+    if (not args.force) and os.path.exists(args.out_path):
         print(
             "target directory %s exists but force (-f) not specified" %
-            args.outPath)
+            args.out_path)
         parser.print_usage()
         sys.exit(1)
 
@@ -253,14 +253,14 @@ def main():
 
     if args.verbose or args.justShow:
         print('force        = ' + str(args.force))
-        print('outPath      = ' + str(args.outPath))
+        print('outPath      = ' + str(args.out_path))
         print('verbose      = ' + str(args.verbose))
 
     if args.justShow:
         sys.exit(0)
 
     # do what's required --------------------------------------------
-    doIt(args)
+    do_it(args)
 
 if __name__ == '__main__':
     main()

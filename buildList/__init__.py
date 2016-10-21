@@ -15,34 +15,34 @@ from Crypto.Signature import PKCS1_PSS
 
 from nlhtree import NLHNode, NLHTree, NLHLeaf
 
-from xlattice.crypto import collectPEMRSAPublicKey
+from xlattice.crypto import collect_pem_rsa_public_key
 from xlattice.lfs import touch
 from xlattice.u import Q, UDir, check_using_sha
-from xlattice.util import makeExRE, parseTimestamp, timestamp, timestampNow
+from xlattice.util import make_ex_re, parse_timestamp, timestamp, timestamp_now
 
 __all__ = ['__version__', '__version_date__',
            # FUNCTIONS
-           'checkDirsInPath',
-           "generateRSAKey",
-           "readRSAKey", 'rm_f_dirContents',
+           'check_dirs_in_path',
+           "generate_rsa_key",
+           "read_rsa_key", 'rm_f_dir_contents',
            # PARSER FUNCTIONS
-           'acceptContentLine',
-           'acceptListLine', 'expectListLine',
-           'expectStr',
-           'expectTimestamp',
-           'expectTitle',
+           'accept_content_line',
+           'accept_list_line', 'expect_list_line',
+           'expect_str',
+           'expect_timestamp',
+           'expect_title',
            # CLASSES
            'BuildList',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.7.5'
-__version_date__ = '2016-10-13'
+__version__ = '0.8.0'
+__version_date__ = '2016-10-21'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
 
-def checkDirsInPath(pathToFile):
+def check_dirs_in_path(pathToFile):
     # if a path to the file is specified, create intervening directories
     # if they don't exist
     if pathToFile:
@@ -53,7 +53,7 @@ def checkDirsInPath(pathToFile):
 # this should be in some common place ...
 
 
-def rm_f_dirContents(dir):
+def rm_f_dir_contents(dir):
     if not dir:
         print('directory must be named')
         sys.exit(1)
@@ -71,23 +71,23 @@ def rm_f_dirContents(dir):
 # RSA KEY PAIR ------------------------------------------------------
 
 
-def generateRSAKey(pathToFile, bitCount=2048):
+def generate_rsa_key(pathToFile, bitCount=2048):
     """
     Generate an RSA key and write it to disk in PEM format.  The key size
     should be no less than 1024 bits.
     """
 
-    checkDirsInPath(pathToFile)
+    check_dirs_in_path(pathToFile)
 
     key = RSA.generate(bitCount)
-    with open(pathToFile, 'wb+') as f:
-        f.write(key.exportKey('PEM'))
+    with open(pathToFile, 'wb+') as file:
+        file.write(key.exportKey('PEM'))
     os.chmod(pathToFile, 0o600)
 
 
-def readRSAKey(pathToFile):
-    with open(pathToFile, 'rb') as f:
-        key = RSA.importKey(f.read())
+def read_rsa_key(pathToFile):
+    with open(pathToFile, 'rb') as file:
+        key = RSA.importKey(file.read())
     return key
 
 # PARSER ------------------------------------------------------------
@@ -101,8 +101,8 @@ class BLParseFailed(BaseException):
     pass
 
 
-def acceptListLine(f):
-    line = f.readline()
+def accept_list_line(file):
+    line = file.readline()
     lenLine = len(line)
     if lenLine:
         if line.endswith(LF):
@@ -114,33 +114,33 @@ def acceptListLine(f):
     return line
 
 
-def expectListLine(f, errMsg):
-    line = acceptListLine(f)
+def expect_list_line(file, errMsg):
+    line = accept_list_line(file)
     if not line:
         raise BLParseFailed(errMsg)
     return line
 
 
-def expectTitle(f, digest):
-    line = expectListLine(f, "missing title")
+def expect_title(file, digest):
+    line = expect_list_line(file, "missing title")
     # DEBUG
     # print("TITLE: %s" % line)
     # END
     digest.update(line)
 
 
-def expectTimestamp(f, digest):
-    line = expectListLine(f, "missing timestamp")
-    t = parseTimestamp(line)        # can raise ValueError
+def expect_timestamp(file, digest):
+    line = expect_list_line(file, "missing timestamp")
+    tstamp = parse_timestamp(line)        # can raise ValueError
     # DEBUG
     #print("TIMESTAMP: %s" % line)
     # END
     digest.update(line)
 
 
-def expectStr(f, str):
+def expect_str(file, str):
     """ Raise an exception if the next line doesn't match str. """
-    line = expectListLine(f, "expected " + str)
+    line = expect_list_line(file, "expected " + str)
     if line != str:
         raise ParseFailure('expected ' + str)
     # DEBUG
@@ -148,7 +148,7 @@ def expectStr(f, str):
     # END
 
 
-def acceptContentLine(f, digest, str, rootPath, u_path):
+def accept_content_line(file, digest, str, rootPath, u_path):
     """
     Accept either a content line or a delimiter (str).  Anything else
     raises an exception.  Returns True if content line matched, False
@@ -160,7 +160,7 @@ def acceptContentLine(f, digest, str, rootPath, u_path):
     NOT IMPLEMENTED: If u_path is not None, verifies that the content key
     matches that of a file present in u_path.
     """
-    line = acceptListLine(f)        # may raise BLParseFailed
+    line = accept_list_line(file)        # may raise BLParseFailed
     if line == str:
         # DEBUG
         # print("STR: " + line)
@@ -366,72 +366,72 @@ class BuildList(object):
 
     # SERIALIZATION -------------------------------------------------
     @staticmethod
-    def createFromFileSystem(title, pathToDir, sk,
-                             using_sha=Q.USING_SHA2, exRE=None, matchRE=None):
+    def create_from_file_system(title, pathToDir, sk,
+                                using_sha=Q.USING_SHA2, exRE=None, matchRE=None):
 
         if (not pathToDir) or (not os.path.isdir(pathToDir)):
             raise BLError(
                 "%s does not exist or is not a directory" % pathToDir)
 
-        tree = NLHTree.createFromFileSystem(pathToDir,
-                                            # accept default deltaIndent
-                                            using_sha=using_sha, ex_re=exRE)
+        tree = NLHTree.create_from_file_system(pathToDir,
+                                               # accept default deltaIndent
+                                               using_sha=using_sha, ex_re=exRE)
         return BuildList(title, sk, tree)
 
     @staticmethod
-    def parse(s, using_sha):
+    def parse(string, using_sha):
         """
         This relies upon the fact that all fields are separated by
         LF ('\n').
         """
 
-        if s is None:
+        if string is None:
             raise BLParseFailed('BuildList.parse: empty input')
-        if not isinstance(s, str):
-            s = str(s, 'utf-8')
-        ss = s.split('\n')
-        return BuildList.parseFromStrings(ss, using_sha)
+        if not isinstance(string, str):
+            string = str(string, 'utf-8')
+        strings = string.split('\n')
+        return BuildList.parseFromStrings(strings, using_sha)
 
     @staticmethod
-    def _expectField(ss, n):
+    def _expectField(strings, n):
         """
         Complain if the Nth field does not exist.  Return the index
         of the next field.
         """
-        if n >= len(ss):
+        if n >= len(strings):
             raise BLParseFailed("Missing %d-th field in BuildList")
-        field = ss[n]
+        field = strings[n]
         n += 1
         return field, n
 
     @staticmethod
-    def parseFromStrings(ss, using_sha):
+    def parseFromStrings(strings, using_sha):
 
         check_using_sha(using_sha)
 
         # DEBUG
         # print("parseFromStrings: using_sha = %s" % using_sha)
         # END
-        if ss is None:
+        if strings is None:
             raise BLParseFailed("parseFromStrings: null argument")
 
         # expect a PEM-encoded public key with embedded newlines
-        firstLine = ss[0]
-        ss = ss[1:]
-        serCK, ss = collectPEMRSAPublicKey(firstLine, ss)
+        firstLine = strings[0]
+        strings = strings[1:]
+        serCK, strings = collect_pem_rsa_public_key(firstLine, strings)
         myCK = RSA.importKey(serCK)
 
         n = 0
 
         # expect a title
-        myTitle, n = BuildList._expectField(ss, n)
+        myTitle, n = BuildList._expectField(strings, n)
 
         # expect a timestamp
-        myTimestamp, n = BuildList._expectField(ss, n)
+        myTimestamp, n = BuildList._expectField(strings, n)
 
         # expect CONTENT-START
-        startLine, n = BuildList._expectField(ss, n)
-        if (startLine != BuildList.CONTENT_START) and \
+        startLine, n = BuildList._expectField(strings, n)
+        if (startLine != BuildList.CONTENT_START) and\
                 (startLine != BuildList.OLD_CONTENT_START):
             # DEBUG
             # print("Expected CONTENT START, got '%s'" % startLine)
@@ -441,25 +441,25 @@ class BuildList(object):
         # expect a serialized NLHTree followed by a CONTENT END
         mtLines = []
         while True:
-            line, n = BuildList._expectField(ss, n)
+            line, n = BuildList._expectField(strings, n)
             if line == BuildList.CONTENT_END:
                 break
             else:
                 mtLines.append(line)
         # expect default indents
-        myTree = NLHTree.createFromStringArray(mtLines, using_sha)
+        myTree = NLHTree.create_from_string_array(mtLines, using_sha)
 
         # expect an empty line
-        space, n = BuildList._expectField(ss, n)
+        space, n = BuildList._expectField(strings, n)
         if space != '':
             raise BLParseFailed("expected an empty line")
 
         # accept a digital signature if it is present
-        if n < len(ss):
-            myDigSig = ss[n]
+        if n < len(strings):
+            myDigSig = strings[n]
 
         bld = BuildList(myTitle, myCK, myTree)
-        bld._when = parseTimestamp(myTimestamp)
+        bld._when = parse_timestamp(myTimestamp)
         bld._digSig = binascii.a2b_base64(myDigSig)
         return bld
 
@@ -471,42 +471,42 @@ class BuildList(object):
         In this serialization, each field appears followed by a CR-LF
         sequence.
         """
-        ss = self.toStrings()
-        return '\n'.join(ss)
+        strings = self.to_strings()
+        return '\n'.join(strings)
 
-    def toStrings(self):
-        ss = []
+    def to_strings(self):
+        strings = []
 
         # public key (with embedded newlines)
         pemCK = self.publicKey.exportKey('PEM').decode('utf-8')
-        ss.append(pemCK)
+        strings.append(pemCK)
 
         # title
-        ss.append(self.title)
+        strings.append(self.title)
 
         # timestamp
-        ss.append(self.timestamp)
+        strings.append(self.timestamp)
 
         # content start line
-        ss.append(BuildList.CONTENT_START)
+        strings.append(BuildList.CONTENT_START)
 
         # NLHTree
         ssTree = self.tree.__str__().split('\n')
         if (len(ssTree) > 1) and (ssTree[-1] == ''):
             ssTree = ssTree[0:-1]
-        ss += ssTree
+        strings += ssTree
 
         # content end line
-        ss.append(BuildList.CONTENT_END)
+        strings.append(BuildList.CONTENT_END)
 
         # empty line
-        ss.append('')
+        strings.append('')
 
         # dig sig
         if self._digSig:
-            ss.append(self.digSig)
+            strings.append(self.digSig)
 
-        return ss
+        return strings
 
     # OTHER CONSTRUCTORS --------------------------------------------
 
@@ -536,23 +536,23 @@ class BuildList(object):
         version = '0.0.0'
         pathToVersion = os.path.join(dvczDir, 'version')
         if os.path.exists(pathToVersion):
-            with open(pathToVersion, 'r') as f:
-                version = f.readline().strip()
+            with open(pathToVersion, 'r') as file:
+                version = file.readline().strip()
                 title = title + ' v' + version
                 # DEBUG
                 # print("title with version is '%s'" % title)
                 # END
 
-        exRE = makeExRE(excl)
+        exRE = make_ex_re(excl)
         signing = keyFile != ''
         if signing:
-            with open(keyFile, 'r') as f:
-                skPriv = RSA.importKey(f.read())
+            with open(keyFile, 'r') as file:
+                skPriv = RSA.importKey(file.read())
             sk = skPriv.publickey()
         else:
             sk = None
-        bl = cls.createFromFileSystem(title, dataDir, sk,
-                                      using_sha, exRE, matchRE=None)
+        bl = cls.create_from_file_system(title, dataDir, sk,
+                                         using_sha, exRE, matchRE=None)
         if signing:
             bl.sign(skPriv)
 
@@ -569,20 +569,20 @@ class BuildList(object):
 
         if u_path:
 
-            bl.tree.saveToUDir(dataDir, u_path, using_sha)
+            bl.tree.save_to_u_dir(dataDir, u_path, using_sha)
 
             # insert this BuildList into U
             # DEBUG
             # print("writing BuildList with hash %s into %s" % (newHash, u_path))
             # END
-            uDir = UDir.discover(u_path)
+            u_dir = UDir.discover(u_path)
             # DEBUG
             # print("listGen:")
             #print("  uDir:      %s" % u_path)
             #print("  dirStruc:  %s" % UDir.dirStrucToName(uDir.dirStruc))
             #print("  using_sha: %s" % uDir.using_sha)
             # END
-            (length, hashBack) = uDir.putData(newData, newHash)
+            (length, hashBack) = u_dir.put_data(newData, newHash)
             if hashBack != newHash:
                 print("WARNING: wrote %s to %s, but actual hash is %s" % (
                     newHash, u_path, hashBack))
@@ -590,16 +590,16 @@ class BuildList(object):
         # CHANGES TO DATADIR AFTER UPDATING u_path ===================
 
         # serialize the BuildList, typically to .dvcz/lastBuildList
-        with open(pathToListing, 'wb+') as f:
-            f.write(newData)
+        with open(pathToListing, 'wb+') as file:
+            file.write(newData)
 
         # DEBUG
         # print("hash of buildList at %s is %s" % (pathToListing, newHash))
         # END
         if logging:
             pathToLog = os.path.join(dvczDir, 'builds')
-            with open(pathToLog, 'a') as f:
-                f.write("%s v%s %s\n" % (bl.timestamp, version, newHash))
+            with open(pathToLog, 'a') as file:
+                file.write("%s v%s %s\n" % (bl.timestamp, version, newHash))
 
         return bl
 
@@ -618,22 +618,22 @@ class BuildList(object):
                     self.tree.name, name))
 
         os.makedirs(relPath, exist_ok=True, mode=0o755)
-        self.tree.populateDataDir(u_path, relPath)
+        self.tree.populate_data_dir(u_path, relPath)
 
     # OTHER METHODS =================================================
 
-    def checkInDataDir(self, dataPath):
+    def check_in_data_dir(self, dataPath):
         """
         Whether the BuildList's component files are present in the
         data directory named.  Returns a list of content hashes for
         files not found.
         """
-        return self.tree.checkInDataDir(dataPath)
+        return self.tree.check_in_data_dir(dataPath)
 
-    def checkInUDir(self, u_path):
+    def check_in_u_dir(self, u_path):
         """
         Whether the BuildList's component files are present in the
         U directory named.  Returns a list of content hashes for
         files not found.
         """
-        return self.tree.checkInUDir(u_path)
+        return self.tree.check_in_u_dir(u_path)
