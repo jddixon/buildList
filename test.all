@@ -2,7 +2,7 @@
 
 if [ ! -z "${DEV_BASE// }" ]
 then
-  cd $DEV_BASE/py/buildList
+  cd $DEV_BASE/py/buildlist
   
   ./test_build_list.py
   ./test_populate_data_dir.py

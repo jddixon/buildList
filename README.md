@@ -1,4 +1,4 @@
-# buildList
+# buildlist
 
 A set of Python3 utilities conforming to the
 [BuildList](https://jddixon.github.io/xlattice/buildList.html)
@@ -141,5 +141,5 @@ A reasonable beta.
 
 ## On-line Documentation
 
-More information on the **buildList** project can be found
-[here](https://jddixon.github.io/buildList)
+More information on the **buildlist** project can be found
+[here](https://jddixon.github.io/buildlist)

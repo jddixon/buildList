@@ -2,6 +2,9 @@
 
 
 
+v0.8.1
+    2016-10-22
+        * rename project; PEP 8 API and file names                  SLOC 2470
 v0.8.0
     2016-10-21
         * change file names, API per PEP 8                          SLOC 2368
@@ -232,6 +235,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

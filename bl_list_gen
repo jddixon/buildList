@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# ~/dev/py/buildList/blListGen
+# ~/dev/py/buildlist/bl_list_gen
 
 import os
 import re
@@ -15,7 +15,7 @@ from xlattice import (Q, check_using_sha, parseUsingSHA, fix_using_sha,
                       show_using_sha)
 
 from xlattice.util import get_exclusions, make_ex_re, timestamp_now
-from buildList import __file__, BuildList
+from buildlist import __file__, BuildList
 
 
 def doit(options):
@@ -29,7 +29,7 @@ def doit(options):
     u_path = options.u_path      # if None, don't save to uPath
     using_sha = options.using_sha
 
-    bl = BuildList.listGen(title, dataDir, dvczDir, listFile, keyFile,
+    bl = BuildList.list_gen(title, dataDir, dvczDir, listFile, keyFile,
                            excl, logging, u_path, using_sha)
 
     print("BuildList written to %s" % os.path.join(dvczDir, listFile))
@@ -45,7 +45,7 @@ def doit(options):
 def main():
     """
     Expect a command like
-        blListGen [options]
+        bl_list_gen [options]
 
     """
 
@@ -58,8 +58,8 @@ def main():
     __version_date__ = re.search("__version_date__\s*=\s*'(.*)'",
                                  open(__file__).read()).group(1)
 
-    appName = 'blListGen %s' % __version__
-    APP_NAME = 'blListGen %s' % __version__
+    appName = 'bl_list_gen %s' % __version__
+    APP_NAME = 'bl_list_gen %s' % __version__
     KEY_PATH = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
     UDIR = os.environ['DVCZ_UDIR']
 

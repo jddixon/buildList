@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# ~/dev/py/buildList/blSrcGen
+# ~/dev/py/buildlist/bl_src_gen
 
 import os
 import re
@@ -8,7 +8,7 @@ import sys
 
 from argparse import ArgumentParser
 from shutil import rmtree
-from buildList import __file__, BuildList
+from buildlist import __file__, BuildList
 from xlattice import check_u_path, Q
 
 
@@ -32,13 +32,13 @@ def makeDataDir(options):
         data = file.read()
     bl = BuildList.parse(data, using_sha=Q.USING_SHA1)  # XXX THINK
 
-    bl.populateDataDir(u_path, path)
+    bl.populate_data_dir(u_path, path)
 
 
 def main():
     """
     Expect a command like
-        blSrcGen [options]
+        bl_src_gen [options]
 
     """
 
@@ -49,7 +49,7 @@ def main():
     __version_date__ = re.search("__version_date__\s*=\s*'(.*)'",
                                  open(__file__).read()).group(1)
 
-    APP_NAME = 'blSrcGen %s' % __version__
+    APP_NAME = 'bl_src_gen %s' % __version__
     KEY_PATH = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
     U_PATH = os.environ['DVCZ_UDIR']
 

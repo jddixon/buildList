@@ -1,7 +1,7 @@
-# buildList/.dvcz/projCfg.local
+# buildlist/.dvcz/projCfg.local
 
 dir:ign:cover
-dir:pkg:buildList
+dir:pkg:buildlist
 dir:local:example
 
 txt:std:LICENSE-MIT.md
@@ -16,10 +16,11 @@ bash:local:checkExample2
 bash:local:make.bld.from.example.datadir
 bash:local:sampleRun
 
-py:local:blBootstrap
-py:global:blCheck
-py:global:blListGen
-py:global:blSrcGen
+py:local:bl_bootstrap
+py:global:bl_check
+py:global:bl_create_test_data1
+py:global:bl_list_gen
+py:global:bl_src_gen
 
 # these may be temporary
 py:local:doListGen

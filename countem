@@ -2,11 +2,11 @@
 
 if [ ! -z "${DEV_BASE// }" ]
 then
-  cd $DEV_BASE/py/buildList
+  cd $DEV_BASE/py/buildlist
   
   rm -rf build/* 
   
-  runpysloc -L py bl_bootstrap bl_check bl_list_gen bl_src_gen  -X cover -X htmlcov -X dist -v $@
+  runpysloc -L py bl_bootstrap bl_check bl_create_test_data1 bl_list_gen bl_src_gen  -X cover -X htmlcov -X dist -v $@
 else
   echo "DEV_BASE is not defined"
 fi

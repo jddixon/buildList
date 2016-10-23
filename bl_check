@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# ~/dev/py/buildList/blCheck
+# ~/dev/py/buildlist/bl_check
 
 import os
 import re
@@ -12,7 +12,7 @@ from xlattice import (Q, check_using_sha,
                       parseUsingSHA, fix_using_sha, show_using_sha, check_u_path)
 from xlattice.util import get_exclusions, make_ex_re
 
-from buildList import __file__, BuildList
+from buildlist import __file__, BuildList
 
 
 def checkBuildList(args):
@@ -81,7 +81,7 @@ def checkBuildList(args):
 def main():
     """
     Expect a command like
-        blCheck [options]
+        bl_check [options]
 
     """
 
@@ -148,7 +148,7 @@ def main():
         check_u_path(parser, args, mustExist=True)
 
     # complete setup ------------------------------------------------
-    appName = 'blCheck %s' % __version__
+    appName = 'bl_check %s' % __version__
 
     # maybe show options and such -----------------------------------
     if args.verbose or args.justShow:

@@ -1,13 +1,13 @@
 #!/usr/bin/env python3
 
-# buildList/testRandomDir.py
+# buildlist/testRandomDir.py
 
 import hashlib
 import os
 import time
 import unittest
 
-from buildList import BuildList
+from buildlist import BuildList
 from rnglib import SimpleRNG
 from xlattice import Q, u, check_using_sha
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd ~ / dev / py / buildList
+cd ~ / dev / py / buildlist
 
 rm - rf tmp / *
 mkdir - p tmp / dvcz

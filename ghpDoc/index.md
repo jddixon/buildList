@@ -1,4 +1,4 @@
-<h1 class="libTop">buildList</h1>
+<h1 class="libTop">buildlist</h1>
 
 A set of Python3 utilities conforming to the
 [BuildList](https://jddixon.github.io/xlattice/buildList.html)
@@ -9,16 +9,16 @@ intended to be interoperable with the Go
 as well as the Java version in
 [xlCrypto.java](https://jddixon.github.com/xlCrypto_java).
 
-## blBootStrap
+## bl_bootStrap
 
 A utility for use in testing the buildList package.  It generates a
 directory tree, `example/` by default, in the current directory.  This
-contains a data directory, `dataDir`; a corresponding BuildList,
+contains a data directory, `data_dir`; a corresponding BuildList,
 `example.bld`; a secret key in `node`, and a matching content key
 directory, `uDir`.  The distribution contains an SHA1 example directory
 under `example1/` and an SHA256 directory as `example2/`.
 
-	usage: blBootstrap [-h] [-e EXDIR] [-f] [-j] [-T] [-v]
+	usage: bl_bootstrap [-h] [-e EXDIR] [-f] [-j] [-T] [-v]
 	
 	generate a sample data tree, write a build list, and create a corresponding
 	content-keyed store
@@ -28,18 +28,18 @@ under `example1/` and an SHA256 directory as `example2/`.
 	  -e EXDIR, --exDir EXDIR
 	                        example directory, defaults to example/
 	  -f, --force           overwrite any existing example/ directory
-	  -j, --justShow        show options and exit
+	  -j, --just_show        show options and exit
 	  -T, --testing         this is a test run
 	  -v, --verbose         be chatty
 
-## blCheck
+## bl_check
 
 This script runs an integrity check on a BuildList (`LISTFILE`) against
 a given data directory (`DATADIR`) and content directory (`UDIR`).  The
 BuildList file name and at least one of the data directory and content
 directory must be present.
 
-    usage: blCheck [-h] [-1] [-b LISTFILE] [-d DATADIR] [-i IGNOREFILE] [-j]
+    usage: bl_check [-h] [-1] [-b LISTFILE] [-d DATADIR] [-i IGNOREFILE] [-j]
                    [-u UDIR] [-v]
 
     verify integrity of build list, optionally agains root dir and uDir"
@@ -47,48 +47,48 @@ directory must be present.
     optional arguments:
       -h, --help            show this help message and exit
       -1, --using_sha1       using the 160-bit SHA1 hash
-      -b LISTFILE, --listFile LISTFILE
+      -b LISTFILE, --list_file LISTFILE
                             root directory for build list
-      -d DATADIR, --dataDir DATADIR
+      -d DATADIR, --data_dir DATADIR
                             root directory for build list
-      -i IGNOREFILE, --ignoreFile IGNOREFILE
+      -i IGNOREFILE, --ignore_file IGNOREFILE
                             file containing wildcards (globs) for files to ignore
-      -j, --justShow        show options and exit
+      -j, --just_show        show options and exit
       -u UDIR, --uDir UDIR  path to uDir
       -v, --verbose         be chatty
 
-## blListGen
+## bl_list_gen
 
 Given a source directory specified by `-r`, writes a buildList to `LISTFILE`.
 
 If the `-u` option is present, `UPATH` is a directory for the storage of files
-by content key; `blListGen` will copy each file in the build list into that
+by content key; `bl_list_gen` will copy each file in the build list into that
 directory if the file is not already present.
 
 It is usually important to skip some files, **not** adding them to the
 buildList and the backup directory.  Such files are
 specified with the `-X` option.
 
-    usage: blListGen [-h] [-1] [-b LISTFILE] [-D DVCZDIR] [-d DATADIR]
+    usage: bl_list_gen [-h] [-1] [-b LISTFILE] [-D DVCZDIR] [-d DATADIR]
                      [-i IGNOREFILE] [-j] [-k KEYFILE] [-L] [-M MATCHPAT] [-T]
                      [-t TITLE] [-u UPATH] [-V] [-v] [-X EXCLUSIONS]
 
-    generate build list for directory, optionally populating uPath
+    generate build list for directory, optionally populating u_path
 
     optional arguments:
       -h, --help            show this help message and exit
       -1, --using_sha1       use SHA1 in building merkletree (default=false=use
                             SHA256)
-      -b LISTFILE, --listFile LISTFILE
+      -b LISTFILE, --list_file LISTFILE
                             path to build list
-      -D DVCZDIR, --dvczDir DVCZDIR
+      -D DVCZDIR, --dvcz_dir DVCZDIR
                             dvcz directory (default=.dvcz)
-      -d DATADIR, --dataDir DATADIR
+      -d DATADIR, --data_dir DATADIR
                             data directory for build list (default=./)
-      -i IGNOREFILE, --ignoreFile IGNOREFILE
+      -i IGNOREFILE, --ignore_file IGNOREFILE
                             file containing wildcards (globs) for files to ignore
-      -j, --justShow        show options and exit
-      -k KEYFILE, --keyFile KEYFILE
+      -j, --just_show        show options and exit
+      -k KEYFILE, --key_file KEYFILE
                             path to RSA private key for signing
       -L, --logging         append timestamp and BuildList hash to to .dvcz/builds
       -M MATCHPAT, --matchPat MATCHPAT
@@ -96,41 +96,41 @@ specified with the `-X` option.
       -T, --testing         this is a test run
       -t TITLE, --title TITLE
                             title for build list
-      -u UPATH, --uPath UPATH
-                            path to uPath (relative to tmp/ if testing)
-      -V, --showVersion     display version number and exit
+      -u UPATH, --u_path UPATH
+                            path to u_path (relative to tmp/ if testing)
+      -V, --show_version     display version number and exit
       -v, --verbose         be chatty
       -X EXCLUSIONS, --exclusions EXCLUSIONS
                             do not include files/directories matching this pattern
 
-## blSrcGen
+## bl_src_gen
 
-This utility is complementary to `blListGen`: given a build list and
-a backup directory indexed by content key, `blSrcGen` will rebuild the
+This utility is complementary to `bl_list_gen`: given a build list and
+a backup directory indexed by content key, `bl_src_gen` will rebuild the
 source directory.  This can be used, for example, to restore an earlier
 version of a source tree or to switch to another branch.
 
-    usage: blSrcGen [-h] [-b LISTFILE] [-d DATADIR] [-f] [-j] [-k KEYFILE]
+    usage: bl_src_gen [-h] [-b LISTFILE] [-d DATADIR] [-f] [-j] [-k KEYFILE]
                     [-M MATCHON] [-T] [-u UPATH] [-V] [-v] [-X EXCLUSIONS]
 
     given a build list and uDir, regenerate the data directory
 
     optional arguments:
       -h, --help            show this help message and exit
-      -b LISTFILE, --listFile LISTFILE
+      -b LISTFILE, --list_file LISTFILE
                             where to find the build list
-      -d DATADIR, --dataDir DATADIR
+      -d DATADIR, --data_dir DATADIR
                             where to write the new tree
       -f, --force           do it despite objections
-      -j, --justShow        show options and exit
-      -k KEYFILE, --keyFile KEYFILE
+      -j, --just_show        show options and exit
+      -k KEYFILE, --key_file KEYFILE
                             path to RSA key for verifying dig sig
-      -M MATCHON, --matchOn MATCHON
+      -M MATCHON, --match_on MATCHON
                             include only files matching this pattern
       -T, --testing         this is a test run
-      -u UPATH, --uPath UPATH
+      -u UPATH, --u_path UPATH
                             path to uDir (relative to tmp/ if testing)
-      -V, --showVersion     display version number and exit
+      -V, --show_version     display version number and exit
       -v, --verbose         be chatty
       -X EXCLUSIONS, --exclusions EXCLUSIONS
                             do not include files/directories matching this pattern
