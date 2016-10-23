@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# buildList/testTimestamp.py
+# buildlist/testTimestamp.py
 
 import hashlib
 import os
@@ -9,7 +9,7 @@ import unittest
 
 from rnglib import SimpleRNG
 from xlattice import u
-from buildList import BuildList
+from buildlist import BuildList
 
 
 class TestTimestamp (unittest.TestCase):

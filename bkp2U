@@ -2,10 +2,10 @@
 
 if [ ! -z "${DEV_BASE// }" ]
 then
-  cd $DEV_BASE/py/buildList
+  cd $DEV_BASE/py/buildlist
   
   bl_list_gen \
-    -d ../buildList \
+    -d ../buildlist \
     -1L  \
     -u $DVCZ_UDIR \
     -X cover \

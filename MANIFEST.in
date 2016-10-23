@@ -3,8 +3,8 @@
 include netDistrib.conf
 include CHANGES MANIFEST.in README TODO
 include check* countem make.example.bld sampleRun
-include blBootstrap blCheck blListGen blSrcGen
-recursive-include buildList *.py
+include bl_bootstrap bl_check bl_list_gen bl_src_gen
+recursive-include buildlist *.py
 recursive-include example *
 recursive-include ghpDoc *
 global-exclude junk* .*swp 

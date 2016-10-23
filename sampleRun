@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd ~/dev/py/buildList
+cd ~/dev/py/buildlist
 
-./blListGen -1s -k example/node/skPriv.pem -r example/dataDir 
+./bl_list_gen -1s -k example/node/skPriv.pem -r example/dataDir 

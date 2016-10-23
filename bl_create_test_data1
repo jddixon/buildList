@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 from xlattice import Q
 #
-# ~/dev/py/buildList/blCreateTestData1
+# ~/dev/py/buildlist/bl_create_test_data1
 
 import os
 import re
@@ -16,7 +16,7 @@ from xlattice.util import make_ex_re
 from rnglib import SimpleRNG
 from xlattice import Q, check_using_sha
 
-from buildList import __file__, BuildList
+from buildlist import __file__, BuildList
 
 DEFAULT_OUT_DIR = '../../dat/xl_test_data/treeData/binExample_1'
 
@@ -103,7 +103,7 @@ def do_it(args):
     # BUILD LIST ----------------------------------------------------
     #
     # ---------------------------------------------------------------
-    blPath = os.path.join(out_path, 'buildList')
+    blPath = os.path.join(out_path, 'buildlist')
 
     for using_sha in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3]:
         ndx = int(using_sha)
@@ -132,7 +132,7 @@ def do_it(args):
 def main():
     """
     Expect a command like
-        blCreateTestData1 [options]
+        bl_create_test_data1 [options]
 
     This program creates a quasi-random directory tree like
 
@@ -163,7 +163,7 @@ def main():
                                 ff/
                                 in/
                                 tmp/
-                    buildList
+                    buildlist
                         {1,2,3}
                             example.bld     # serialized BuildList
                             hex             # BuildList.hash()
@@ -245,7 +245,7 @@ def main():
     # fixups --------------------------------------------------------
 
     # complete setup ------------------------------------------------
-    appName = 'blCreateTestData1 %s' % __version__
+    appName = 'bl_create_test_data1 %s' % __version__
 
     # maybe show options and such -----------------------------------
     if args.verbose or args.justShow:
