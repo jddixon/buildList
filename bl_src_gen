@@ -8,31 +8,31 @@ import sys
 
 from argparse import ArgumentParser
 from shutil import rmtree
-from buildlist import __file__, BuildList
 from xlattice import check_u_path, Q
+from buildlist import __version__, __version_date__, BuildList
 
 
-def makeDataDir(options):
+def make_data_dir(options):
 
-    dataPath = options.dataPath
-    keyFile = options.keyFile
-    listFile = options.listFile
+    data_path = options.data_path
+    key_file = options.key_file
+    list_file = options.list_file
     testing = options.testing
     u_path = options.u_path
     verbose = options.verbose
 
-    verifying = keyFile != ''
+    verifying = key_file != ''
 
-    if dataPath and dataPath[-1] == '/':      # trailing slash
-        dataPath = dataPath[:-1]
+    if data_path and data_path[-1] == '/':      # trailing slash
+        data_path = data_path[:-1]
     if u_path and u_path[-1] == '/':            # trailing slash
         u_path = u_path[:-1]
 
-    with open(listFile, 'r') as file:
+    with open(list_file, 'r') as file:
         data = file.read()
-    bl = BuildList.parse(data, using_sha=Q.USING_SHA1)  # XXX THINK
+    blist = BuildList.parse(data, using_sha=Q.USING_SHA1)  # XXX THINK
 
-    bl.populate_data_dir(u_path, path)
+    blist.populate_data_dir(u_path, path)
 
 
 def main():
@@ -49,38 +49,38 @@ def main():
     __version_date__ = re.search("__version_date__\s*=\s*'(.*)'",
                                  open(__file__).read()).group(1)
 
-    APP_NAME = 'bl_src_gen %s' % __version__
-    KEY_PATH = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
-    U_PATH = os.environ['DVCZ_UDIR']
+    app_name = 'bl_src_gen %s' % __version__
+    key_path = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
+    u_path = os.environ['DVCZ_UDIR']
 
     # parse the command line ----------------------------------------
 
-    DESC = 'given a build list and uDir, regenerate the data directory'
-    parser = ArgumentParser(description=DESC)
+    desc = 'given a build list and uDir, regenerate the data directory'
+    parser = ArgumentParser(description=desc)
 
-    parser.add_argument('-b', '--listFile',
+    parser.add_argument('-b', '--list_file',
                         help='where to find the  build list')
 
-    parser.add_argument('-d', '--dataDir',
+    parser.add_argument('-d', '--data_dir',
                         help='where to write the new tree')
 
     parser.add_argument('-f', '--force', action='store_true',
                         help='do it despite objections')
 
-    parser.add_argument('-j', '--justShow', action='store_true',
+    parser.add_argument('-j', '--just_show', action='store_true',
                         help='show options and exit')
 
-    parser.add_argument('-k', '--keyFile', default=KEY_PATH,
+    parser.add_argument('-k', '--key_file', default=key_path,
                         help='path to RSA key for verifying dig sig')
 
     # NOT CURRENTLY SUPPORTED (may never be)
-    parser.add_argument('-M', '--matchOn', action='append',
+    parser.add_argument('-M', '--match_on', action='append',
                         help='include only files matching this pattern')
 
     parser.add_argument('-T', '--testing', action='store_true',
                         help='this is a test run')
 
-    parser.add_argument('-u', '--uPath', default=U_PATH,
+    parser.add_argument('-u', '--u_path', default=u_path,
                         help='path to uDir (relative to tmp/ if testing)')
 
     parser.add_argument('-V', '--showVersion', action='store_true',
@@ -95,14 +95,14 @@ def main():
     args = parser.parse_args()
 
     if args.showVersion:
-        print(APP_NAME)
+        print(app_name)
         sys.exit(0)
 
     # fixups --------------------------------------------------------
-    if args.testing and args.dataDir:
-        if args.dataDir[0] == '/':
-            args.dataDir = args.dataDir[1:]
-        args.dataDir = os.path.join('tmp', args.dataDir)
+    if args.testing and args.data_dir:
+        if args.data_dir[0] == '/':
+            args.data_dir = args.data_dir[1:]
+        args.data_dir = os.path.join('tmp', args.data_dir)
 
     if args.testing and args.u_path:
         if args.u_path[0] == '/':
@@ -112,85 +112,85 @@ def main():
     # sanity checks -------------------------------------------------
     check_u_path(args.u_path)
 
-    def giveUp(msg):
+    def give_up(msg):
         print(msg)
         parser.print_usage()
         sys.exit(1)
 
-    if not args.justShow:
+    if not args.just_show:
 
-        # dataDir -----------------------------------------
-        dataDir = args.dataDir
+        # data_dir -----------------------------------------
+        data_dir = args.data_dir
 
-        if dataDir is None or dataDir == '':
-            giveUp("you must specify a data directory")
+        if data_dir is None or data_dir == '':
+            give_up("you must specify a data directory")
 
-        if dataDir[0] == '/':
-            giveup("dataDir may not be an absolute path")
+        if data_dir[0] == '/':
+            give_up("data_dir may not be an absolute path")
 
-        if dataDir.find('..') != -1:
-            giveup("path to data directory may not contain '..'")
+        if data_dir.find('..') != -1:
+            give_up("path to data directory may not contain '..'")
 
-        if os.path.exists(dataDir):
-            if not os.path.isdir(dataDir):
-                giveUp("dataDir %s exists and is not a directory" % dataDir)
+        if os.path.exists(data_dir):
+            if not os.path.isdir(data_dir):
+                give_up("data_dir %s exists and is not a directory" % data_dir)
 
             if args.force:
                 try:
-                    rmtree(dataDir)
-                except Exception as e:
+                    rmtree(data_dir)
+                except Exception as exc:
                     print("tried to delete %s; ignoring %s" % (
-                        dataDir, e))
+                        data_dir, exc))
             else:
-                giveup(
+                give_up(
                     "data directory '%s' already exists; add -f to continue" %
-                    dataDir)
+                    data_dir)
 
-        # uPath --------------------------------------------
+        # u_path --------------------------------------------
         if not args.u_path:
-            giveUp("you must specify uPath")
+            give_up("you must specify u_path")
         elif os.path.exists(args.u_path) and not os.path.isdir(args.u_path):
-            giveUp("uPath %s is not a directory" % args.u_path)
+            give_up("u_path %s is not a directory" % args.u_path)
 
         if not os.path.exists(args.u_path):
             # XXX could/should check path
             os.mkdir(args.u_path, 0o755)
 
-        # listFile ----------------------------------------
-        if not args.listFile or args.listFile == '':
-            giveUp('no build list file specified')
+        # list_file ----------------------------------------
+        if not args.list_file or args.list_file == '':
+            give_up('no build list file specified')
 
         if args.testing:
-            if args.listFile[0] == '/':
-                args.listFile = args.listFile[1:]
-            args.listFile = os.path.join('tmp', args.listFile)
+            if args.list_file[0] == '/':
+                args.list_file = args.list_file[1:]
+            args.list_file = os.path.join('tmp', args.list_file)
 
-        if not os.path.isfile(args.listFile):
-            giveUp("list file %s does not exist" % args.listFile)
+        if not os.path.isfile(args.list_file):
+            give_up("list file %s does not exist" % args.list_file)
 
     # complete setup ------------------------------------------------
 
     # maybe show options and such -----------------------------------
-    if args.verbose or args.justShow:
-        print("%s %s" % (APP_NAME, __version_date__))
+    if args.verbose or args.just_show:
+        print("%s %s" % (app_name, __version_date__))
 
-    if args.verbose or args.justShow:
-        print('dataDir      = ' + str(args.dataDir))
+    if args.verbose or args.just_show:
+        print('data_dir     = ' + str(args.data_dir))
         print('exclusions   = ' + str(args.exclusions))
         print('force        = ' + str(args.force))
-        print('keyFile      = ' + str(args.keyFile))
-        print('listFile     = ' + str(args.listFile))
-        print('matchOn      = ' + str(args.matchOn))
+        print('key_file     = ' + str(args.key_file))
+        print('list_file    = ' + str(args.list_file))
+        print('match_on     = ' + str(args.match_on))
         print('testing      = ' + str(args.testing))
-        print('uPath        = ' + str(args.u_path))
+        print('u_path       = ' + str(args.u_path))
         print('verbose      = ' + str(args.verbose))
-        print('verifying    = %s' % (args.keyFile != ''))
+        print('verifying    = %s' % (args.key_file != ''))
 
-    if args.justShow:
+    if args.just_show:
         sys.exit(0)
 
     # do what's required --------------------------------------------
-    makeDataDir(args)
+    make_data_dir(args)
 
 if __name__ == '__main__':
     main()

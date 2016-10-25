@@ -40,14 +40,14 @@ class TestTimestamp (unittest.TestCase):
         dVal.update(data)
         hash = dVal.hexdigest()
 
-        fileName = self.rng.nextFileName(8)
-        pathToFile = os.path.join('tmp', fileName)
+        file_name = self.rng.nextFileName(8)
+        pathToFile = os.path.join('tmp', file_name)
         with open(pathToFile, 'wb') as file:
             file.write(data)
 
-        fileHash = u.file_sha1hex(pathToFile)
+        file_hash = u.file_sha1hex(pathToFile)
 
-        self.assertEqual(hash, fileHash)
+        self.assertEqual(hash, file_hash)
 
 
 if __name__ == '__main__':

@@ -1,0 +1,4 @@
+sdRenameInFiles -v1rw                   \
+    -m name-pairs-api       \
+    -m name-pairs-util      \
+    bl_* test*.py

@@ -12,4 +12,16 @@ expectStr               expect_str
 expectTimestamp         expect_timestamp
 expectTitle             expect_title
 
+# class BuildList
 
+checkInDataDir          check_in_data_dir
+checkInUDir             check_in_u_dir
+digSig                  dig_sig
+expectField             expect_field
+exRE                    ex_re
+listGen                 list_gen
+parseFromStrings        parse_from_strings
+populateDataDir         populate_data_dir
+publicKey               public_key
+toString                __str__
+toStrings               to_strings

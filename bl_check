@@ -1,81 +1,79 @@
 #!/usr/bin/python3
-#
 # ~/dev/py/buildlist/bl_check
 
 import os
-import re
 import sys
 
 from argparse import ArgumentParser
 from nlhtree import NLHTree
-from xlattice import (Q, check_using_sha,
-                      parseUsingSHA, fix_using_sha, show_using_sha, check_u_path)
+from xlattice import (check_using_sha,
+                      parse_using_sha, fix_using_sha, show_using_sha, check_u_path)
 from xlattice.util import get_exclusions, make_ex_re
 
-from buildlist import __file__, BuildList
+from buildlist import __version__, __version_date__, BuildList
 
 
-def checkBuildList(args):
+def check_build_list(args):
 
-    dataDir = args.dataDir  # _without_ trailing slash
-    exRE = make_ex_re(args.excl)
-    listFile = args.listFile
+    data_dir = args.data_dir  # _without_ trailing slash
+    ex_re = make_ex_re(args.excl)
+    list_file = args.list_file
     verbose = args.verbose
     u_path = args.u_path
     using_sha = args.using_sha
 
-    if dataDir and dataDir[-1] == '/':      # trailing slash
-        dataDir = dataDir[:-1]
+    if data_dir and data_dir[-1] == '/':      # trailing slash
+        data_dir = data_dir[:-1]
     if u_path and u_path[-1] == '/':          # trailing slash
         u_path = u_path[:-1]
 
-    bl = None
+    blist = None
     data = None
-    ok = False
+    ok_ = False
     signed = False
 
     try:
         # can't use 'r' which converts CRLF to just LF
-        with open(listFile, 'rb') as file:
+        with open(list_file, 'rb') as file:
             data = file.read()
-            ok = True     # no exceptions
-    except Exception as e:
-        print("error reading build list file: '%s'" % e)
+            ok_ = True     # no exceptions
+    except Exception as exc:
+        print("error reading build list file: '%s'" % exc)
 
-    if ok:
-        ok = False
+    if ok_:
+        ok_ = False
         try:
-            bl = BuildList.parse(data, using_sha)
-            ok = True
-        except Exception as e:
-            print("error parsing BuildList: '%s'" % e)
+            blist = BuildList.parse(data, using_sha)
+            ok_ = True
+        except Exception as exc:
+            print("error parsing BuildList: '%s'" % exc)
 
-    if ok:
-        signed = bl.signed
+    if ok_:
+        signed = blist.signed
         if signed:
-            ok = bl.verify
-            if not ok:
+            ok_ = blist.verify
+            if not ok_:
                 print("dig sig verification fails")
 
-    if ok:
-        using_sha = bl.using_sha
-        # assume exRE can be ignored
-        myTree = NLHTree.create_from_file_system(dataDir, using_sha, exRE)
-        ok = myTree == bl.tree
-        if not ok:
-            print("build list's NLHTree doesn't match %s" % dataDir)
-            print("NLHTree for %s:\n%s" % (dataDir, myTree))
-            print("NLHTree for BuildList:\n%s" % bl.tree)
+    if ok_:
+        using_sha = blist.using_sha
+        # assume ex_re can be ignored
+        my_tree = NLHTree.create_from_file_system(data_dir, using_sha, ex_re)
+        ok_ = my_tree == blist.tree
+        if not ok_:
+            print("build list's NLHTree doesn't match %s" % data_dir)
+            print("NLHTree for %s:\n%s" % (data_dir, my_tree))
+            print("NLHTree for BuildList:\n%s" % blist.tree)
 
-    if ok and u_path:
-        unmatched = bl.tree.check_in_u_dir(u_path)
+    if ok_ and u_path:
+        unmatched = blist.tree.check_in_u_dir(u_path)
         if unmatched:
-            print("BuildList, dataDir, and uPath are inconsistent")
-            for u in unmatched:
-                print("  %s is in the tree but not found in uPath" % u)
+            print("BuildList, data_dir, and u_path are inconsistent")
+            for unm in unmatched:
+                print("  %s is in the tree but not found in u_path" % unm)
 
-    if ok:
-        print("ok")
+    if ok_:
+        print("ok_")
 
 
 def main():
@@ -85,32 +83,25 @@ def main():
 
     """
 
-    # program defaults ----------------------------------------------
-
-    __version__ = re.search("__version__\s*=\s*'(.*)'",
-                            open(__file__).read()).group(1)
-    __version_date__ = re.search("__version_date__\s*=\s*'(.*)'",
-                                 open(__file__).read()).group(1)
-
     # parse the command line ----------------------------------------
 
-    DESC = 'verify integrity of build list, optionally agains root dir and uPath"'
-    parser = ArgumentParser(description=DESC)
+    desc = 'verify integrity of build list, optionally agains root dir and u_path"'
+    parser = ArgumentParser(description=desc)
 
-    parser.add_argument('-b', '--listFile',
+    parser.add_argument('-b', '--list_file',
                         help='root directory for build list')
 
-    parser.add_argument('-d', '--dataDir',
+    parser.add_argument('-d', '--data_dir',
                         help='root directory for build list')
 
-    parser.add_argument('-i', '--ignoreFile', default='.gitignore',
+    parser.add_argument('-i', '--ignore_file', default='.gitignore',
                         help='file containing wildcards (globs) for files to ignore')
 
-    parser.add_argument('-j', '--justShow', action='store_true',
+    parser.add_argument('-j', '--just_show', action='store_true',
                         help='show options and exit')
 
     # -1,-2,-3, using_sha, -v/--verbose
-    parseUsingSHA(parser)
+    parse_using_sha(parser)
 
     args = parser.parse_args()
 
@@ -118,53 +109,53 @@ def main():
 
     fix_using_sha(args)
 
-    args.curDir = os.getcwd()
-    if os.path.exists(args.ignoreFile):
-        args.excl = get_exclusions(args.curDir)
+    args.cur_dir = os.getcwd()
+    if os.path.exists(args.ignore_file):
+        args.excl = get_exclusions(args.cur_dir)
     else:
-        print("WARNING: ignore file '%s' NOT FOUND" % ignoreFile)
+        print("WARNING: ignore file '%s' NOT FOUND" % args.ignore_file)
         args.excl = []
     if not 'build' in args.excl:
         args.excl.append('build')
 
     # sanity checks -------------------------------------------------
     check_using_sha(args.using_sha)
-    if (not args.justShow):
-        if not args.listFile or (not os.path.isfile(args.listFile)):
-            print("list file %s does not exist" % args.listFile)
+    if (not args.just_show):
+        if not args.list_file or not os.path.isfile(args.list_file):
+            print("list file %s does not exist" % args.list_file)
             parser.print_usage()
             sys.exit(1)
 
-        if (not args.dataDir) or (args.dataDir == ''):
+        if (not args.data_dir) or (args.data_dir == ''):
             print("no root directory specified")
             parser.print_usage()
             sys.exit(1)
 
-        if not os.path.isdir(args.dataDir):
-            print("root directory %s does not exist" % args.dataDir)
+        if not os.path.isdir(args.data_dir):
+            print("root directory %s does not exist" % args.data_dir)
             parser.print_usage()
             sys.exit(1)
 
         check_u_path(parser, args, mustExist=True)
 
     # complete setup ------------------------------------------------
-    appName = 'bl_check %s' % __version__
+    app_name = 'bl_check %s' % __version__
 
     # maybe show options and such -----------------------------------
-    if args.verbose or args.justShow:
-        print("%s %s" % (appName, __version_date__))
+    if args.verbose or args.just_show:
+        print("%s %s" % (app_name, __version_date__))
 
-    if args.verbose or args.justShow:
-        print('dataDir      = ' + str(args.dataDir))
-        print('ignoreFile   = ' + str(args.ignoreFile))
-        print('listFile     = ' + str(args.listFile))
+    if args.verbose or args.just_show:
+        print('data_dir      = ' + str(args.data_dir))
+        print('ignore_file   = ' + str(args.ignore_file))
+        print('list_file     = ' + str(args.list_file))
         show_using_sha(args)
 
-    if args.justShow:
+    if args.just_show:
         sys.exit(0)
 
     # do what's required --------------------------------------------
-    checkBuildList(args)
+    check_build_list(args)
 
 
 if __name__ == '__main__':

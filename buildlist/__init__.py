@@ -19,7 +19,7 @@ from nlhtree import NLHNode, NLHTree, NLHLeaf
 
 from xlattice.crypto import collect_pem_rsa_public_key
 from xlattice.lfs import touch
-from xlattice.u import Q, UDir, check_using_sha
+from xlattice.u import QQQ, UDir, check_using_sha
 from xlattice.util import make_ex_re, parse_timestamp, timestamp, timestamp_now
 
 __all__ = ['__version__', '__version_date__',
@@ -39,8 +39,8 @@ __all__ = ['__version__', '__version_date__',
            'ParseFailure',
            ]
 
-__version__ = '0.8.1'
-__version_date__ = '2016-10-22'
+__version__ = '0.8.2'
+__version_date__ = '2016-10-24'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -349,10 +349,10 @@ class BuildList(object):
 
         return success
 
-    # EQUALITY ------------------------------------------------------
+    # EQQQUALITY ------------------------------------------------------
     def __eq__(self, other):
         # DEBUG
-        print("entering BuildList.__eq__")
+        # print("entering BuildList.__eq__")
         # END
         if (not other) or (not isinstance(other, BuildList)):
             # DEBUG
@@ -385,15 +385,15 @@ class BuildList(object):
             return other._dig_sig is None
         else:
             # DEBUG
-            print("COMPARING DIG SIGS:\nDIG SIG A:\n%s" % self.dig_sig)
-            print("DIG SIG B:\n%s" % other.dig_sig)
+            #           print("COMPARING DIG SIGS:\nDIG SIG A:\n%s" % self.dig_sig)
+            #           print("DIG SIG B:\n%s" % other.dig_sig)
             # END
             return self.dig_sig == other.dig_sig
 
     # SERIALIZATION -------------------------------------------------
     @staticmethod
     def create_from_file_system(title, path_to_dir, sk,
-                                using_sha=Q.USING_SHA2, ex_re=None, match_re=None):
+                                using_sha=QQQ.USING_SHA2, ex_re=None, match_re=None):
 
         if (not path_to_dir) or (not os.path.isdir(path_to_dir)):
             raise BLError(
@@ -546,7 +546,7 @@ class BuildList(object):
                  excl=['build'],
                  logging=False,
                  u_path='',
-                 using_sha=Q.USING_SHA1):     # NOTE default is SHA1
+                 using_sha=QQQ.USING_SHA1):     # NOTE default is SHA1
         """
         Create a BuildList for data_dir with the title indicated.
         Files matching the globs in excl will be skipped.  'build'
@@ -585,11 +585,11 @@ class BuildList(object):
 
         new_data = bl.__str__().encode('utf-8')
         # pylint:disable=redefined-variable-type
-        if using_sha == Q.USING_SHA1:
+        if using_sha == QQQ.USING_SHA1:
             sha = hashlib.sha1()
-        elif using_sha == Q.USING_SHA2:
+        elif using_sha == QQQ.USING_SHA2:
             sha = hashlib.sha256()
-        elif using_sha == Q.USING_SHA3:
+        elif using_sha == QQQ.USING_SHA3:
             sha = hashlib.sha3_256()
         sha.update(new_data)
         new_hash = sha.hexdigest()
