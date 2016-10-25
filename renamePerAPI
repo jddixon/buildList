@@ -1,0 +1,3 @@
+sdRenameInFiles -v1rw                   \
+    -m name-pairs-api     \
+    setup.py buildlist/__init__.py bl_* test*.py

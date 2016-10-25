@@ -11,12 +11,12 @@ from Crypto.PublicKey import RSA
 from argparse import ArgumentParser
 
 from rnglib import SimpleRNG
-from xlattice import Q, check_using_sha
+from xlattice import QQQ, check_using_sha
 from xlattice.util import timestamp
-from buildlist import *
+from buildlist import BuildList
 
 
-class Test_build_list (unittest.TestCase):
+class TestBuildList (unittest.TestCase):
 
     def setUp(self):
         self.rng = SimpleRNG(time.time())
@@ -28,14 +28,14 @@ class Test_build_list (unittest.TestCase):
 
     # actual unit tests #############################################
 
-    def expect_exception(self, pathToDir):
+    def expect_exception(self, path_to_dir):
         # DEBUG
         # print("ENTERING expect_exception, path = '%s'" % pathToDir)
         # END
         try:
-            BuildList.create_from_file_system('anything', pathToDir, None)
+            BuildList.create_from_file_system('anything', path_to_dir, None)
             self.fail("accepted '%s' as pathToDir")
-        except RuntimeError as e:
+        except RuntimeError as exc:
             pass
         except Exception as e2:
             self.fail("unexpected exception %s" % e2)
@@ -60,37 +60,37 @@ class Test_build_list (unittest.TestCase):
     def do_build_test(self, title, using_sha):
         check_using_sha(using_sha)
         sk_priv = RSA.generate(1024)
-        sk = sk_priv.publickey()
+        sk_ = sk_priv.publickey()
 
-        if using_sha == Q.USING_SHA1:
+        if using_sha == QQQ.USING_SHA1:
             path_to_data = os.path.join('example1', 'dataDir')
-        elif using_sha == Q.USING_SHA2:
+        elif using_sha == QQQ.USING_SHA2:
             path_to_data = os.path.join('example2', 'dataDir')
-        elif using_sha == Q.USING_SHA3:
+        elif using_sha == QQQ.USING_SHA3:
             path_to_data = os.path.join('example3', 'dataDir')
-        bl = BuildList.create_from_file_system(
-            'a trial list', path_to_data, sk, using_sha)
+        blist = BuildList.create_from_file_system(
+            'a trial list', path_to_data, sk_, using_sha)
 
         # check properties ------------------------------------------
-        self.assertEqual(bl.title, 'a trial list')
-        self.assertEqual(bl.public_key, sk)
-        self.assertEqual(bl.timestamp, timestamp(0))
-        self.assertEqual(bl.using_sha, using_sha)
+        self.assertEqual(blist.title, 'a trial list')
+        self.assertEqual(blist.public_key, sk_)
+        self.assertEqual(blist.timestamp, timestamp(0))
+        self.assertEqual(blist.using_sha, using_sha)
 
         # check sign() and verify() ---------------------------------
 
-        self.assertEqual(bl, bl)
-        self.assertFalse(bl.verify())   # not signed yet
+        self.assertEqual(blist, blist)
+        self.assertFalse(blist.verify())   # not signed yet
 
-        bl.sign(sk_priv)
-        sig = bl.dig_sig                 # this is the base64-encoded value
+        blist.sign(sk_priv)
+        sig = blist.dig_sig                 # this is the base64-encoded value
         self.assertTrue(sig is not None)
-        self.assertTrue(bl.verify())    # it has been signed
+        self.assertTrue(blist.verify())    # it has been signed
 
         # equality, serialization, deserialization ------------------
-        self.assertEqual(bl, bl)
-        bl_string = bl.__str__()
-        tree_string = bl.tree.__str__()
+        self.assertEqual(blist, blist)
+        bl_string = blist.__str__()
+        tree_string = blist.tree.__str__()
         # DEBUG
         # print("SIGNED BUILD LIST:\n%s" % bl_string)
         # END
@@ -102,18 +102,18 @@ class Test_build_list (unittest.TestCase):
         # print("ROUNDTRIPPED:\n%s" % bl_string2)
         # END
         self.assertEqual(tree_string, tree_string2)
-        self.assertEqual(bl, bl)  # same list, but signed now
+        self.assertEqual(blist, blist)  # same list, but signed now
         # self.assertEqual(bl, bl2)     # XXX timestamps may not be equal
 
     def test_build_list(self):
-        for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
             self.do_build_test('SHA1 test', using)
 
     def test_namespace(self):
         parser = ArgumentParser(description='oh hello')
         args = parser.parse_args()
-        args.junk = 'trash'
-        self.assertEqual(args.junk, 'trash')
+        args._ = 'trash'
+        self.assertEqual(args._, 'trash')
 
 
 if __name__ == '__main__':

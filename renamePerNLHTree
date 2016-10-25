@@ -1,0 +1,4 @@
+sdRenameInFiles -v1rw                   \
+    -m ../xlattice_py/name-pairs-api    \
+    -m ../nlhtree_py/name-pairs-api     \
+    setup.py buildlist/__init__.py bl_* test*.py
