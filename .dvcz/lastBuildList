@@ -7,34 +7,34 @@ zPjEShF9rvcNa9XEy1dKpcDz9Szbm2SlxOgM83fDDGtOq4SSCSqndtxrOvXXPB57
 H1mJV/FmerbXRPm5ERJVNIxtLk7Gr2Ce45FVlWyJGMhpfVlKkkk+bRQ02OFfazJI
 GQIDAQAB
 -----END RSA PUBLIC KEY-----
-buildlist v0.8.2
-2016-10-25 01:38:36
+buildlist v0.8.3
+2016-11-01 21:26:22
 # BEGIN CONTENT #
 buildlist
  .dvcz
-  builds a55198f22ad2832a061fec379765c54e1430a04b
+  builds 1829d7ffdcd8af7366aaaa4adae544d355a24c43
   copyright 803f3e50518123ef8a08d34f2238e89b62d0c9a2
-  lastBuildList ac9188eada533deae78ff1e50c8e93f48d6028a7
+  lastBuildList 9d7dde830700cd59513fe3db6f02e58e042874e5
   license 5977a55c75bb4612004451a56b0b4c22d9d3311d
   projCfg 10e2a3cfe3a0ddb2b7c65586b68decc17b6e0c82
   projCfg.local a14aa1ab237ad3b7abb8cf75a5e81f95fca2e691
-  version d5afb776c7c87b4547150eb1f8c665533f8eb54c
+  version 96f78cfc37e0aaea595b026e3d283fcae63cc6b3
  .gitignore 2bc4bcb7826ea9b5fb999444fe18f6785df1de72
- CHANGES 19cd3553f1afc224d8134a149a8e64cf2964356c
+ CHANGES 8068c49bf50fa7d028e66c65f741920a18f999f6
  LICENSE-MIT.md d1cecfadc47b23486f6bc8a863cfdde348c3eb46
  MANIFEST.in 6500e1b65a1f7a9bacc4f36f6c8632eefc00df18
  README.md e3a275bc5de269f562c1eb65afd7d24a2dc22e59
- TODO a180ad9a5e2ad8c639457a40e48c518c51c33d9d
+ TODO 9f688c8e96475c7a80b811e79773b12dbc76a0bd
  bkp2U bdf68c05c71bc5e5c32023d942c643fd01a8d669
  bl_bootstrap 442703302cc5364d6b00b7e47168578beedece23
- bl_check 3330bc1abba80d2745e36ac5ed36846e8ad3b00d
+ bl_check aebf64b2cc20a78c996b70a652baf30e05639a6e
  bl_create_test_data1 dfffc113282858c76a7ae3bbe302797ac9b34589
  bl_list_gen e1a6882f5f1c49dce25721e84112bce4d5724494
- bl_src_gen 2e110cfc9c76c4da0231a20c37b959abbdc384ec
+ bl_src_gen 7c7028b3ac9756cc2e65e7f99c84aa1bced8e66b
  buildlist
-  __init__.py b173ddf531752b085900542cd68ddbf56f05fbcd
+  __init__.py c2eca820b0ecbeabf0c0f7ac57a8540aa00643b8
  checkBlSrcGen a5517be6293deb93e800c96f605bb647cbde3079
- checkCoverage c17285d7affb7cc8249f8fc1f922faaa69962e6a
+ checkCoverage 0dbc3f42eb214cf64a1536a061e2b2fe2a58659b
  checkExample1 46cdc90898f97dafde15be4629e891b53c44a6f3
  checkExample2 7df18ca5ddc0c0a59da7b0855ea9ce3ca5d418bc
  checkExample3 03f655bfc4bb5cbc762feb6f406904d6d9a75e53
@@ -105,6 +105,7 @@ buildlist
   buildList-0.8.0.tar.gz 1e7c0de9f714e3f7797cfd433ec8ae6febff9216
   buildlist-0.8.1.tar.gz 5c69a254730921e8cf4eb8a193cecff6a4b66a00
   buildlist-0.8.2.tar.gz 5e3f9b8c3a234f59d26f55d7b47f5672a200cb63
+  buildlist-0.8.3.tar.gz 690a215fb34db50edf36fe1f21a235c5c71b7743
  doListGen 2c2ba6dc679b041d1d59baaa0b035f7eecb74d8f
  doPyLint 944d68982590f648e29d582ea2785dc91096b3dc
  doSrcGen fab4b95000c135656f7be3416171df24138cdc2b
@@ -132,9 +133,6 @@ buildlist
    ca83a024cf4bb9c503f89c86b8819e012d64212d ca83a024cf4bb9c503f89c86b8819e012d64212d
    da39a3ee5e6b4b0d3255bfef95601890afd80709 da39a3ee5e6b4b0d3255bfef95601890afd80709
    e5ea2d73b3801b38e2add428fa98219c48c69e93 e5ea2d73b3801b38e2add428fa98219c48c69e93
-   in
-  u_dir
-   da39a3ee5e6b4b0d3255bfef95601890afd80709 da39a3ee5e6b4b0d3255bfef95601890afd80709
    in
  example2
   dataDir
@@ -215,9 +213,9 @@ buildlist
  styleit 2b9d2294fd286abaa68158993a8d547711d7cc9d
  test.all 0877d0314eef74c56c24cb0bd0ea40ceed6f7ea1
  test_build_list.py e00a01c9c92b6719430f2e0234b88802054a5f70
- test_populate_data_dir.py 1fdc3cb73393f2f92c8798578e89677d118abd1d
+ test_populate_data_dir.py bbb5eb9c92173459bef9ccd68a7e1de55c3ca44c
  test_random_dir.py b0509525934f81d1f44919c6ca965b98e6834b4e
  test_timestamp.py 0074da2df4052f10268ae09f0d855b79fe3b448f
 # END CONTENT #
 
-NuuKRXArk8KIehMyvn1t24B4GoC/mAEIf6MClOBh+unFjqbscKqXalZLBL94fz3fhAbVQD3/jUotbYnsTzr9sxzbkZ95NLrEmj/vh7cSQXomqf3c4oThd+7owxklhNLyZ/kFz+MvTp5REMp4CBFzhpJ40oAuKJtgJYQ7UeOz5sHHcLlQ0X6+zceVUZn1OL5q6O5ZSrQK8XlHStTTe4Pr6CQ9ZBcH/eHRmil+P43bri9Nk1DfnZhFCJDt4fLYfnkZl1ST8YMBogU6J066WDdJ1Z0hqv8Y3COrPWUZmSrnO5TW3dJ3tzx0hzqQwTpMjKa57Coo2FnXRzGEfKVm0PYvcQ==
+Q9dYhqA6fEZkgXyTWOCr3jfRVjH9zweiFmNGWzMn+EU46x1xruVn0BswVqvug51YaI7wvgwoqHiH6gjqq4H2W0D+ZdwZ3hImjViJWGKp7rlyU0g3Vy468GSn96H8OyqVviRflza8dpfFZNHI2sCmaYzJXk8oEfEesQsnM/sCUkpgX5+qdqV0qNGWBwhP8NJZ7mCBkfPtcO2BFvoYMxoyS4Z9F7uMKT++HEi12cXF5BJzpjugCSLFR0/lngKXPgCfio0TjcxTFRkYMUGtA+qTAXSEI/kAesUpi27Ee3tPDgyGQcyAn+d7guK6IAw0afNUQhcrmoOf6a0sIlwe7jnoTQ==
