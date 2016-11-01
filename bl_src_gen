@@ -32,7 +32,7 @@ def make_data_dir(options):
         data = file.read()
     blist = BuildList.parse(data, using_sha=Q.USING_SHA1)  # XXX THINK
 
-    blist.populate_data_dir(u_path, path)
+    blist.populate_data_dir(u_path, data_path)
 
 
 def main():
@@ -43,11 +43,6 @@ def main():
     """
 
     # program defaults ----------------------------------------------
-
-    __version__ = re.search("__version__\s*=\s*'(.*)'",
-                            open(__file__).read()).group(1)
-    __version_date__ = re.search("__version_date__\s*=\s*'(.*)'",
-                                 open(__file__).read()).group(1)
 
     app_name = 'bl_src_gen %s' % __version__
     key_path = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
@@ -83,18 +78,19 @@ def main():
     parser.add_argument('-u', '--u_path', default=u_path,
                         help='path to uDir (relative to tmp/ if testing)')
 
-    parser.add_argument('-V', '--showVersion', action='store_true',
+    parser.add_argument('-V', '--show_version', action='store_true',
                         help='display version number and exit')
 
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='be chatty')
 
-    parser.add_argument('-X', '--exclusions', action='append',
-                        help='do not include files/directories matching this pattern')
+    parser.add_argument(
+        '-X', '--exclusions', action='append',
+        help='do not include files/directories matching this pattern')
 
     args = parser.parse_args()
 
-    if args.showVersion:
+    if args.show_version:
         print(app_name)
         sys.exit(0)
 
@@ -110,7 +106,7 @@ def main():
         args.u_path = os.path.join('tmp', args.u_path)
 
     # sanity checks -------------------------------------------------
-    check_u_path(args.u_path)
+    check_u_path(parser, args, must_exist=True)
 
     def give_up(msg):
         print(msg)

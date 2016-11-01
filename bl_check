@@ -136,7 +136,7 @@ def main():
             parser.print_usage()
             sys.exit(1)
 
-        check_u_path(parser, args, mustExist=True)
+        check_u_path(parser, args, must_exist=True)
 
     # complete setup ------------------------------------------------
     app_name = 'bl_check %s' % __version__

@@ -1,21 +1,22 @@
 ~/dev/py/buildList/TODO
 
+2016-10-22, confirmed -11-01
+    * test_populate_data_dir shows that round-tripping the 
+        serialized BuildList doesn't work; the copy is signed but
+        the dig sig is not picked up.
+
 2016-10-22
     * test_build_list.py roundtrip test in do_build_test()
         compares the serialization of NLHTree part of two build lists,  
         should also check pubKey, title, and time, and verify the
         digSig on each.
-    * test_populate_data_dir shows that round-tripping the 
-        serialized BuildList doesn't work; the copy is signed but
-        the dig sig is not picked up.
-
 2016-10-21
     * package renamed to buildlist                                      * DONE
     * BuildList.to_strings() should use strings.extend() to add
         serialized NLHTree 
 
 2016-10-15
-    * README command summaries are out of date
+    * index.md command summaries are out of date
 
 2016-09-19
     * Need a function BuildList.documentHash() which returns the 
@@ -40,7 +41,7 @@
     * running blCheck on example1 returns 'incompatible SHA types'      * FIXED
 
 2016-08-06
-    * verify that command line formats specified in README.md are       * DONE
+    * verify that command line formats specified in index.md are       * DONE
         current                                                         * DONE
 
 2016-07-18

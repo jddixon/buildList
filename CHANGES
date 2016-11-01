@@ -2,6 +2,9 @@
 
 
 
+v0.8.3
+    2016-11-01
+        * further bug fixes; update web pages                       SLOC 2463
 v0.8.2
     2016-10-24
         * minor fixes reflecting change in xlattice_py API          SLOC 2535
@@ -238,6 +241,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

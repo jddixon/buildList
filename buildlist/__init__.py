@@ -39,8 +39,8 @@ __all__ = ['__version__', '__version_date__',
            'ParseFailure',
            ]
 
-__version__ = '0.8.2'
-__version_date__ = '2016-10-24'
+__version__ = '0.8.3'
+__version_date__ = '2016-11-01'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -542,7 +542,7 @@ class BuildList(object):
                  dvcz_dir='.dvcz',
                  list_file='lastBuildList',
                  key_file=os.path.join(
-                     os.environ['DVCZ_PATH_TO_KEYS'], 'sk_priv.pem'),
+                     os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem'),
                  excl=['build'],
                  logging=False,
                  u_path='',
