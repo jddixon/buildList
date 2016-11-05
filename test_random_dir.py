@@ -24,14 +24,14 @@ class TestRandomDir (unittest.TestCase):
 
     # actual unit tests #############################################
 
-    def doTestRandomDir(self, using_sha):
+    def do_test_random_dir(self, using_sha):
         check_using_sha(using_sha)
         depth = 1 + self.rng.nextInt16(3)       # so 1 to 3
         width = 1 + self.rng.nextInt16(16)      # so 1 to 16
 
-        blkCount = 1 + self.rng.nextInt16(3)     # so 1 to 3
+        blk_count = 1 + self.rng.nextInt16(3)     # so 1 to 3
         # last block will usually be only partically populated
-        max_len = BuildList.BLOCK_SIZE * (blkCount - 1) +\
+        max_len = BuildList.BLOCK_SIZE * (blk_count - 1) +\
             self.rng.nextInt16(BuildList.BLOCK_SIZE)
         min_len = 1
 
@@ -45,28 +45,28 @@ class TestRandomDir (unittest.TestCase):
         data = bytearray(max_len)            # that many null bytes
         self.rng.nextBytes(data)            # fill with random data
         if using_sha == QQQ.USING_SHA1:
-            dVal = hashlib.sha1()
+            d_val = hashlib.sha1()
         elif using_sha == QQQ.USING_SHA2:
-            dVal = hashlib.sha256()
+            d_val = hashlib.sha256()
         elif using_sha == QQQ.USING_SHA3:
-            dVal = hashlib.sha3_256()
-        dVal.update(data)
-        hash = dVal.hexdigest()
+            d_val = hashlib.sha3_256()
+        d_val.update(data)
+        hash = d_val.hexdigest()
         file_name = self.rng.nextFileName(8)
-        pathToFile = os.path.join('tmp', file_name)
-        with open(pathToFile, 'wb') as file:
+        path_to_file = os.path.join('tmp', file_name)
+        with open(path_to_file, 'wb') as file:
             file.write(data)
         if using_sha == QQQ.USING_SHA1:
-            file_hash = u.file_sha1hex(pathToFile)
+            file_hash = u.file_sha1hex(path_to_file)
         elif using_sha == QQQ.USING_SHA2:
-            file_hash = u.file_sha2hex(pathToFile)
+            file_hash = u.file_sha2hex(path_to_file)
         elif using_sha == QQQ.USING_SHA3:
-            file_hash = u.file_sha3hex(pathToFile)
+            file_hash = u.file_sha3hex(path_to_file)
         self.assertEqual(hash, file_hash)
 
-    def testRandomDir(self):
+    def test_random_dir(self):
         for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
-            self.doTestRandomDir(using)
+            self.do_test_random_dir(using)
 
 if __name__ == '__main__':
     unittest.main()

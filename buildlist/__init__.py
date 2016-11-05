@@ -39,8 +39,8 @@ __all__ = ['__version__', '__version_date__',
            'ParseFailure',
            ]
 
-__version__ = '0.8.3'
-__version_date__ = '2016-11-01'
+__version__ = '0.8.4'
+__version_date__ = '2016-11-04'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -221,12 +221,12 @@ class BuildList(object):
     OLD_CONTENT_START = '# START CONTENT #'
     # XXX END DROP
 
-    def __init__(self, title, sk, tree):
+    def __init__(self, title, sk_, tree):
 
         self._title = title.strip()
-        if (not sk) or (not isinstance(sk, RSA._RSAobj)):
+        if (not sk_) or (not isinstance(sk_, RSA._RSAobj)):
             raise BLError("sk is nil or not a valid RSA public key")
-        self._public_key = sk
+        self._public_key = sk_
 
         if (not tree) or (not isinstance(tree, NLHTree)):
             raise BLError('tree is nil or not a valid NLHTree')
@@ -277,7 +277,7 @@ class BuildList(object):
     def using_sha(self):
         return self._tree._using_sha
 
-    def _getBuildListSHA1(self):
+    def _get_build_list_sha1(self):
         sha = SHA.new()
         # add public key and then LF to hash
         pem_ck = self._public_key.exportKey('PEM')
@@ -323,7 +323,7 @@ class BuildList(object):
         now = int(time.time())      # seconds from Epoch
         self._when = now
 
-        sha = self._getBuildListSHA1()
+        sha = self._get_build_list_sha1()
 
         # Sign the list using SHA1 and RSA.  What we are signing is the
         # in-memory binary data structure.
@@ -343,7 +343,7 @@ class BuildList(object):
                 # the hash over the fields in standard order (pubkey, title,
                 # timestamp, and content lines).
 
-            sha = self._getBuildListSHA1()
+            sha = self._get_build_list_sha1()
             verifier = PKCS1_PSS.new(self.public_key)
             success = verifier.verify(sha, self._dig_sig)
 
@@ -392,7 +392,7 @@ class BuildList(object):
 
     # SERIALIZATION -------------------------------------------------
     @staticmethod
-    def create_from_file_system(title, path_to_dir, sk,
+    def create_from_file_system(title, path_to_dir, sk_,
                                 using_sha=QQQ.USING_SHA2, ex_re=None, match_re=None):
 
         if (not path_to_dir) or (not os.path.isdir(path_to_dir)):
@@ -402,7 +402,7 @@ class BuildList(object):
         tree = NLHTree.create_from_file_system(path_to_dir,
                                                # accept default deltaIndent
                                                using_sha=using_sha, ex_re=ex_re)
-        return BuildList(title, sk, tree)
+        return BuildList(title, sk_, tree)
 
     @staticmethod
     def parse(string, using_sha):
@@ -575,15 +575,15 @@ class BuildList(object):
         if signing:
             with open(key_file, 'r') as file:
                 sk_priv = RSA.importKey(file.read())
-            sk = sk_priv.publickey()
+            sk_ = sk_priv.publickey()
         else:
-            sk = None
-        bl = cls.create_from_file_system(title, data_dir, sk,
-                                         using_sha, ex_re, match_re=None)
+            sk_ = None
+        blist = cls.create_from_file_system(
+            title, data_dir, sk_, using_sha, ex_re, match_re=None)
         if signing:
-            bl.sign(sk_priv)
+            blist.sign(sk_priv)
 
-        new_data = bl.__str__().encode('utf-8')
+        new_data = blist.__str__().encode('utf-8')
         # pylint:disable=redefined-variable-type
         if using_sha == QQQ.USING_SHA1:
             sha = hashlib.sha1()
@@ -597,7 +597,7 @@ class BuildList(object):
 
         if u_path:
 
-            bl.tree.save_to_u_dir(data_dir, u_path, using_sha)
+            blist.tree.save_to_u_dir(data_dir, u_path, using_sha)
 
             # insert this BuildList into U
             # DEBUG
@@ -627,9 +627,10 @@ class BuildList(object):
         if logging:
             path_to_log = os.path.join(dvcz_dir, 'builds')
             with open(path_to_log, 'a') as file:
-                file.write("%s v%s %s\n" % (bl.timestamp, version, new_hash))
+                file.write("%s v%s %s\n" %
+                           (blist.timestamp, version, new_hash))
 
-        return bl
+        return blist
 
     def populate_data_dir(self, u_path, data_path):
         # u_path path to U, including directory name

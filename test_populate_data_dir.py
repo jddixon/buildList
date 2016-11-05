@@ -32,7 +32,7 @@ class TestPopulateDataDir(unittest.TestCase):
         dir_path = os.path.join(below, self.rng.nextFileName(8))
         while os.path.exists(dir_path):
             dir_path = os.path.join(below, self.rng.nextFileName(8))
-        tmpDir = os.makedirs(dir_path, mode=0o755)
+        tmp_dir = os.makedirs(dir_path, mode=0o755)
 
         # DEBUG
         # print("dir_path: %s" % dir_path)
@@ -52,13 +52,13 @@ class TestPopulateDataDir(unittest.TestCase):
 
         if using_sha == QQQ.USING_SHA1:
             original_data = os.path.join('example1', 'dataDir')
-            original_u = os.path.join('example1', 'uDir')
+            original_u = os.path.join('example1', 'u_dir')
         elif using_sha == QQQ.USING_SHA2:
             original_data = os.path.join('example2', 'dataDir')
-            original_u = os.path.join('example2', 'uDir')
+            original_u = os.path.join('example2', 'u_dir')
         elif using_sha == QQQ.USING_SHA3:
-            original_data = os.path.join('example3', 'dataDir')
-            original_u = os.path.join('example3', 'uDir')
+            original_data = os.path.join('example3', 'data_dir')
+            original_u = os.path.join('example3', 'u_dir')
 
         blist = BuildList.create_from_file_system(
             'name_of_the_list', original_data, sk_, using_sha)
@@ -141,8 +141,8 @@ class TestPopulateDataDir(unittest.TestCase):
         # BL3:
 
         # this writes the buildlist to dvczPath/lastBuildList:
-        bl3 = BuildList.list_gen("title", data_path, dvcz_path,
-                                 u_path=u_path, using_sha=using_sha)
+        blist3 = BuildList.list_gen("title", data_path, dvcz_path,
+                                    u_path=u_path, using_sha=using_sha)
         path_to_list = os.path.join(dvcz_path, 'lastBuildList')
         with open(path_to_list, 'r') as file:
             ser4 = file.read()
@@ -157,7 +157,7 @@ class TestPopulateDataDir(unittest.TestCase):
 
         self.assertEqual(blist.tree, blist.tree)    # check __eq__
         self.assertEqual(bl2.tree, blist.tree)
-        self.assertEqual(bl3.tree, blist.tree)
+        self.assertEqual(blist3.tree, blist.tree)
         self.assertEqual(bl4.tree, blist.tree)
 
     def test_populate_data_dir(self):

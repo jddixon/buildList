@@ -1,7 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
-
-
+v0.8.4
+    2016-11-04
+        * corrected utility options and updated web page            SLOC 2456
 v0.8.3
     2016-11-01
         * further bug fixes; update web pages                       SLOC 2463
@@ -241,6 +242,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

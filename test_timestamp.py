@@ -12,7 +12,7 @@ from xlattice import u
 from buildlist import BuildList
 
 
-class TestTimestamp (unittest.TestCase):
+class TestTimestamp(unittest.TestCase):
 
     def setUp(self):
         self.rng = SimpleRNG(time.time())
@@ -27,27 +27,27 @@ class TestTimestamp (unittest.TestCase):
     # Note that in the Go code timestamp is an int64, whereas here it
     # is a string.
 
-    def testSHA1File(self):
+    def test_sha1_file(self):
 
-        blkCount = 1 + self.rng.nextInt16(3)     # so 1 to 3
+        blk_count = 1 + self.rng.nextInt16(3)     # so 1 to 3
         # last block will usually be only partically populated
-        byteCount = BuildList.BLOCK_SIZE * (blkCount - 1) +\
+        byte_count = BuildList.BLOCK_SIZE * (blk_count - 1) +\
             self.rng.nextInt16(BuildList.BLOCK_SIZE)
 
-        data = bytearray(byteCount)     # that many null bytes
+        data = bytearray(byte_count)     # that many null bytes
         self.rng.nextBytes(data)             # fill with random data
-        dVal = hashlib.new('sha1')
-        dVal.update(data)
-        hash = dVal.hexdigest()
+        d_val = hashlib.new('sha1')
+        d_val.update(data)
+        hash_ = d_val.hexdigest()
 
         file_name = self.rng.nextFileName(8)
-        pathToFile = os.path.join('tmp', file_name)
-        with open(pathToFile, 'wb') as file:
+        path_to_file = os.path.join('tmp', file_name)
+        with open(path_to_file, 'wb') as file:
             file.write(data)
 
-        file_hash = u.file_sha1hex(pathToFile)
+        file_hash = u.file_sha1hex(path_to_file)
 
-        self.assertEqual(hash, file_hash)
+        self.assertEqual(hash_, file_hash)
 
 
 if __name__ == '__main__':

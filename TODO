@@ -1,5 +1,10 @@
 ~/dev/py/buildList/TODO
 
+2016-11-04
+    * README.md needs to be corrected for utilities                     * DONE
+    * test_populate_data_dir fails because of dataDir incorrectly       * FIXED
+        called data_dir (under example{1,2,3})                          * FIXED
+
 2016-10-22, confirmed -11-01
     * test_populate_data_dir shows that round-tripping the 
         serialized BuildList doesn't work; the copy is signed but
@@ -16,7 +21,7 @@
         serialized NLHTree 
 
 2016-10-15
-    * index.md command summaries are out of date
+    * index.md command summaries are out of date                        * FIXED
 
 2016-09-19
     * Need a function BuildList.documentHash() which returns the 
