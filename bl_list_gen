@@ -15,7 +15,7 @@ from xlattice import (Q, check_using_sha, parseUsingSHA, fix_using_sha,
                       show_using_sha)
 
 from xlattice.util import get_exclusions, make_ex_re, timestamp_now
-from buildlist import __file__, BuildList
+from buildlist import __version__, __version_date__, __file__, BuildList
 
 
 def doit(options):
@@ -38,8 +38,8 @@ def doit(options):
     if u_path:
         unmatched = blist.tree.check_in_u_dir(u_path)
         if unmatched:
-            for u in unmatched:
-                print("NOT IN UDIR: ", u)
+            for unm in unmatched:
+                print("NOT IN UDIR: ", unm)
 
 
 def main():
@@ -51,17 +51,10 @@ def main():
 
     # program defaults ----------------------------------------------
 
-    NOW = timestamp_now()
-
-    __version__ = re.search("__version__\s*=\s*'(.*)'",
-                            open(__file__).read()).group(1)
-    __version_date__ = re.search("__version_date__\s*=\s*'(.*)'",
-                                 open(__file__).read()).group(1)
+    now = timestamp_now()
 
     app_name = 'bl_list_gen %s' % __version__
-    APP_NAME = 'bl_list_gen %s' % __version__
-    KEY_PATH = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
-    UDIR = os.environ['DVCZ_UDIR']
+    key_path = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
 
     # parse the command line ----------------------------------------
 
@@ -83,7 +76,7 @@ def main():
     parser.add_argument('-j', '--just_show', action='store_true',
                         help='show options and exit')
 
-    parser.add_argument('-k', '--key_file', default=KEY_PATH,
+    parser.add_argument('-k', '--key_file', default=key_path,
                         help='path to RSA private key for signing')
 
     parser.add_argument('-L', '--logging', action='store_true',
@@ -111,7 +104,7 @@ def main():
     args = parser.parse_args()
 
     if args.showVersion:
-        print(APP_NAME)
+        print(app_name)
         sys.exit(0)
 
     # fixups --------------------------------------------------------
@@ -129,7 +122,7 @@ def main():
     if args.exclusions:
         args.excl.extend(args.exclusions)
 
-    args.now = NOW
+    args.now = now
 
     if args.testing:
         args.dvcz_dir = os.path.join('tmp/dvcz')
@@ -188,7 +181,7 @@ def main():
 
     # maybe show options and such -----------------------------------
     if args.verbose or args.just_show:
-        print("%s %s" % (APP_NAME, __version_date__))
+        print("%s %s" % (app_name, __version_date__))
 
     if args.verbose or args.just_show:
         print('data_dir     = ' + str(args.data_dir))

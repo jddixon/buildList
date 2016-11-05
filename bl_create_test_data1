@@ -48,7 +48,7 @@ def do_it(args):
     #
     # ---------------------------------------------------------------
 
-    data_path = os.path.join(out_path, 'dataDir')
+    data_path = os.path.join(out_path, 'data_dir')
     sub_dir1 = os.path.join(data_path, 'subDir1')
     sub_dir2 = os.path.join(data_path, 'subDir2')
     sub_dir3 = os.path.join(data_path, 'subDir3')

@@ -16,7 +16,7 @@ from xlattice.util import timestamp
 from buildlist import BuildList
 
 
-class TestBuildList (unittest.TestCase):
+class TestBuildList(unittest.TestCase):
 
     def setUp(self):
         self.rng = SimpleRNG(time.time())
@@ -37,8 +37,8 @@ class TestBuildList (unittest.TestCase):
             self.fail("accepted '%s' as pathToDir")
         except RuntimeError as exc:
             pass
-        except Exception as e2:
-            self.fail("unexpected exception %s" % e2)
+        except Exception as exc2:
+            self.fail("unexpected exception %s" % exc2)
 
 #   def do_test_bad_parts(self):
 #       # we object to absolute paths
