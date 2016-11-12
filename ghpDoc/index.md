@@ -1,7 +1,7 @@
 <h1 class="libTop">buildlist</h1>
 
 A set of Python3 utilities conforming to the
-[BuildList](https://jddixon.github.io/xlattice/buildList.html)
+[BuildList](https://jddixon.github.io/xlattice/buildlist.html)
 specification and
 intended to be interoperable with the Go
 **builds/** package in
@@ -9,9 +9,9 @@ intended to be interoperable with the Go
 as well as the Java version in
 [xlCrypto.java](https://jddixon.github.com/xlCrypto_java).
 
-## bl_boot_strap
+## bl_bootstrap
 
-A utility for use in testing the buildList package.  It generates a
+A utility for use in testing the buildlist package.  It generates a
 directory tree, `example/` by default, in the current directory.  This
 contains a data directory, `dataDir`; a corresponding BuildList,
 `example.bld`; a secret key in `node`, and a matching content key
@@ -59,11 +59,11 @@ directory must be present.
                             path to uDir
       -v, --verbose         be chatty
 
-## bl_create_test_data_1
+## bl_createtestdata1
 
 Replaces `bl_bootstrap`.  Output is to the xl_test_data project directory.
 
-    usage: bl_create_test_data1 [-h] [-f] [-j] [-o OUT_PATH] [-v]
+    usage: bl_createtestdata1 [-h] [-f] [-j] [-o OUT_PATH] [-v]
 
     generate a sample data tree, write a build list, and create a corresponding
     content-keyed store
@@ -77,19 +77,19 @@ Replaces `bl_bootstrap`.  Output is to the xl_test_data project directory.
                             '../../dat/xl_test_data/treeData/binExample_1'
       -v, --verbose         be chatty
 
-## bl_list_gen
+## bl_listgen
 
-Given a source directory specified by `-r`, writes a buildList to `LISTFILE`.
+Given a source directory specified by `-r`, writes a buildlist to `LISTFILE`.
 
 If the `-u` option is present, `UPATH` is a directory for the storage of files
 by content key; `blListGen` will copy each file in the build list into that
 directory if the file is not already present.
 
 It is usually important to skip some files, **not** adding them to the
-buildList and the backup directory.  Such files are
+buildlist and the backup directory.  Such files are
 specified with the `-X` option.
 
-    usage: bl_list_gen [-h] [-b LIST_FILE] [-D DVCZ_DIR] [-d DATA_DIR]
+    usage: bl_listgen [-h] [-b LIST_FILE] [-D DVCZ_DIR] [-d DATA_DIR]
                        [-i IGNORE_FILE] [-j] [-k KEY_FILE] [-L] [-M MATCHPAT] [-T]
                        [-t TITLE] [-V] [-1] [-2] [-3] [-u U_PATH] [-v]
                        [-X EXCLUSIONS]
@@ -125,14 +125,14 @@ specified with the `-X` option.
       -X EXCLUSIONS, --exclusions EXCLUSIONS
                             do not include files/directories matching this pattern
 
-## bl_src_gen
+## bl_srcgen
 
 This utility is complementary to `blListGen`: given a build list and
 a backup directory indexed by content key, `blSrcGen` will rebuild the
 source directory.  This can be used, for example, to restore an earlier
 version of a source tree or to switch to another branch.
 
-    usage: bl_src_gen [-h] [-b LIST_FILE] [-d DATA_DIR] [-f] [-j] [-k KEY_FILE]
+    usage: bl_srcgen [-h] [-b LIST_FILE] [-d DATA_DIR] [-f] [-j] [-k KEY_FILE]
                       [-M MATCH_ON] [-T] [-u U_PATH] [-V] [-v] [-X EXCLUSIONS]
 
     given a build list and uDir, regenerate the data directory

@@ -39,8 +39,8 @@ __all__ = ['__version__', '__version_date__',
            'ParseFailure',
            ]
 
-__version__ = '0.8.4'
-__version_date__ = '2016-11-04'
+__version__ = '0.8.5'
+__version_date__ = '2016-11-11'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 

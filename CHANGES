@@ -1,5 +1,9 @@
 ~/dev/py/buildList/CHANGES
 
+v0.8.5
+    2016-11-11
+        * renamed utilities by removing second underscore           SLOC 2464
+        * more PEP 8, some minor bug fixes                          SLOC 2498
 v0.8.4
     2016-11-04
         * corrected utility options and updated web page            SLOC 2456
@@ -242,6 +246,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

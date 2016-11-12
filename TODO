@@ -1,5 +1,13 @@
 ~/dev/py/buildList/TODO
 
+2016-11-05
+    * markdown is mangling section headings in github.io, converting    * FIXED
+        python names like bl_boot_strap into bl + ITALICS(boot) +       * FIXED
+        strap.                                                          * FIXED
+        - this will be a common result of PEP8-izing program names      * FIXED
+        - this particular case can be fixed by treating 'bootstrap'     * FIXED
+            as a single word -- as it should be                         * FIXED
+
 2016-11-04
     * README.md needs to be corrected for utilities                     * DONE
     * test_populate_data_dir fails because of dataDir incorrectly       * FIXED

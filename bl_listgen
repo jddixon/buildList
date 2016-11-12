@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 #
-# ~/dev/py/buildlist/bl_list_gen
+# ~/dev/py/buildlist/bl_listgen
 
 import os
 import re
@@ -30,7 +30,7 @@ def doit(options):
     using_sha = options.using_sha
 
     blist = BuildList.list_gen(title, data_dir, dvcz_dir, list_file, key_file,
-                               excl, logging, u_path, using_sha)
+                              excl, logging, u_path, using_sha)
 
     print("BuildList written to %s" % os.path.join(dvcz_dir, list_file))
 
@@ -45,7 +45,7 @@ def doit(options):
 def main():
     """
     Expect a command like
-        bl_list_gen [options]
+        bl_listgen [options]
 
     """
 
@@ -53,7 +53,7 @@ def main():
 
     now = timestamp_now()
 
-    app_name = 'bl_list_gen %s' % __version__
+    app_name = 'bl_listgen %s' % __version__
     key_path = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
 
     # parse the command line ----------------------------------------
