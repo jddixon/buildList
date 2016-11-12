@@ -92,7 +92,7 @@ class TestBuildList(unittest.TestCase):
         bl_string = blist.__str__()
         tree_string = blist.tree.__str__()
         # DEBUG
-        # print("SIGNED BUILD LIST:\n%s" % bl_string)
+        print("SIGNED BUILD LIST:\n%s" % bl_string)
         # END
 
         bl2 = BuildList.parse(bl_string, using_sha)

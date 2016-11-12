@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
 # testPopulateDataDir.py
 
-import base64
 import os
 import time
 import unittest
-from Crypto.PublicKey import RSA
 
 from argparse import ArgumentParser
+
+from Crypto.PublicKey import RSA
 
 from rnglib import SimpleRNG
 from xlattice import QQQ, check_using_sha
 from xlattice.u import UDir
 from xlattice.util import timestamp
-from buildlist import *
+from buildlist import BuildList
 
 
 class TestPopulateDataDir(unittest.TestCase):
@@ -32,11 +32,7 @@ class TestPopulateDataDir(unittest.TestCase):
         dir_path = os.path.join(below, self.rng.nextFileName(8))
         while os.path.exists(dir_path):
             dir_path = os.path.join(below, self.rng.nextFileName(8))
-        tmp_dir = os.makedirs(dir_path, mode=0o755)
-
-        # DEBUG
-        # print("dir_path: %s" % dir_path)
-        # END
+        os.makedirs(dir_path, mode=0o755)
         return dir_path
 
     # actual unit tests #############################################
@@ -44,7 +40,7 @@ class TestPopulateDataDir(unittest.TestCase):
     def do_pop_test(self, using_sha):
         check_using_sha(using_sha)
         # DEBUG
-        print("do_pop_test: %s" % using_sha)
+        # print("do_pop_test: %s" % using_sha)
         # EMD
 
         sk_priv = RSA.generate(1024)
@@ -52,13 +48,13 @@ class TestPopulateDataDir(unittest.TestCase):
 
         if using_sha == QQQ.USING_SHA1:
             original_data = os.path.join('example1', 'dataDir')
-            original_u = os.path.join('example1', 'u_dir')
+            original_u = os.path.join('example1', 'uDir')
         elif using_sha == QQQ.USING_SHA2:
             original_data = os.path.join('example2', 'dataDir')
-            original_u = os.path.join('example2', 'u_dir')
+            original_u = os.path.join('example2', 'uDir')
         elif using_sha == QQQ.USING_SHA3:
             original_data = os.path.join('example3', 'data_dir')
-            original_u = os.path.join('example3', 'u_dir')
+            original_u = os.path.join('example3', 'uDir')
 
         blist = BuildList.create_from_file_system(
             'name_of_the_list', original_data, sk_, using_sha)
@@ -79,13 +75,13 @@ class TestPopulateDataDir(unittest.TestCase):
         unmatched = blist.check_in_u_dir(original_u)
         # DEBUG
         #print("UNMATCHED IN U DIR: ", unmatched)
-        # if len(unmatched) > 0:
-        #    print("BL:\n%s" % blist.__str__())
-        #    print("in the buildlist, but not in u_dir:")
-        #    for un in unmatched:
-        #        print("    %s %s" % (un[1], un[0]))
+        if len(unmatched) > 0:
+            print("BL:\n%s" % blist.__str__())
+            print("in the buildlist, but not in u_dir:")
+            for un in unmatched:
+                print("    %s %s" % (un[1], un[0]))
         # END
-        self.assertEqual(len(unmatched), 0)         # FAILS HERE
+        self.assertEqual(len(unmatched), 0)
 
         self.assertEqual(blist.title, 'name_of_the_list')
         self.assertEqual(blist.public_key, sk_)
@@ -118,7 +114,7 @@ class TestPopulateDataDir(unittest.TestCase):
         # create empty test directories -------------------
         test_path = self.make_unique('tmp')
         u_path = os.path.join(test_path, 'u_dir')
-        u_dir = UDir.discover(
+        _ = UDir.discover(
             u_path, using_sha=using_sha)  # creates empty UDir
         dvcz_path = os.path.join(test_path, 'dvcz')
         os.mkdir(dvcz_path)
@@ -152,7 +148,7 @@ class TestPopulateDataDir(unittest.TestCase):
 
         # DEBUG
         print("recovered from disk:\n%s" % ser4)
-        print("serialized from BuildList:\n%s" % ser41)
+        print("\nserialized from BuildList:\n%s" % ser41)
         # END
 
         self.assertEqual(blist.tree, blist.tree)    # check __eq__

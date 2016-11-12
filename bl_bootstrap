@@ -1,6 +1,4 @@
 #!/usr/bin/python3
-from xlattice import Q
-#
 # ~/dev/py/buildlist/bl_bootstrap
 
 import os
@@ -14,7 +12,7 @@ from nlhtree import NLHLeaf, NLHTree
 from xlattice.lfs import touch
 from xlattice.util import make_ex_re
 from rnglib import SimpleRNG
-from xlattice import Q, check_using_sha
+from xlattice import QQQ, check_using_sha
 
 from buildlist import __version__, __version_date__, BuildList
 
@@ -28,18 +26,18 @@ def do_it(args):
         if not ok_.startswith('Y'):
             sys.exit(0)
 
-    for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+    for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
         really_do_it(args, using)
 
 
 def really_do_it(args, using_sha):
     check_using_sha(using_sha)
     ex_dir = args.ex_dir
-    if using_sha == Q.USING_SHA1:
+    if using_sha == QQQ.USING_SHA1:
         ex_dir += '1'
-    elif using_sha == Q.USING_SHA2:
+    elif using_sha == QQQ.USING_SHA2:
         ex_dir += '2'
-    elif using_sha == Q.USING_SHA3:
+    elif using_sha == QQQ.USING_SHA3:
         ex_dir += '3'
     force = args.force
     verbose = args.verbose
@@ -179,7 +177,7 @@ def main():
     """
     # parse the command line ----------------------------------------
 
-    desc = 'generate a sample data tree, write a build list, and create a corresponding content-keyed store'
+    desc = 'generate sample data tree, write build list, create content-keyed store'
 
     parser = ArgumentParser(description=desc)
 

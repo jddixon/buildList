@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 from xlattice import Q
 #
-# ~/dev/py/buildlist/bl_create_test_data1
+# ~/dev/py/buildlist/bl_createtestdata1
 
 from argparse import ArgumentParser
 import os
@@ -130,7 +130,7 @@ def do_it(args):
 def main():
     """
     Expect a command like
-        bl_create_test_data1 [options]
+        bl_createtestdata1 [options]
 
     This program creates a quasi-random directory tree like
 
@@ -238,7 +238,7 @@ def main():
     # fixups --------------------------------------------------------
 
     # complete setup ------------------------------------------------
-    app_name = 'bl_create_test_data1 %s' % __version__
+    app_name = 'bl_createtestdata1 %s' % __version__
 
     # maybe show options and such -----------------------------------
     if args.verbose or args.justShow:

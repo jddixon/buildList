@@ -17,8 +17,8 @@ setup(name='buildlist',
       py_modules=[],
       packages=['buildlist'],
       # following could be in scripts/ subdir
-      scripts=['bl_bootstrap', 'bl_check', 'bl_create_test_data1',
-               'bl_list_gen', 'bl_src_gen', ],
+      scripts=['bl_bootstrap', 'bl_check', 'bl_createtestdata1',
+               'bl_listgen', 'bl_srcgen', ],
       description='digitally signed indented list of content keys',
       url='https://jddixon.github.com/buildlist',
       classifiers=[

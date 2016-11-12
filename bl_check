@@ -85,7 +85,7 @@ def main():
 
     # parse the command line ----------------------------------------
 
-    desc = 'verify integrity of build list, optionally agains root dir and u_path"'
+    desc = 'verify integrity of build list, optionally against root dir and u_path'
     parser = ArgumentParser(description=desc)
 
     parser.add_argument('-b', '--list_file',
