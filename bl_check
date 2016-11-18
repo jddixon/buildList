@@ -1,6 +1,8 @@
 #!/usr/bin/python3
 # ~/dev/py/buildlist/bl_check
 
+""" Verify the integrity of a BuildList. """
+
 import os
 import sys
 
@@ -14,6 +16,7 @@ from buildlist import __version__, __version_date__, BuildList
 
 
 def check_build_list(args):
+    """ Verify the integrity of a BuildList. """
 
     data_dir = args.data_dir  # _without_ trailing slash
     ex_re = make_ex_re(args.excl)
@@ -29,29 +32,29 @@ def check_build_list(args):
 
     blist = None
     data = None
-    ok_ = False
+    ok_ = True
     signed = False
 
+    # can't use 'r' which converts CRLF to just LF
     try:
-        # can't use 'r' which converts CRLF to just LF
         with open(list_file, 'rb') as file:
             data = file.read()
-            ok_ = True     # no exceptions
-    except Exception as exc:
-        print("error reading build list file: '%s'" % exc)
+    except:
+        (_, last_value, _) = sys.exc_info()
+        print("can't open list file: %s" % last_value)
+        ok_ = False
 
     if ok_:
-        ok_ = False
         try:
             blist = BuildList.parse(data, using_sha)
-            ok_ = True
-        except Exception as exc:
-            print("error parsing BuildList: '%s'" % exc)
+        except:
+            (_, last_value, _) = sys.exc_info()
+            print("Exception: %s" % last_value)
+            ok_ = False
 
     if ok_:
-        signed = blist.signed
-        if signed:
-            ok_ = blist.verify
+        if blist.signed:
+            ok_ = blist.verify()
             if not ok_:
                 print("dig sig verification fails")
 
@@ -61,7 +64,7 @@ def check_build_list(args):
         my_tree = NLHTree.create_from_file_system(data_dir, using_sha, ex_re)
         ok_ = my_tree == blist.tree
         if not ok_:
-            print("build list's NLHTree doesn't match %s" % data_dir)
+            print("BuildList's NLHTree doesn't match %s" % data_dir)
             print("NLHTree for %s:\n%s" % (data_dir, my_tree))
             print("NLHTree for BuildList:\n%s" % blist.tree)
 
@@ -73,7 +76,7 @@ def check_build_list(args):
                 print("  %s is in the tree but not found in u_path" % unm)
 
     if ok_:
-        print("ok_")
+        print("ok")
 
 
 def main():
@@ -85,14 +88,14 @@ def main():
 
     # parse the command line ----------------------------------------
 
-    desc = 'verify integrity of build list, optionally against root dir and u_path'
+    desc = 'verify integrity of BuildList, optionally against root dir and u_path'
     parser = ArgumentParser(description=desc)
 
     parser.add_argument('-b', '--list_file',
-                        help='root directory for build list')
+                        help='root directory for BuildList')
 
     parser.add_argument('-d', '--data_dir',
-                        help='root directory for build list')
+                        help='root directory for BuildList')
 
     parser.add_argument('-i', '--ignore_file', default='.gitignore',
                         help='file containing wildcards (globs) for files to ignore')
@@ -120,7 +123,7 @@ def main():
 
     # sanity checks -------------------------------------------------
     check_using_sha(args.using_sha)
-    if (not args.just_show):
+    if not args.just_show:
         if not args.list_file or not os.path.isfile(args.list_file):
             print("list file %s does not exist" % args.list_file)
             parser.print_usage()

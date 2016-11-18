@@ -1,5 +1,7 @@
 # buildlist/__init__.py
 
+""" Object for verifying integrity of description of directory structure. """
+
 import base64
 import binascii
 import calendar
@@ -22,6 +24,11 @@ from xlattice.lfs import touch
 from xlattice.u import QQQ, UDir, check_using_sha
 from xlattice.util import make_ex_re, parse_timestamp, timestamp, timestamp_now
 
+try:
+    from os.scandir import scandir
+except ImportError:
+    from scandir import scandir
+
 __all__ = ['__version__', '__version_date__',
            # FUNCTIONS
            'check_dirs_in_path',
@@ -39,8 +46,8 @@ __all__ = ['__version__', '__version_date__',
            'ParseFailure',
            ]
 
-__version__ = '0.8.5'
-__version_date__ = '2016-11-11'
+__version__ = '0.8.6'
+__version_date__ = '2016-11-17'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -56,19 +63,17 @@ def check_dirs_in_path(path_to_file):
 # this should be in some common place ...
 
 
-def rm_f_dir_contents(this):
-    if not this:
-        print('directory must be named')
-        sys.exit(1)
-    if this[0] == '/' or (this.find('..') != -1):
-        print("illegal path for rm_f_dirContents(): '%s'" % dir)
-        sys.exit(1)
-    for file in os.listdir(dir):
-        path_to_file = os.path.join(dir, file)
-        if os.path.isfile(path_to_file):
-            os.unlink(path_to_file)
-        elif os.path.isdir(path_to_file):
-            shutil.rmtree(path_to_file)
+def rm_f_dir_contents(path_to_dir):
+    if not path_to_dir:
+        raise BLError('rm_f_dir_contents: directory must be named')
+    if path_to_dir[0] == '/' or (path_to_dir.find('..') != -1):
+        raise BLError(
+            "illegal path for rm_f_dir_contents(): '%s'" % path_to_dir)
+    for entry in scandir(dir):
+        if entry.is_file():
+            os.unlink(entry.path)
+        elif entry.is_dir():
+            shutil.rmtree(entry.path)
     # allow exceptions to bubble up
 
 # RSA KEY PAIR ------------------------------------------------------

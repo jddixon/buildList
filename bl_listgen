@@ -3,19 +3,17 @@
 # ~/dev/py/buildlist/bl_listgen
 
 import os
-import re
 import sys
 
 from argparse import ArgumentParser
-from Crypto.PublicKey import RSA
-from Crypto.Hash import SHA    # presumably 1
 
-from merkletree import MerkleDoc
-from xlattice import (Q, check_using_sha, parseUsingSHA, fix_using_sha,
+from xlattice import (check_using_sha, parseUsingSHA, fix_using_sha,
                       show_using_sha)
 
-from xlattice.util import get_exclusions, make_ex_re, timestamp_now
-from buildlist import __version__, __version_date__, __file__, BuildList
+from xlattice.util import get_exclusions, timestamp_now
+from buildlist import(__version__, __version_date__, __file__,
+                      BuildList,
+                      check_dirs_in_path, generate_rsa_key, rm_f_dir_contents)
 
 
 def doit(options):
@@ -30,7 +28,7 @@ def doit(options):
     using_sha = options.using_sha
 
     blist = BuildList.list_gen(title, data_dir, dvcz_dir, list_file, key_file,
-                              excl, logging, u_path, using_sha)
+                               excl, logging, u_path, using_sha)
 
     print("BuildList written to %s" % os.path.join(dvcz_dir, list_file))
 
@@ -170,7 +168,7 @@ def main():
     # title -----------------------------------------------
     if args.data_dir:
         if not args.title or args.title == '':
-            _, sep, base = args.data_dir.rpartition('/')
+            _, _, base = args.data_dir.rpartition('/')
             args.title = base
         else:
             # this can contain spaces and other undesirable characters

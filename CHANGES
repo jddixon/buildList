@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.8.6
+    2016-11-17
+        * replace listdir() with scandir(); more pylint             SLOC 2483
 v0.8.5
     2016-11-11
         * renamed utilities by removing second underscore           SLOC 2464
@@ -246,6 +249,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

@@ -1,25 +1,28 @@
 #!/usr/bin/python3
-from xlattice import Q
-#
 # ~/dev/py/buildlist/bl_createtestdata1
+
+""" Create test data for interoperability tests. """
 
 from argparse import ArgumentParser
 import os
 import shutil
 import sys
 
+from buildlist import __version__, __version_date__, BuildList
 from Crypto.PublicKey import RSA
 from nlhtree import NLHTree
+from rnglib import SimpleRNG
 from xlattice.lfs import touch
 from xlattice.util import make_ex_re
-from rnglib import SimpleRNG
-from xlattice import check_using_sha
-from buildlist import __version__, __version_date__, BuildList
+from xlattice import QQQ
+#from xlattice import check_using_sha
 
 DEFAULT_OUT_DIR = '../../dat/xl_test_data/treeData/binExample_1'
 
 
 def do_it(args):
+    """ Create test data for interoperability tests. """
+
     out_path = args.out_path
     if os.path.exists(out_path):
         print("deleting existing directory %s" % out_path)
@@ -27,13 +30,12 @@ def do_it(args):
     # creates ../xl_test_data/treeData/binExample_1
     os.makedirs(out_path)
 
-    # for using in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3, ]:
+    # for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
 
     # NODE_DIR ------------------------------------------------------
     # Creates RSA key sk_priv and its public part sk; and writes
     # node/skPriv.pem.
     # ---------------------------------------------------------------
-    out_path = args.out_path
     node_dir = os.path.join(out_path, 'node')
     os.makedirs(node_dir, mode=0o755)
 
@@ -85,7 +87,7 @@ def do_it(args):
     # ---------------------------------------------------------------
     nlh_path = os.path.join(out_path, 'nlhTree')
 
-    for using_sha in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3]:
+    for using_sha in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
         ndx = int(using_sha)
         ndx_path = os.path.join(nlh_path, str(ndx))
         os.makedirs(ndx_path, mode=0o755)
@@ -103,7 +105,7 @@ def do_it(args):
     # ---------------------------------------------------------------
     bl_path = os.path.join(out_path, 'buildlist')
 
-    for using_sha in [Q.USING_SHA1, Q.USING_SHA2, Q.USING_SHA3]:
+    for using_sha in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
         ndx = int(using_sha)
         ndx_path = os.path.join(bl_path, str(ndx))
         os.makedirs(ndx_path, mode=0o755)
@@ -209,7 +211,7 @@ def main():
 
     # parse the command line ----------------------------------------
 
-    desc = 'generate a sample data tree, write a build list, and create a corresponding content-keyed store'
+    desc = 'generate sample data tree, write build list, create corresponding content-keyed store'
 
     parser = ArgumentParser(description=desc)
 

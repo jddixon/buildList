@@ -1,5 +1,12 @@
 ~/dev/py/buildList/TODO
 
+2016-11-17
+    * bl_check needs to be tested (it had an error which had not been
+        caught)
+    * bl_check -h says that datadir is optional, but sanity checks
+        require its presence
+    * test messages are too verbose
+
 2016-11-05
     * markdown is mangling section headings in github.io, converting    * FIXED
         python names like bl_boot_strap into bl + ITALICS(boot) +       * FIXED
