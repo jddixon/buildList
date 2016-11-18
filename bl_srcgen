@@ -2,8 +2,9 @@
 #
 # ~/dev/py/buildlist/bl_srcgen
 
+""" Given a BuildList and a content-keyed store uDir, create data directory. """
+
 import os
-import re
 import sys
 
 from argparse import ArgumentParser
@@ -13,15 +14,18 @@ from buildlist import __version__, __version_date__, BuildList
 
 
 def make_data_dir(options):
+    """
+    Given a BuildList and a content-keyed store uDir, create data directory.
+    """
 
     data_path = options.data_path
     key_file = options.key_file
     list_file = options.list_file
-    testing = options.testing
+    # testing = options.testing
     u_path = options.u_path
-    verbose = options.verbose
+    # verbose = options.verbose
 
-    verifying = key_file != ''
+    verifying = key_file != ''                  # XXX UNUSED
 
     if data_path and data_path[-1] == '/':      # trailing slash
         data_path = data_path[:-1]
@@ -35,12 +39,8 @@ def make_data_dir(options):
     blist.populate_data_dir(u_path, data_path)
 
 
-def main():
-    """
-    Expect a command like
-        bl_srcgen [options]
-
-    """
+def get_args():
+    """ Parse the command line, returning parser and arg list. """
 
     # program defaults ----------------------------------------------
 
@@ -50,7 +50,7 @@ def main():
 
     # parse the command line ----------------------------------------
 
-    desc = 'given a build list and uDir, regenerate the data directory'
+    desc = 'Given a build list and uDir, regenerate the data directory.'
     parser = ArgumentParser(description=desc)
 
     parser.add_argument('-b', '--list_file',
@@ -89,10 +89,16 @@ def main():
         help='do not include files/directories matching this pattern')
 
     args = parser.parse_args()
-
+    args.app_name = app_name
     if args.show_version:
-        print(app_name)
+        print(args.app_name)
         sys.exit(0)
+
+    return parser, args
+
+
+def check_args(parser, args):
+    """ Check argument list, making corrections or exiting as appropriate. """
 
     # fixups --------------------------------------------------------
     if args.testing and args.data_dir:
@@ -109,6 +115,7 @@ def main():
     check_u_path(parser, args, must_exist=True)
 
     def give_up(msg):
+        """ Display message, print usage, and exit. """
         print(msg)
         parser.print_usage()
         sys.exit(1)
@@ -134,9 +141,11 @@ def main():
             if args.force:
                 try:
                     rmtree(data_dir)
-                except Exception as exc:
+                except:
+                    (_, last_value, _) = sys.exc_info()
+
                     print("tried to delete %s; ignoring %s" % (
-                        data_dir, exc))
+                        data_dir, last_value))
             else:
                 give_up(
                     "data directory '%s' already exists; add -f to continue" %
@@ -164,13 +173,23 @@ def main():
         if not os.path.isfile(args.list_file):
             give_up("list file %s does not exist" % args.list_file)
 
+
+def main():
+    """
+    Parse the command line, check arguments, carry out the requested actions.
+    """
+
+    parser, args = get_args()
+    check_args(parser, args)
+
     # complete setup ------------------------------------------------
 
     # maybe show options and such -----------------------------------
     if args.verbose or args.just_show:
-        print("%s %s" % (app_name, __version_date__))
+        print("%s %s" % (args.app_name, __version_date__))
 
     if args.verbose or args.just_show:
+        print('app_name     = ' + str(args.app_name))
         print('data_dir     = ' + str(args.data_dir))
         print('exclusions   = ' + str(args.exclusions))
         print('force        = ' + str(args.force))

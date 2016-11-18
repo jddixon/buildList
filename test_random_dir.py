@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 # buildlist/testRandomDir.py
 
 import hashlib
@@ -12,7 +11,7 @@ from rnglib import SimpleRNG
 from xlattice import QQQ, u, check_using_sha
 
 
-class TestRandomDir (unittest.TestCase):
+class TestRandomDir(unittest.TestCase):
 
     def setUp(self):
         self.rng = SimpleRNG(time.time())
@@ -44,25 +43,27 @@ class TestRandomDir (unittest.TestCase):
 
         data = bytearray(max_len)            # that many null bytes
         self.rng.nextBytes(data)            # fill with random data
+        # pylint:disable=redefined-variable-type
         if using_sha == QQQ.USING_SHA1:
-            d_val = hashlib.sha1()
+            sha = hashlib.sha1()
         elif using_sha == QQQ.USING_SHA2:
-            d_val = hashlib.sha256()
+            sha = hashlib.sha256()
         elif using_sha == QQQ.USING_SHA3:
-            d_val = hashlib.sha3_256()
-        d_val.update(data)
-        hash = d_val.hexdigest()
+            sha = hashlib.sha3_256()
+        sha.update(data)
+        hash_ = sha.hexdigest()
         file_name = self.rng.nextFileName(8)
         path_to_file = os.path.join('tmp', file_name)
         with open(path_to_file, 'wb') as file:
             file.write(data)
+
         if using_sha == QQQ.USING_SHA1:
             file_hash = u.file_sha1hex(path_to_file)
         elif using_sha == QQQ.USING_SHA2:
             file_hash = u.file_sha2hex(path_to_file)
         elif using_sha == QQQ.USING_SHA3:
             file_hash = u.file_sha3hex(path_to_file)
-        self.assertEqual(hash, file_hash)
+        self.assertEqual(hash_, file_hash)
 
     def test_random_dir(self):
         for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
