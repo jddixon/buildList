@@ -1,17 +1,29 @@
 #!/usr/bin/env python3
 # buildlist/testRandomDir.py
 
-import hashlib
+"""
+Test building quasi-random data files and directory structures.
+
+XXX This appears to be incomplete.  Why wouldn't this functionality
+not be in rnglib?
+"""
 import os
+import sys
 import time
 import unittest
+import hashlib
 
 from buildlist import BuildList
 from rnglib import SimpleRNG
 from xlattice import QQQ, u, check_using_sha
 
+if sys.version_info < (3, 6):
+    # pylint:disable=unused-import
+    import sha3         # monkey-patches hashlib
+
 
 class TestRandomDir(unittest.TestCase):
+    """ Test building quasi-random data files and directory structures. """
 
     def setUp(self):
         self.rng = SimpleRNG(time.time())
@@ -24,6 +36,7 @@ class TestRandomDir(unittest.TestCase):
     # actual unit tests #############################################
 
     def do_test_random_dir(self, using_sha):
+        """ Test building random directories with specific SHA hash type. """
         check_using_sha(using_sha)
         depth = 1 + self.rng.nextInt16(3)       # so 1 to 3
         width = 1 + self.rng.nextInt16(16)      # so 1 to 16
@@ -49,6 +62,7 @@ class TestRandomDir(unittest.TestCase):
         elif using_sha == QQQ.USING_SHA2:
             sha = hashlib.sha256()
         elif using_sha == QQQ.USING_SHA3:
+            # pylint:disable=no-member
             sha = hashlib.sha3_256()
         sha.update(data)
         hash_ = sha.hexdigest()
@@ -66,6 +80,7 @@ class TestRandomDir(unittest.TestCase):
         self.assertEqual(hash_, file_hash)
 
     def test_random_dir(self):
+        """ Test building random directories with supported SHA hash types. """
         for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
             self.do_test_random_dir(using)
 

@@ -78,8 +78,8 @@ class TestPopulateDataDir(unittest.TestCase):
         if len(unmatched) > 0:
             print("BL:\n%s" % blist.__str__())
             print("in the buildlist, but not in u_dir:")
-            for un in unmatched:
-                print("    %s %s" % (un[1], un[0]))
+            for unm in unmatched:
+                print("    %s %s" % (unm[1], unm[0]))
         # END
         self.assertEqual(len(unmatched), 0)
 
@@ -105,7 +105,8 @@ class TestPopulateDataDir(unittest.TestCase):
         #print("\nFIRST BUILD LIST:\n%s" % blist)
         #print("\nSECOND BUILD LIST:\n%s" % bl2)
         # END
-        string2 = bl2.__str__()
+
+        # string2 = bl2.__str__()
         # self.assertEqual(string, string2)
         # same list, but signed now
         self.assertEqual(blist, blist)
@@ -113,7 +114,7 @@ class TestPopulateDataDir(unittest.TestCase):
 
         # create empty test directories -------------------
         test_path = self.make_unique('tmp')
-        u_path = os.path.join(test_path, 'u_dir')
+        u_path = os.path.join(test_path, 'uDir')
         _ = UDir.discover(
             u_path, using_sha=using_sha)  # creates empty UDir
         dvcz_path = os.path.join(test_path, 'dvcz')

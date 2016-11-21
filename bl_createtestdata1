@@ -12,23 +12,28 @@ from buildlist import __version__, __version_date__, BuildList
 from Crypto.PublicKey import RSA
 from nlhtree import NLHTree
 from rnglib import SimpleRNG
-from xlattice.lfs import touch
-from xlattice.util import make_ex_re
 from xlattice import QQQ
+from xlattice.lfs import touch
+from xlattice.u import UDir
+from xlattice.util import make_ex_re
 #from xlattice import check_using_sha
 
 DEFAULT_OUT_DIR = '../../dat/xl_test_data/treeData/binExample_1'
 
 
-def do_it(args):
-    """ Create test data for interoperability tests. """
+def create_test_dir_and_node(args):
+    """
+    Create test directory and its node/ subdir with an RSA private key,
+    each unless it already exists.
+    """
 
     out_path = args.out_path
-    if os.path.exists(out_path):
+    if os.path.exists(out_path) and args.force:
         print("deleting existing directory %s" % out_path)
         shutil.rmtree(out_path)
-    # creates ../xl_test_data/treeData/binExample_1
-    os.makedirs(out_path)
+
+    # creates ../xl_test_data/treeData/binExample_1 if it doesn't exist
+    os.makedirs(out_path, exist_ok=True)
 
     # for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
 
@@ -37,20 +42,28 @@ def do_it(args):
     # node/skPriv.pem.
     # ---------------------------------------------------------------
     node_dir = os.path.join(out_path, 'node')
-    os.makedirs(node_dir, mode=0o755)
+    os.makedirs(node_dir, mode=0o755, exist_ok=True)
 
-    # should be >= 2048, but this is just testing
-    sk_priv = RSA.generate(1024)
     path_to_key = os.path.join(node_dir, 'skPriv.pem')
-    with open(path_to_key, 'wb') as file:
-        file.write(sk_priv.exportKey('PEM'))
-    sk_ = sk_priv.publickey()
+    if os.path.exists(path_to_key):
+        # if a key file exists, use it
+        with open(path_to_key, 'rb') as file:
+            # XXX possible exception
+            sk_priv = RSA.importKey(file.read())
+    else:
+        sk_priv = RSA.generate(2048)
+        with open(path_to_key, 'wb') as file:
+            file.write(sk_priv.exportKey('PEM'))
+    return out_path, sk_priv
 
-    # DATA_DIR ------------------------------------------------------
-    #
-    # ---------------------------------------------------------------
 
-    data_path = os.path.join(out_path, 'data_dir')
+def create_core_data_dir(out_path):
+    """
+    Create any core data files and subdirectories that do not
+    already exist.
+    """
+
+    data_path = os.path.join(out_path, 'dataDir')
     sub_dir1 = os.path.join(data_path, 'subDir1')
     sub_dir2 = os.path.join(data_path, 'subDir2')
     sub_dir3 = os.path.join(data_path, 'subDir3')
@@ -60,7 +73,7 @@ def do_it(args):
 
     for dir_name in [data_path, sub_dir1, sub_dir2, sub_dir3, sub_dir4,
                      sub_dir41, sub_dir411, ]:
-        os.makedirs(dir_name, mode=0o755)
+        os.makedirs(dir_name, mode=0o755, exist_ok=True)
 
     # files to be populaed with random data
     rng = SimpleRNG()
@@ -71,6 +84,8 @@ def do_it(args):
     data4111 = os.path.join(sub_dir411, 'data31')
 
     for path in [data1, data11, data2, data31, data4111]:
+        if os.path.exists(path):
+            continue
         count = 16 + rng.nextInt16(2048)
         data = bytearray(count)
         rng.nextBytes(data)
@@ -81,53 +96,104 @@ def do_it(args):
     data12 = os.path.join(sub_dir1, 'data12')
     for path in [data12]:
         touch(path)
+    return data_path
 
-    # NLH_TREE ------------------------------------------------------
-    #
-    # ---------------------------------------------------------------
-    nlh_path = os.path.join(out_path, 'nlhTree')
+
+def do_it(args):
+    """ Create test data for interoperability tests. """
+
+    out_path, sk_priv = create_test_dir_and_node(args)
+    sk_ = sk_priv.publickey()               # public part of key
+    data_path = create_core_data_dir(out_path)
+
+    # create derived/ after deleting any existing files and subdirectories
+    derived_path = os.path.join(out_path, 'derived')
+    if os.path.exists(derived_path):
+        shutil.rmtree(derived_path)
+    os.mkdir(derived_path, 0o755)
 
     for using_sha in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
         ndx = int(using_sha)
-        ndx_path = os.path.join(nlh_path, str(ndx))
+        ndx_path = os.path.join(derived_path, 'sha' + str(ndx))
         os.makedirs(ndx_path, mode=0o755)
+
+        # create and serialize the NLHTree
         tree = NLHTree.create_from_file_system(data_path, using_sha)
 
-        u_path = os.path.join(ndx_path, 'u_dir')
-        u_in = os.path.join(u_path, 'in')
-        u_tmp = os.path.join(u_path, 'tmp')
-        for dir_name in [u_path, u_in, u_tmp]:
-            os.makedirs(dir_name, mode=0o755)
-        tree.save_to_u_dir(data_path, u_path, using_sha)
+        # XXX STUB: serialize NLHTree to example.nlh
 
-    # BUILD LIST ----------------------------------------------------
-    #
-    # ---------------------------------------------------------------
-    bl_path = os.path.join(out_path, 'buildlist')
-
-    for using_sha in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
-        ndx = int(using_sha)
-        ndx_path = os.path.join(bl_path, str(ndx))
-        os.makedirs(ndx_path, mode=0o755)
-
+        # create and serialize the BuildList
         list_file = os.path.join(ndx_path, 'example.bld')
         title = 'sample build list % d' % ndx
         ex_re = make_ex_re(['build', ])
-        blist = BuildList.create_from_file_system(title, data_path, sk_, using_sha,
-                                                  ex_re, match_re=None)
+        blist = BuildList.create_from_file_system(
+            title, data_path, sk_, using_sha, ex_re, match_re=None)
         blist.sign(sk_priv)
         bl_ser = blist.__str__()
         with open(list_file, 'w+') as file:
             file.write(bl_ser)
 
-        # XXX MISSING: hex hash of BuildList
+        for dir_struc in [UDir.DIR_FLAT, UDir.DIR16x16, UDir.DIR256x256]:
+            name = UDir.DIR_STRUC_NAMES[dir_struc]
+            struc_path = os.path.join(ndx_path, name)
+            os.mkdir(struc_path, 0o755)
 
-#       unmatched = bl.tree.check_in_u_dir(uPath)    # all leaf nodes present ?
-#       if unmatched:
-#           print("check walk on example %d failed" % ndx)
-#           for u in unmatched:
-#               print("  %s is not in uDir" % u)
+            # initialize uDir, create subdirs
+            u_path = os.path.join(struc_path, 'uDir')
+            u_dir = UDir(u_path, dir_struc, using_sha)
+            # save the NLHTree into uDir, populating it
+            tree.save_to_u_dir(data_path, u_path, using_sha)
 
+
+#    # XXX OBSOLETE FROM HERE ========================================
+#
+#    nlh_path = os.path.join(out_path, 'nlhTree')
+#
+#    for using_sha in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
+#        ndx = int(using_sha)
+#        ndx_path = os.path.join(nlh_path, str(ndx))
+#        os.makedirs(ndx_path, mode=0o755, exist_ok=True)
+#        tree = NLHTree.create_from_file_system(data_path, using_sha)
+#
+#        u_path = os.path.join(ndx_path, 'u_dir')
+#        u_in = os.path.join(u_path, 'in')
+#        u_tmp = os.path.join(u_path, 'tmp')
+#        for dir_name in [u_path, u_in, u_tmp]:
+#            os.makedirs(dir_name, mode=0o755, exist_ok=True)
+#        tree.save_to_u_dir(data_path, u_path, using_sha)
+#
+#        list_file = os.path.join(ndx_path, 'example.bld')
+#        title = 'sample build list % d' % ndx
+#        ex_re = make_ex_re(['build', ])
+#        blist = BuildList.create_from_file_system(title, data_path, sk_, using_sha,
+#                                                  ex_re, match_re=None)
+#        blist.sign(sk_priv)
+#        bl_ser = blist.__str__()
+#        with open(list_file, 'w+') as file:
+#            file.write(bl_ser)
+#
+#    # BUILD LIST ----------------------------------------------------
+#    #
+#    # ---------------------------------------------------------------
+#    bl_path = os.path.join(out_path, 'buildlist')
+#
+#    for using_sha in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
+#        ndx = int(using_sha)
+#        ndx_path = os.path.join(bl_path, str(ndx))
+#        os.makedirs(ndx_path, mode=0o755, exist_ok=True)
+#
+#        list_file = os.path.join(ndx_path, 'example.bld')
+#        title = 'sample build list % d' % ndx
+#        ex_re = make_ex_re(['build', ])
+#        blist = BuildList.create_from_file_system(title, data_path, sk_, using_sha,
+#                                                  ex_re, match_re=None)
+#        blist.sign(sk_priv)
+#        bl_ser = blist.__str__()
+#        with open(list_file, 'w+') as file:
+#            file.write(bl_ser)
+#
+#        # XXX MISSING: hex hash of BuildList
+#
 
 def main():
     """
@@ -154,23 +220,18 @@ def main():
                             subDir41
                                 subDir411
                                     data4111
-                    nlhTree
-                        {1,2,3}         # three subdirectories: 1/, 2/, 3/
-                            example.nlh # serialization of NLHTree
-                            uDir/
-                                00/
-                                ...
-                                ff/
-                                in/
-                                tmp/
-                    buildlist
-                        {1,2,3}
-                            example.bld     # serialized BuildList
-                            hex             # BuildList.hash()
-                    merkleTree
-                        {1,2,3}
-                            example.tree    # serialized
-                            hex             # returned by merkleize -x
+                    derived/
+                        sha{1,2,3}/             # three subdirectories
+                            struc{Flat,16x16,256x256}
+                                uDir/
+                                    ...
+                                    in/
+                                    tmp/
+                                example.nlh     # serialization of NLHTree
+                                example.bld     # serialized BuildList
+                                buildlist.hex   # BuildList.hash()
+                                example.merkle  # serialized
+                                merkle.hex      # returned by merkleize -x
 
 
     sk_priv is the RSA private key used to sign the example.bld
@@ -191,15 +252,18 @@ def main():
     example, the RSA private key used in signing the document in
     contained in node/sk_priv.
 
-    nlhTree/{1,2,3}/uDir/ contains the same set of files as under dataDir/,
-    but instead of being organized by name it is organized by content
-    key, by the SHA{1,2,3} hash of the file, where SHA2 means SHA256
-    and SHA3 means SHA3-256, the 256-bit version of Keccak.
-
     The notation '{1,2,3}' is an abbreviation for "each of the sequence
-    of values 1, 2, and 3, taken in turn."
+    of string values 1, 2, and 3, taken in turn."
 
-    The data under binExample.1/ is sufficient to verify the correctness of
+    Each of derived/sha{1,2,3}/struc{*}/uDir/ includes the set of files
+    as dataDir/, but instead of being organized by name the files are
+    organized by content key, by the SHA{1,2,3} hash of the files, where
+    SHA2 means SHA256 and SHA3 means SHA3-256, the 256-bit version of Keccak.
+
+    That is, the name of each file is its hexadecimal SHA content hash.
+
+    The data under binExample.1/node/ and binExample.1/dataDir is sufficient
+    to verify the correctness of
     the build list and the 1-to-1 relationship between the files under
     binExample.1/datadir/ and those under binExample.1/nlhTree/{1,2,3}/uDir/
 
@@ -216,7 +280,7 @@ def main():
     parser = ArgumentParser(description=desc)
 
     parser.add_argument('-f', '--force', action='store_true',
-                        help='overwrite any existing example/ directory')
+                        help='destroy any existing test data directory')
 
     parser.add_argument('-j', '--justShow', action='store_true',
                         help='show options and exit')
@@ -224,20 +288,19 @@ def main():
     parser.add_argument('-o', '--out_path', default=DEFAULT_OUT_DIR,
                         help="example directory, defaults to '%s'" % DEFAULT_OUT_DIR)
 
+    parser.add_argument('-T', '--testing', action='store_true',
+                        help='select if testing')
+
     parser.add_argument('-v', '--verbose', action='store_true',
                         help='be chatty')
 
     args = parser.parse_args()
 
-    # sanity chesks -------------------------------------------------
-    if (not args.force) and os.path.exists(args.out_path):
-        print(
-            "target directory %s exists but force (-f) not specified" %
-            args.out_path)
-        parser.print_usage()
-        sys.exit(1)
-
     # fixups --------------------------------------------------------
+    if args.testing:
+        args.out_path = 'tmp/test_data'
+
+    # sanity chesks -------------------------------------------------
 
     # complete setup ------------------------------------------------
     app_name = 'bl_createtestdata1 %s' % __version__
@@ -249,6 +312,7 @@ def main():
     if args.verbose or args.justShow:
         print('force        = ' + str(args.force))
         print('out_path     = ' + str(args.out_path))
+        print('testing      = ' + str(args.testing))
         print('verbose      = ' + str(args.verbose))
 
     if args.justShow:

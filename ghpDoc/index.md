@@ -1,7 +1,7 @@
 <h1 class="libTop">buildlist</h1>
 
 A set of Python3 utilities conforming to the
-[BuildList](https://jddixon.github.io/xlattice/buildlist.html)
+[BuildList](https://jddixon.github.io/xlattice/buildList.html)
 specification and
 intended to be interoperable with the Go
 **builds/** package in
@@ -60,6 +60,18 @@ directory must be present.
       -v, --verbose         be chatty
 
 ## bl_createtestdata1
+
+Create test data for
+[https://github.com/jddixon/xl_test_data](https://github.com/jddixon/xl_test_data).
+
+The test data is intended for testing interoperability between various
+gibhub probjects using different computer languages, specifically Python
+and Go in the shorter term.  Data consists of a random directory structure
+containing raw data files of random length and then corresponding
+
+* NLHTrees
+* BuildLists
+* content-keyed stores using SHA{1,2,3} structured as flat, 16x16, and 256x256
 
 Replaces `bl_bootstrap`.  Output is to the xl_test_data project directory.
 

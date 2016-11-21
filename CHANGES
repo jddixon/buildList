@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.8.7
+    2016-11-20
+        * improved bl_createtestdata1; more PEP 8; minor bug fixes  SLOC 2564
 v0.8.6
     2016-11-17
         * replace listdir() with scandir(); more pylint             SLOC 2483
@@ -249,6 +252,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 
