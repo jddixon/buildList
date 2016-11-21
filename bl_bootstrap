@@ -1,36 +1,29 @@
 #!/usr/bin/python3
 # ~/dev/py/buildlist/bl_bootstrap
 
+"""
+Initializes test directories example{1,2,3} which are being replaced by
+the xl_test_data project.
+
+"""
 import os
-import re
 import shutil
 import sys
 
 from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
-from nlhtree import NLHLeaf, NLHTree
+from rnglib import SimpleRNG
+
+from xlattice import QQQ, check_using_sha
 from xlattice.lfs import touch
 from xlattice.util import make_ex_re
-from rnglib import SimpleRNG
-from xlattice import QQQ, check_using_sha
 
 from buildlist import __version__, __version_date__, BuildList
 
 
-def do_it(args):
-    ex_dir = args.ex_dir
-    print("This will destroy %s1, %s2, and %s2" % (ex_dir, ex_dir, ex_dir))
-    ok_ = input("OK to proceed? (Y/n)")
-    if ok_:
-        ok_ = ok_.capitalize()
-        if not ok_.startswith('Y'):
-            sys.exit(0)
-
-    for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
-        really_do_it(args, using)
-
-
 def really_do_it(args, using_sha):
+    """ Build test data directory for specific SHA hash type. """
+
     check_using_sha(using_sha)
     ex_dir = args.ex_dir
     if using_sha == QQQ.USING_SHA1:
@@ -39,8 +32,7 @@ def really_do_it(args, using_sha):
         ex_dir += '2'
     elif using_sha == QQQ.USING_SHA3:
         ex_dir += '3'
-    force = args.force
-    verbose = args.verbose
+    # verbose = args.verbose
 
     data_dir = os.path.join(ex_dir, 'data_dir')
     list_file = os.path.join(ex_dir, 'example.bld')
@@ -103,9 +95,9 @@ def really_do_it(args, using_sha):
     with open(list_file, 'w') as file:
         file.write(bl_ser)
 
-    # XXX WORKING HERE
-
-    # XXX need checks on uPath
+    #######################################################
+    # THIS MODULE IS BEING ABANDONED.  NO MORE WORK NEEDED.
+    #######################################################
 
     blist.tree.save_to_u_dir(data_dir, u_path, using_sha=using_sha)
     unmatched = blist.tree.check_in_u_dir(u_path)    # all leaf nodes present ?
@@ -113,6 +105,20 @@ def really_do_it(args, using_sha):
         print("check walk on example/ failed")
         for unm in unmatched:
             print("  %s is not in uDir" % unm)
+
+
+def do_it(args):
+    """ Execute command line options. """
+    ex_dir = args.ex_dir
+    print("This will destroy %s1, %s2, and %s2" % (ex_dir, ex_dir, ex_dir))
+    ok_ = input("OK to proceed? (Y/n)")
+    if ok_:
+        ok_ = ok_.capitalize()
+        if not ok_.startswith('Y'):
+            sys.exit(0)
+
+    for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+        really_do_it(args, using)
 
 
 def main():

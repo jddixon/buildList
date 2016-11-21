@@ -3,7 +3,6 @@
 # test_build_list.py
 
 import os
-import sys
 import time
 import unittest
 from Crypto.PublicKey import RSA
@@ -35,7 +34,7 @@ class TestBuildList(unittest.TestCase):
         try:
             BuildList.create_from_file_system('anything', path_to_dir, None)
             self.fail("accepted '%s' as pathToDir")
-        except RuntimeError as exc:
+        except RuntimeError:
             pass
         except Exception as exc2:
             self.fail("unexpected exception %s" % exc2)

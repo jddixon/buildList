@@ -5,10 +5,15 @@
 import base64
 import binascii
 import calendar
-import os
 import shutil
 import sys
 import time
+
+import os
+try:
+    from os.scandir import scandir
+except ImportError:
+    from scandir import scandir
 
 import hashlib
 import sha3         # XXX should be conditional
@@ -23,11 +28,6 @@ from xlattice.crypto import collect_pem_rsa_public_key
 from xlattice.lfs import touch
 from xlattice.u import QQQ, UDir, check_using_sha
 from xlattice.util import make_ex_re, parse_timestamp, timestamp, timestamp_now
-
-try:
-    from os.scandir import scandir
-except ImportError:
-    from scandir import scandir
 
 __all__ = ['__version__', '__version_date__',
            # FUNCTIONS
@@ -46,15 +46,17 @@ __all__ = ['__version__', '__version_date__',
            'ParseFailure',
            ]
 
-__version__ = '0.8.6'
-__version_date__ = '2016-11-17'
+__version__ = '0.8.7'
+__version_date__ = '2016-11-20'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
 
 def check_dirs_in_path(path_to_file):
-    # if a path to the file is specified, create intervening directories
-    # if they don't exist
+    """
+    If a path to the file is specified, create intervening directories
+    if they don't exist.
+    """
     if path_to_file:
         dir_, delim, file_name = path_to_file.rpartition('/')
         if dir_:
@@ -64,6 +66,9 @@ def check_dirs_in_path(path_to_file):
 
 
 def rm_f_dir_contents(path_to_dir):
+    """
+    Equivalent to rm -rf.
+    """
     if not path_to_dir:
         raise BLError('rm_f_dir_contents: directory must be named')
     if path_to_dir[0] == '/' or (path_to_dir.find('..') != -1):
@@ -94,6 +99,9 @@ def generate_rsa_key(path_to_file, bit_count=2048):
 
 
 def read_rsa_key(path_to_file):
+    """
+    Read an RSA private key from disk.
+    """
     with open(path_to_file, 'rb') as file:
         key = RSA.importKey(file.read())
     return key
@@ -114,6 +122,7 @@ class BLParseFailed(BaseException):
 
 
 def accept_list_line(file):
+    """ Read the next line, drop any terminating character(s), and return. """
     line = file.readline()
     len_line = len(line)
     if len_line:
@@ -127,6 +136,7 @@ def accept_list_line(file):
 
 
 def expect_list_line(file, err_msg):
+    """ Read the next line, raising if there isn't one. """
     line = accept_list_line(file)
     if not line:
         raise BLParseFailed(err_msg)
@@ -134,6 +144,8 @@ def expect_list_line(file, err_msg):
 
 
 def expect_title(file, digest):
+    """ Read the title line, adding it to the SHA hash. """
+
     line = expect_list_line(file, "missing title")
     # DEBUG
     # print("TITLE: %s" % line)
@@ -142,6 +154,8 @@ def expect_title(file, digest):
 
 
 def expect_timestamp(file, digest):
+    """ Read the timestamp, adding it to the SHA hash. """
+
     line = expect_list_line(file, "missing timestamp")
     tstamp = parse_timestamp(line)        # can raise ValueError
     # DEBUG
@@ -252,7 +266,20 @@ class BuildList(object):
         Take care: we store the binary value but this returns it
         base64-encoded.
         """
-        return base64.b64encode(self._dig_sig).decode('utf-8')
+        if self._dig_sig is None:
+            return None
+        else:
+            return base64.b64encode(self._dig_sig).decode('utf-8')
+
+    @dig_sig.setter
+    def dig_sig(self, value):
+        """
+        Set the digital signature if it is not already set.
+        """
+        if self._dig_sig is None:
+            self._dig_sig = value
+        else:
+            raise BLError("BuildList is already signed")
 
     @property
     def ex_re(self):
@@ -280,7 +307,16 @@ class BuildList(object):
 
     @property
     def using_sha(self):
-        return self._tree._using_sha
+        return self._tree.using_sha
+
+    @property
+    def when(self):
+        return self._when
+
+    @when.setter
+    def when(self, value):
+        # Xxx validation
+        self._when = value
 
     def _get_build_list_sha1(self):
         sha = SHA.new()
@@ -354,7 +390,7 @@ class BuildList(object):
 
         return success
 
-    # EQQQUALITY ------------------------------------------------------
+    # EQUALITY ------------------------------------------------------
     def __eq__(self, other):
         # DEBUG
         # print("entering BuildList.__eq__")
@@ -380,14 +416,14 @@ class BuildList(object):
             # print("NLHTrees differ")
             # END
             return False
-        if self._when != other._when:
+        if self._when != other.when:
             print(
                 "  my when = %f, other when = %f" %
-                (self._when, other._when))
+                (self._when, other.when))
             return False
 
         if self._dig_sig is None:
-            return other._dig_sig is None
+            return other.dig_sig is None
         else:
             # DEBUG
             #           print("COMPARING DIG SIGS:\nDIG SIG A:\n%s" % self.dig_sig)
@@ -490,8 +526,8 @@ class BuildList(object):
             my_dig_sig = strings[ndx]
 
         bld = BuildList(my_title, my_ck, my_tree)
-        bld._when = parse_timestamp(my_timestamp)
-        bld._dig_sig = binascii.a2b_base64(my_dig_sig)
+        bld.when = parse_timestamp(my_timestamp)
+        bld.dig_sig = binascii.a2b_base64(my_dig_sig)
         return bld
 
     def __str__(self):

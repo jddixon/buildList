@@ -1,8 +1,31 @@
 ~/dev/py/buildList/TODO
 
-2016-11-17
+2016-11-19, edited from -18
+    * 404: buildlist.html should be buildList.html                      * FIXED
+    * bl_createtestdata1 should create under ~/dev/py/xl_test_data:
+        - SHA{1,2,3}
+            * NLHTree for each
+            * BuildList and hex hash for each
+            * MerkleTree and hex hash for each
+            * DIR{_FLAT,16x16,256x256}
+                - uDir for SHA and dirstruc
+
+        - IMPORTANT: additions to this test set must always leave the 
+            earlier contents of dataDir/ and node/ intact
+            * that is, createtestdata1 must be modified to only ADD
+                to dataDir, retaining all earlier entries
+    * modify createtestdata1 to allow expansion of dataDir/
+        - node/ and existing data files should be left untouched
+            unless -f/--force 
+        - option should allow specifying target number N of data files 
+            in leaf dir if DIR16x16 or DIR256x256, otherwise in top dir
+            * for each of SHA{1,2,3} x DIR{_FLAT,16x16,256x256}
+
+2016-11-19, edited from -17
     * bl_check needs to be tested (it had an error which had not been
         caught)
+        - write script which makes the 9 possible bl_check runs
+            against ../../dat/xl_test_data files
     * bl_check -h says that datadir is optional, but sanity checks
         require its presence
     * test messages are too verbose
