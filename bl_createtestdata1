@@ -10,6 +10,7 @@ import sys
 
 from buildlist import __version__, __version_date__, BuildList
 from Crypto.PublicKey import RSA
+from merkletree import MerkleDoc
 from nlhtree import NLHTree
 from rnglib import SimpleRNG
 from xlattice import QQQ
@@ -18,7 +19,7 @@ from xlattice.u import UDir
 from xlattice.util import make_ex_re
 #from xlattice import check_using_sha
 
-DEFAULT_OUT_DIR = '../../dat/xl_test_data/treeData/binExample_1'
+DEFAULT_OUT_DIR = '../../dat/xl_testData/treeData/binExample_1'
 
 
 def create_test_dir_and_node(args):
@@ -32,7 +33,7 @@ def create_test_dir_and_node(args):
         print("deleting existing directory %s" % out_path)
         shutil.rmtree(out_path)
 
-    # creates ../xl_test_data/treeData/binExample_1 if it doesn't exist
+    # creates ../xl_testData/treeData/binExample_1 if it doesn't exist
     os.makedirs(out_path, exist_ok=True)
 
     # for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
@@ -41,10 +42,10 @@ def create_test_dir_and_node(args):
     # Creates RSA key sk_priv and its public part sk; and writes
     # node/skPriv.pem.
     # ---------------------------------------------------------------
-    node_dir = os.path.join(out_path, 'node')
-    os.makedirs(node_dir, mode=0o755, exist_ok=True)
+    node_path = os.path.join(out_path, 'node')
+    os.makedirs(node_path, mode=0o755, exist_ok=True)
 
-    path_to_key = os.path.join(node_dir, 'skPriv.pem')
+    path_to_key = os.path.join(node_path, 'skPriv.pem')
     if os.path.exists(path_to_key):
         # if a key file exists, use it
         with open(path_to_key, 'rb') as file:
@@ -75,7 +76,7 @@ def create_core_data_dir(out_path):
                      sub_dir41, sub_dir411, ]:
         os.makedirs(dir_name, mode=0o755, exist_ok=True)
 
-    # files to be populaed with random data
+    # files to be populated with random data
     rng = SimpleRNG()
     data1 = os.path.join(data_path, 'data1')
     data11 = os.path.join(sub_dir1, 'data11')
@@ -117,12 +118,16 @@ def do_it(args):
         ndx_path = os.path.join(derived_path, 'sha' + str(ndx))
         os.makedirs(ndx_path, mode=0o755)
 
-        # create and serialize the NLHTree
+        # create and serialize the NLHTree --------------------------
+
         tree = NLHTree.create_from_file_system(data_path, using_sha)
+        text = tree.__str__()
+        nlh_file = os.path.join(ndx_path, 'example.nlh')
+        with open(nlh_file, 'w') as file:
+            file.write(text)
 
-        # XXX STUB: serialize NLHTree to example.nlh
+        # create and serialize the BuildList ------------------------
 
-        # create and serialize the BuildList
         list_file = os.path.join(ndx_path, 'example.bld')
         title = 'sample build list % d' % ndx
         ex_re = make_ex_re(['build', ])
@@ -133,6 +138,27 @@ def do_it(args):
         with open(list_file, 'w+') as file:
             file.write(bl_ser)
 
+        # write out the BuildList's hash ----------------------------
+
+        # XXX NOT IMPLEMENTED
+
+        # create and serialize MerkleDoc ----------------------------
+        mdoc = MerkleDoc.create_from_file_system(data_path, using_sha)
+        mtext = mdoc.__str__()
+        mfile = os.path.join(ndx_path, 'example.merkle')
+        with open(mfile, 'w') as file:
+            file.write(mtext)
+
+        # collect the MerkleDoc's hash; write it to merkle.hex
+        mtree = mdoc.tree
+        # pylint: disable=no-member
+        mhash = mtree.hex_hash
+        mhash_file = os.path.join(ndx_path, 'merkle.hex')
+        with open(mhash_file, 'w') as file:
+            file.write(mhash)               # no line feed
+
+        # create uDir structured three different ways ---------------
+
         for dir_struc in [UDir.DIR_FLAT, UDir.DIR16x16, UDir.DIR256x256]:
             name = UDir.DIR_STRUC_NAMES[dir_struc]
             struc_path = os.path.join(ndx_path, name)
@@ -140,60 +166,10 @@ def do_it(args):
 
             # initialize uDir, create subdirs
             u_path = os.path.join(struc_path, 'uDir')
-            u_dir = UDir(u_path, dir_struc, using_sha)
+            _ = UDir(u_path, dir_struc, using_sha)
             # save the NLHTree into uDir, populating it
             tree.save_to_u_dir(data_path, u_path, using_sha)
 
-
-#    # XXX OBSOLETE FROM HERE ========================================
-#
-#    nlh_path = os.path.join(out_path, 'nlhTree')
-#
-#    for using_sha in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
-#        ndx = int(using_sha)
-#        ndx_path = os.path.join(nlh_path, str(ndx))
-#        os.makedirs(ndx_path, mode=0o755, exist_ok=True)
-#        tree = NLHTree.create_from_file_system(data_path, using_sha)
-#
-#        u_path = os.path.join(ndx_path, 'u_dir')
-#        u_in = os.path.join(u_path, 'in')
-#        u_tmp = os.path.join(u_path, 'tmp')
-#        for dir_name in [u_path, u_in, u_tmp]:
-#            os.makedirs(dir_name, mode=0o755, exist_ok=True)
-#        tree.save_to_u_dir(data_path, u_path, using_sha)
-#
-#        list_file = os.path.join(ndx_path, 'example.bld')
-#        title = 'sample build list % d' % ndx
-#        ex_re = make_ex_re(['build', ])
-#        blist = BuildList.create_from_file_system(title, data_path, sk_, using_sha,
-#                                                  ex_re, match_re=None)
-#        blist.sign(sk_priv)
-#        bl_ser = blist.__str__()
-#        with open(list_file, 'w+') as file:
-#            file.write(bl_ser)
-#
-#    # BUILD LIST ----------------------------------------------------
-#    #
-#    # ---------------------------------------------------------------
-#    bl_path = os.path.join(out_path, 'buildlist')
-#
-#    for using_sha in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
-#        ndx = int(using_sha)
-#        ndx_path = os.path.join(bl_path, str(ndx))
-#        os.makedirs(ndx_path, mode=0o755, exist_ok=True)
-#
-#        list_file = os.path.join(ndx_path, 'example.bld')
-#        title = 'sample build list % d' % ndx
-#        ex_re = make_ex_re(['build', ])
-#        blist = BuildList.create_from_file_system(title, data_path, sk_, using_sha,
-#                                                  ex_re, match_re=None)
-#        blist.sign(sk_priv)
-#        bl_ser = blist.__str__()
-#        with open(list_file, 'w+') as file:
-#            file.write(bl_ser)
-#
-#        # XXX MISSING: hex hash of BuildList
-#
 
 def main():
     """
@@ -202,7 +178,7 @@ def main():
 
     This program creates a quasi-random directory tree like
 
-        ../xl_test_data/
+        ${DEV_BASE}/dat/xl_testData/
             treeData
                 binExample.1
                     node
@@ -221,17 +197,17 @@ def main():
                                 subDir411
                                     data4111
                     derived/
-                        sha{1,2,3}/             # three subdirectories
-                            struc{Flat,16x16,256x256}
+                        sha{1,2,3}/         # three subdirectories
+                            example.nlh     # serialization of NLHTree
+                            example.bld     # serialized BuildList
+                            buildlist.hex   # BuildList.hash()
+                            example.merkle  # serialized
+                            merkle.hex      # returned by merkleize -x
+                            DIR{_FLAT,16x16,256x256}/
                                 uDir/
                                     ...
                                     in/
                                     tmp/
-                                example.nlh     # serialization of NLHTree
-                                example.bld     # serialized BuildList
-                                buildlist.hex   # BuildList.hash()
-                                example.merkle  # serialized
-                                merkle.hex      # returned by merkleize -x
 
 
     sk_priv is the RSA private key used to sign the example.bld
@@ -252,15 +228,23 @@ def main():
     example, the RSA private key used in signing the document in
     contained in node/sk_priv.
 
-    The notation '{1,2,3}' is an abbreviation for "each of the sequence
+    The notation `{1,2,3}` is an abbreviation for "each of the sequence
     of string values 1, 2, and 3, taken in turn."
 
-    Each of derived/sha{1,2,3}/struc{*}/uDir/ includes the set of files
+    Each of derived/sha{1,2,3}/DIR{*}/uDir/ includes the set of files
     as dataDir/, but instead of being organized by name the files are
     organized by content key, by the SHA{1,2,3} hash of the files, where
     SHA2 means SHA256 and SHA3 means SHA3-256, the 256-bit version of Keccak.
 
     That is, the name of each file is its hexadecimal SHA content hash.
+
+    The uDirs are structured in three different ways: either all data files
+    are in a single directory (DIR_FLAT), or the first two nibbles of the
+    content key are used as subdirectory and sub-subdirectory names
+    (DIR16x16), or the first two bytes of the content key are used as
+    subdirectory and sub-subdirectory names (DIR256x256).  As an example,
+    in a uDir organized 256x256, `0123456789...` would be stored as
+    `01/23/0123456789...`.
 
     The data under binExample.1/node/ and binExample.1/dataDir is sufficient
     to verify the correctness of
@@ -268,9 +252,9 @@ def main():
     binExample.1/datadir/ and those under binExample.1/nlhTree/{1,2,3}/uDir/
 
     For MerkleTrees, there are three serializations, indented lists
-    created using SHA1, SHA2, and SHA3 under 1/, 2/, and 3 respectively;
-    and also the value returned by merkleize -x, the hash value for the
-    entire MerkleTree.
+    created using SHA1, SHA2, and SHA3 under sha1/, sha2/, and sha3
+    respectively; and also the value returned by `merkleize -x`, the
+    hash value for the entire MerkleTree.
     """
 
     # parse the command line ----------------------------------------
@@ -298,9 +282,9 @@ def main():
 
     # fixups --------------------------------------------------------
     if args.testing:
-        args.out_path = 'tmp/test_data'
+        args.out_path = 'tmp/testData'
 
-    # sanity chesks -------------------------------------------------
+    # sanity checks -------------------------------------------------
 
     # complete setup ------------------------------------------------
     app_name = 'bl_createtestdata1 %s' % __version__

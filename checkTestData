@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# wipe and rewrite tmp/testData
+./bl_createtestdata1 -Tf
+
+./bl_check -1 \
+    -d tmp/testData/dataDir \
+    -b tmp/testData/derived/sha1/example.bld \
+    -u tmp/testData/derived/sha1/DIR_FLAT/uDir
+
+./bl_check -1 \
+    -d tmp/testData/dataDir \
+    -b tmp/testData/derived/sha1/example.bld \
+    -u tmp/testData/derived/sha1/DIR16x16/uDir
+
+./bl_check -1 \
+    -d tmp/testData/dataDir \
+    -b tmp/testData/derived/sha1/example.bld \
+    -u tmp/testData/derived/sha1/DIR256x256/uDir
+
+
+./bl_check -2 \
+    -d tmp/testData/dataDir \
+    -b tmp/testData/derived/sha2/example.bld \
+    -u tmp/testData/derived/sha2/DIR_FLAT/uDir
+
+./bl_check -2 \
+    -d tmp/testData/dataDir \
+    -b tmp/testData/derived/sha2/example.bld \
+    -u tmp/testData/derived/sha2/DIR16x16/uDir
+
+./bl_check -2 \
+    -d tmp/testData/dataDir \
+    -b tmp/testData/derived/sha2/example.bld \
+    -u tmp/testData/derived/sha2/DIR256x256/uDir
+
+
+./bl_check -3 \
+    -d tmp/testData/dataDir \
+    -b tmp/testData/derived/sha3/example.bld \
+    -u tmp/testData/derived/sha3/DIR_FLAT/uDir
+
+./bl_check -3 \
+    -d tmp/testData/dataDir \
+    -b tmp/testData/derived/sha3/example.bld \
+    -u tmp/testData/derived/sha3/DIR16x16/uDir
+
+./bl_check -3 \
+    -d tmp/testData/dataDir \
+    -b tmp/testData/derived/sha3/example.bld \
+    -u tmp/testData/derived/sha3/DIR256x256/uDir
+
+

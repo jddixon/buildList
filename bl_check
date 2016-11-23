@@ -21,7 +21,7 @@ def check_build_list(args):
     data_dir = args.data_dir  # _without_ trailing slash
     ex_re = make_ex_re(args.excl)
     list_file = args.list_file
-    verbose = args.verbose
+    # verbose = args.verbose
     u_path = args.u_path
     using_sha = args.using_sha
 
@@ -33,7 +33,6 @@ def check_build_list(args):
     blist = None
     data = None
     ok_ = True
-    signed = False
 
     # can't use 'r' which converts CRLF to just LF
     try:
@@ -43,10 +42,12 @@ def check_build_list(args):
         (_, last_value, _) = sys.exc_info()
         print("can't open list file: %s" % last_value)
         ok_ = False
-
+    text = data.decode('utf-8')
+    if text[-1] == '\n':
+        text = text[0:-1]
     if ok_:
         try:
-            blist = BuildList.parse(data, using_sha)
+            blist = BuildList.parse(text, using_sha)
         except:
             (_, last_value, _) = sys.exc_info()
             print("Exception: %s" % last_value)
@@ -56,7 +57,7 @@ def check_build_list(args):
         if blist.signed:
             ok_ = blist.verify()
             if not ok_:
-                print("dig sig verification fails")
+                print("digital signature verification fails")
 
     if ok_:
         using_sha = blist.using_sha
