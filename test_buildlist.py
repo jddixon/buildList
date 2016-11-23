@@ -39,23 +39,6 @@ class TestBuildList(unittest.TestCase):
         except Exception as exc2:
             self.fail("unexpected exception %s" % exc2)
 
-#   def do_test_bad_parts(self):
-#       # we object to absolute paths
-#       self.expect_exception('/')
-#       self.expect_exception('/abc')
-
-#       # and we must object to '.' and '..' path segments in the build list
-#       self.expect_exception('.')
-#       self.expect_exception('..')
-#       self.expect_exception('./')
-#       self.expect_exception('..//')
-#       self.expect_exception('./a')
-#       self.expect_exception('../b')
-#       self.expect_exception('a/.')
-#       self.expect_exception('b/..')
-#       self.expect_exception('a/./b')
-#       self.expect_exception('b/../c')
-
     def do_build_test(self, title, using_sha):
         check_using_sha(using_sha)
         sk_priv = RSA.generate(1024)
@@ -90,9 +73,6 @@ class TestBuildList(unittest.TestCase):
         self.assertEqual(blist, blist)
         bl_string = blist.__str__()
         tree_string = blist.tree.__str__()
-        # DEBUG
-        print("SIGNED BUILD LIST:\n%s" % bl_string)
-        # END
 
         bl2 = BuildList.parse(bl_string, using_sha)
         bl_string2 = bl2.__str__()

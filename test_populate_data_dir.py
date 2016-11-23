@@ -148,8 +148,8 @@ class TestPopulateDataDir(unittest.TestCase):
         # self.assertEqual(ser41, ser4) # FAILS: ser41 is signed, ser4 isn't
 
         # DEBUG
-        print("recovered from disk:\n%s" % ser4)
-        print("\nserialized from BuildList:\n%s" % ser41)
+        #print("recovered from disk:\n%s" % ser4)
+        #print("\nserialized from BuildList:\n%s" % ser41)
         # END
 
         self.assertEqual(blist.tree, blist.tree)    # check __eq__

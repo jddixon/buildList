@@ -46,8 +46,8 @@ __all__ = ['__version__', '__version_date__',
            'ParseFailure',
            ]
 
-__version__ = '0.8.7'
-__version_date__ = '2016-11-20'
+__version__ = '0.8.8'
+__version_date__ = '2016-11-22'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -243,6 +243,7 @@ class BuildList(object):
     def __init__(self, title, sk_, tree):
 
         self._title = title.strip()
+        # pylint: disable=protected-access
         if (not sk_) or (not isinstance(sk_, RSA._RSAobj)):
             raise BLError("sk is nil or not a valid RSA public key")
         self._public_key = sk_
@@ -347,7 +348,11 @@ class BuildList(object):
         return sha
 
     def sign(self, sk_priv):
-        """ sk_priv is the RSA private key used for siging the BuildList """
+        """
+        Sign the BuildList using the RSA private key.
+
+        sk_priv is the RSA private key used for siging the BuildList.
+        """
 
         if self._dig_sig is not None:
             raise BLError("buildlist has already been signed")
@@ -372,17 +377,18 @@ class BuildList(object):
         self._dig_sig = signer.sign(sha)
 
     def verify(self):
+        """
+        Check that the BuildList is signed and the signature is correct.
 
-        # if self._signature is not set, return False
+        Return True if self._signature is set and it is
+        consistent as an RSA-SHA1 with the public key on the
+        document and the SHA1 hash of the serialized document, taking
+        the hash over the fields in standard order (pubkey, title,
+        timestamp, and content lines).
+        """
         success = False
 
         if self._dig_sig:
-
-                # otherwise, return True if self._signature is set and it is
-                # consistent as an RSA-SHA1 with the public key on the
-                # document and the SHA1 hash of the serialized document, taking
-                # the hash over the fields in standard order (pubkey, title,
-                # timestamp, and content lines).
 
             sha = self._get_build_list_sha1()
             verifier = PKCS1_PSS.new(self.public_key)
@@ -520,6 +526,7 @@ class BuildList(object):
         space, _ = BuildList._expect_field(strings, ndx)
         if space != '':
             raise BLParseFailed("expected an empty line")
+        ndx += 1
 
         # accept a digital signature if it is present
         if ndx < len(strings):
@@ -527,7 +534,8 @@ class BuildList(object):
 
         bld = BuildList(my_title, my_ck, my_tree)
         bld.when = parse_timestamp(my_timestamp)
-        bld.dig_sig = binascii.a2b_base64(my_dig_sig)
+        if my_dig_sig:
+            bld.dig_sig = binascii.a2b_base64(my_dig_sig)
         return bld
 
     def __str__(self):
@@ -651,7 +659,7 @@ class BuildList(object):
             #print("  dirStruc:  %s" % UDir.dir_struc_to_name(uDir.dirStruc))
             #print("  using_sha: %s" % uDir.using_sha)
             # END
-            (length, hash_back) = u_dir.put_data(new_data, new_hash)
+            (_, hash_back) = u_dir.put_data(new_data, new_hash)
             if hash_back != new_hash:
                 print("WARNING: wrote %s to %s, but actual hash is %s" % (
                     new_hash, u_path, hash_back))
