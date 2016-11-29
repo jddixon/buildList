@@ -3,7 +3,7 @@
 
 """
 Initializes test directories example{1,2,3} which are being replaced by
-the xl_test_data project.
+the xl_testData project.
 
 """
 import os
