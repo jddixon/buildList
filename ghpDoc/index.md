@@ -62,7 +62,7 @@ directory must be present.
 ## bl_createtestdata1
 
 Create test data for
-[https://github.com/jddixon/xl_test_data](https://github.com/jddixon/xl_test_data).
+[https://github.com/jddixon/xl_testData](https://github.com/jddixon/xl_testData).
 
 The test data is intended for testing interoperability between various
 gibhub probjects using different computer languages, specifically Python
@@ -73,7 +73,7 @@ containing raw data files of random length and then corresponding
 * BuildLists
 * content-keyed stores using SHA{1,2,3} structured as flat, 16x16, and 256x256
 
-Replaces `bl_bootstrap`.  Output is to the xl_test_data project directory.
+Replaces `bl_bootstrap`.  Output is to the xl_testData project directory.
 
     usage: bl_createtestdata1 [-h] [-f] [-j] [-o OUT_PATH] [-v]
 
@@ -86,7 +86,7 @@ Replaces `bl_bootstrap`.  Output is to the xl_test_data project directory.
       -j, --justShow        show options and exit
       -o OUT_PATH, --out_path OUT_PATH
                             example directory, defaults to
-                            '../../dat/xl_test_data/treeData/binExample_1'
+                            '../../dat/xl_testData/treeData/binExample_1'
       -v, --verbose         be chatty
 
 ## bl_listgen

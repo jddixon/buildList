@@ -11,7 +11,7 @@ import time
 
 import os
 try:
-    from os.scandir import scandir
+    from os import scandir
 except ImportError:
     from scandir import scandir
 
@@ -43,11 +43,10 @@ __all__ = ['__version__', '__version_date__',
            # CLASSES
            'BuildList',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
-           'ParseFailure',
            ]
 
-__version__ = '0.8.8'
-__version_date__ = '2016-11-22'
+__version__ = '0.8.9'
+__version_date__ = '2016-11-28'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -58,7 +57,7 @@ def check_dirs_in_path(path_to_file):
     if they don't exist.
     """
     if path_to_file:
-        dir_, delim, file_name = path_to_file.rpartition('/')
+        dir_, _, _ = path_to_file.rpartition('/')
         if dir_:
             os.makedirs(dir_, 0o711, exist_ok=True)
 
@@ -74,7 +73,7 @@ def rm_f_dir_contents(path_to_dir):
     if path_to_dir[0] == '/' or (path_to_dir.find('..') != -1):
         raise BLError(
             "illegal path for rm_f_dir_contents(): '%s'" % path_to_dir)
-    for entry in scandir(dir):
+    for entry in scandir(path_to_dir):
         if entry.is_file():
             os.unlink(entry.path)
         elif entry.is_dir():
@@ -109,15 +108,13 @@ def read_rsa_key(path_to_file):
 # PARSER ------------------------------------------------------------
 
 
-class ParseFailure(BaseException):
-    pass
-
-
 class BLIntegrityCheckFailure(BaseException):
+    """ Report an integrity check failure parsing the BuildList. """
     pass
 
 
 class BLParseFailed(BaseException):
+    """ Report an error parsing the BuildList. """
     pass
 
 
@@ -168,7 +165,7 @@ def expect_str(file, string):
     """ Raise an exception if the next line doesn't match string. """
     line = expect_list_line(file, "expected " + string)
     if line != string:
-        raise ParseFailure('expected ' + string)
+        raise BLParseFailed('expected ' + string)
     # DEBUG
     # print("STR: %s" % string)
     # END
@@ -197,7 +194,7 @@ def accept_content_line(file, digest, string, root_path, u_path):
     parts = line.split()
     if len(parts) != 2:
         err_msg = "bad content line: '%s'" % line
-        raise ParseFailure(err_msg)
+        raise BLParseFailed(err_msg)
     # DEBUG
     # print("CONTENT: %s" % line)
     # END

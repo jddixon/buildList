@@ -1,8 +1,13 @@
 ~/dev/py/buildList/TODO
 
+2016-11-28
+    * rm_f_dir_contents() must be tested: it had a fatal bug that
+        was't caught here
+    * in any case should be moved to eg xlattice/lfs
+
 2016-11-19, edited from -18
     * 404: buildlist.html should be buildList.html                      * FIXED
-    * bl_createtestdata1 should create under ~/dev/py/xl_test_data:
+    * bl_createtestdata1 should create under ~/dev/py/xl_testData:
         - SHA{1,2,3}
             * NLHTree for each
             * BuildList and hex hash for each
@@ -25,7 +30,7 @@
     * bl_check needs to be tested (it had an error which had not been
         caught)
         - write script which makes the 9 possible bl_check runs
-            against ../../dat/xl_test_data files
+            against ../../dat/xl_testData files
     * bl_check -h says that datadir is optional, but sanity checks
         require its presence
     * test messages are too verbose
