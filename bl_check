@@ -8,8 +8,8 @@ import sys
 
 from argparse import ArgumentParser
 from nlhtree import NLHTree
-from xlattice import (check_using_sha,
-                      parse_using_sha, fix_using_sha, show_using_sha, check_u_path)
+from xlattice import (check_hashtype, parse_hashtype_etc, fix_hashtype,
+                      show_hashtype_etc, check_u_path)
 from xlattice.util import get_exclusions, make_ex_re
 
 from buildlist import __version__, __version_date__, BuildList
@@ -23,7 +23,7 @@ def check_build_list(args):
     list_file = args.list_file
     # verbose = args.verbose
     u_path = args.u_path
-    using_sha = args.using_sha
+    hashtype = args.hashtype
 
     if data_dir and data_dir[-1] == '/':      # trailing slash
         data_dir = data_dir[:-1]
@@ -47,7 +47,7 @@ def check_build_list(args):
         text = text[0:-1]
     if ok_:
         try:
-            blist = BuildList.parse(text, using_sha)
+            blist = BuildList.parse(text, hashtype)
         except:
             (_, last_value, _) = sys.exc_info()
             print("Exception: %s" % last_value)
@@ -60,9 +60,9 @@ def check_build_list(args):
                 print("digital signature verification fails")
 
     if ok_:
-        using_sha = blist.using_sha
+        hashtype = blist.hashtype
         # assume ex_re can be ignored
-        my_tree = NLHTree.create_from_file_system(data_dir, using_sha, ex_re)
+        my_tree = NLHTree.create_from_file_system(data_dir, hashtype, ex_re)
         ok_ = my_tree == blist.tree
         if not ok_:
             print("BuildList's NLHTree doesn't match %s" % data_dir)
@@ -104,14 +104,14 @@ def main():
     parser.add_argument('-j', '--just_show', action='store_true',
                         help='show options and exit')
 
-    # -1,-2,-3, using_sha, -v/--verbose
-    parse_using_sha(parser)
+    # -1,-2,-3, hashtype, -v/--verbose
+    parse_hashtype_etc(parser)
 
     args = parser.parse_args()
 
     # fixups --------------------------------------------------------
 
-    fix_using_sha(args)
+    fix_hashtype(args)
 
     args.cur_dir = os.getcwd()
     if os.path.exists(args.ignore_file):
@@ -123,7 +123,7 @@ def main():
         args.excl.append('build')
 
     # sanity checks -------------------------------------------------
-    check_using_sha(args.using_sha)
+    check_hashtype(args.hashtype)
     if not args.just_show:
         if not args.list_file or not os.path.isfile(args.list_file):
             print("list file %s does not exist" % args.list_file)
@@ -153,7 +153,7 @@ def main():
         print('data_dir      = ' + str(args.data_dir))
         print('ignore_file   = ' + str(args.ignore_file))
         print('list_file     = ' + str(args.list_file))
-        show_using_sha(args)
+        show_hashtype_etc(args)
 
     if args.just_show:
         sys.exit(0)

@@ -6,7 +6,7 @@ then
   
   rm -rf build/* 
   
-  runpysloc -L py bl_bootstrap bl_check bl_createtestdata1 bl_listgen bl_srcgen  -X cover -X htmlcov -X dist -v $@
+  pySloc -L py bl_bootstrap bl_check bl_createtestdata1 bl_listgen bl_srcgen  -X cover -X htmlcov -X dist -v $@
 else
   echo "DEV_BASE is not defined"
 fi

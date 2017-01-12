@@ -13,11 +13,11 @@ from Crypto.PublicKey import RSA
 from merkletree import MerkleDoc
 from nlhtree import NLHTree
 from rnglib import SimpleRNG
-from xlattice import QQQ
+from xlattice import HashTypes
 from xlattice.lfs import touch
 from xlattice.u import UDir
 from xlattice.util import make_ex_re
-#from xlattice import check_using_sha
+#from xlattice import check_hashtype
 
 DEFAULT_OUT_DIR = '../../dat/xl_testData/treeData/binExample_1'
 
@@ -36,7 +36,7 @@ def create_test_dir_and_node(args):
     # creates ../xl_testData/treeData/binExample_1 if it doesn't exist
     os.makedirs(out_path, exist_ok=True)
 
-    # for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+    # for hashtype in HashTypes:
 
     # NODE_DIR ------------------------------------------------------
     # Creates RSA key sk_priv and its public part sk; and writes
@@ -113,14 +113,14 @@ def do_it(args):
         shutil.rmtree(derived_path)
     os.mkdir(derived_path, 0o755)
 
-    for using_sha in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3]:
-        ndx = int(using_sha)
+    for hashtype in [HashTypes.SHA1, HashTypes.SHA2, HashTypes.SHA3]:
+        ndx = int(hashtype)
         ndx_path = os.path.join(derived_path, 'sha' + str(ndx))
         os.makedirs(ndx_path, mode=0o755)
 
         # create and serialize the NLHTree --------------------------
 
-        tree = NLHTree.create_from_file_system(data_path, using_sha)
+        tree = NLHTree.create_from_file_system(data_path, hashtype)
         text = tree.__str__()
         nlh_file = os.path.join(ndx_path, 'example.nlh')
         with open(nlh_file, 'w') as file:
@@ -132,7 +132,7 @@ def do_it(args):
         title = 'sample build list % d' % ndx
         ex_re = make_ex_re(['build', ])
         blist = BuildList.create_from_file_system(
-            title, data_path, sk_, using_sha, ex_re, match_re=None)
+            title, data_path, sk_, hashtype, ex_re, match_re=None)
         blist.sign(sk_priv)
         bl_ser = blist.__str__()
         with open(list_file, 'w+') as file:
@@ -143,7 +143,7 @@ def do_it(args):
         # XXX NOT IMPLEMENTED
 
         # create and serialize MerkleDoc ----------------------------
-        mdoc = MerkleDoc.create_from_file_system(data_path, using_sha)
+        mdoc = MerkleDoc.create_from_file_system(data_path, hashtype)
         mtext = mdoc.__str__()
         mfile = os.path.join(ndx_path, 'example.merkle')
         with open(mfile, 'w') as file:
@@ -166,9 +166,9 @@ def do_it(args):
 
             # initialize uDir, create subdirs
             u_path = os.path.join(struc_path, 'uDir')
-            _ = UDir(u_path, dir_struc, using_sha)
+            _ = UDir(u_path, dir_struc, hashtype)
             # save the NLHTree into uDir, populating it
-            tree.save_to_u_dir(data_path, u_path, using_sha)
+            tree.save_to_u_dir(data_path, u_path, hashtype)
 
 
 def main():

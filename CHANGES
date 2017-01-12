@@ -1,5 +1,9 @@
 ~/dev/py/buildList/CHANGES
 
+v0.8.10
+    2017-01-11
+        * dropped redundant utility files                           SLOC 2146
+        * conform to new xlattice_py API                            SLOC 2146
 v0.8.9
     2016-11-28
         * correct bug in rm_f_dir_content; plus more PEP 8          SLOC 2600
@@ -258,6 +262,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 
