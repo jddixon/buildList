@@ -9,7 +9,7 @@ import sys
 
 from argparse import ArgumentParser
 from shutil import rmtree
-from xlattice import check_u_path, Q
+from xlattice import check_u_path, HashTypes
 from buildlist import __version__, __version_date__, BuildList
 
 
@@ -34,7 +34,7 @@ def make_data_dir(options):
 
     with open(list_file, 'r') as file:
         data = file.read()
-    blist = BuildList.parse(data, using_sha=Q.USING_SHA1)  # XXX THINK
+    blist = BuildList.parse(data, hashtype=HashTypes.SHA1)  # XXX THINK
 
     blist.populate_data_dir(u_path, data_path)
 

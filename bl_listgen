@@ -12,8 +12,8 @@ import sys
 
 from argparse import ArgumentParser
 
-from xlattice import (check_using_sha, parseUsingSHA, fix_using_sha,
-                      show_using_sha)
+from xlattice import (check_hashtype, parse_hashtype_etc, fix_hashtype,
+                      show_hashtype_etc)
 
 from xlattice.util import get_exclusions, timestamp_now
 from buildlist import(__version__, __version_date__, __file__,
@@ -36,10 +36,10 @@ def doit(options):
     logging = options.logging
     title = options.title
     u_path = options.u_path      # if None, don't save to u_path
-    using_sha = options.using_sha
+    hashtype = options.hashtype
 
     blist = BuildList.list_gen(title, data_dir, dvcz_dir, list_file, key_file,
-                               excl, logging, u_path, using_sha)
+                               excl, logging, u_path, hashtype)
 
     print("BuildList written to %s" % os.path.join(dvcz_dir, list_file))
 
@@ -97,8 +97,8 @@ def get_args():
     parser.add_argument('-V', '--showVersion', action='store_true',
                         help='display version number and exit')
 
-    # -1,-2,-3, using_sha, -v/--verbose
-    parseUsingSHA(parser)
+    # -1,-2,-3, hashtype, -v/--verbose
+    parse_hashtype_etc(parser)
 
     parser.add_argument('-X', '--exclusions', action='append',
                         help='do not include files/directories matching this pattern')
@@ -117,7 +117,7 @@ def get_args():
 def sanity_checks(parser, args):
     """ Check for option values that don't make sense. """
     if not args.just_show:
-        check_using_sha(args.using_sha)
+        check_hashtype(args.hashtype)
 
         if (not args.data_dir) or (args.data_dir == ''):
             print("no root directory specified")
@@ -143,7 +143,7 @@ def sanity_checks(parser, args):
 def check_args(parser, args):
     """ Check and possibly edit command-line arguments. """
 
-    fix_using_sha(args)
+    fix_hashtype(args)
 
     args.curDir = os.getcwd()
     if os.path.exists(args.ignore_file):
@@ -206,7 +206,7 @@ def show_args(args):
         print('testing      = ' + str(args.testing))
         print('title        = ' + str(args.title))
         print('u_path       = ' + str(args.u_path))
-        show_using_sha(args)
+        show_hashtype_etc(args)
 
         if args.matchPat and len(args.matchPat) > 0:
             print("match:")

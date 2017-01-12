@@ -14,24 +14,18 @@ from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
 from rnglib import SimpleRNG
 
-from xlattice import QQQ, check_using_sha
+from xlattice import HashTypes, check_hashtype
 from xlattice.lfs import touch
 from xlattice.util import make_ex_re
 
 from buildlist import __version__, __version_date__, BuildList
 
 
-def really_do_it(args, using_sha):
+def really_do_it(args, hashtype):
     """ Build test data directory for specific SHA hash type. """
 
-    check_using_sha(using_sha)
-    ex_dir = args.ex_dir
-    if using_sha == QQQ.USING_SHA1:
-        ex_dir += '1'
-    elif using_sha == QQQ.USING_SHA2:
-        ex_dir += '2'
-    elif using_sha == QQQ.USING_SHA3:
-        ex_dir += '3'
+    check_hashtype(hashtype)
+    ex_dir = args.ex_dir + str(hashtype.value)
     # verbose = args.verbose
 
     data_dir = os.path.join(ex_dir, 'data_dir')
@@ -88,7 +82,7 @@ def really_do_it(args, using_sha):
     sk_ = sd_priv.publickey()
 
     ex_re = make_ex_re(['build', ])
-    blist = BuildList.create_from_file_system(title, data_dir, sk_, using_sha,
+    blist = BuildList.create_from_file_system(title, data_dir, sk_, hashtype,
                                               ex_re, match_re=None)
     blist.sign(sd_priv)
     bl_ser = blist.__str__()
@@ -99,7 +93,7 @@ def really_do_it(args, using_sha):
     # THIS MODULE IS BEING ABANDONED.  NO MORE WORK NEEDED.
     #######################################################
 
-    blist.tree.save_to_u_dir(data_dir, u_path, using_sha=using_sha)
+    blist.tree.save_to_u_dir(data_dir, u_path, hashtype=hashtype)
     unmatched = blist.tree.check_in_u_dir(u_path)    # all leaf nodes present ?
     if unmatched:
         print("check walk on example/ failed")
@@ -117,7 +111,7 @@ def do_it(args):
         if not ok_.startswith('Y'):
             sys.exit(0)
 
-    for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
+    for using in [HighTypes.SHA1, HighTypes.SHA2, HighTypes.SHA3, ]:
         really_do_it(args, using)
 
 

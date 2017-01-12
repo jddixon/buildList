@@ -26,7 +26,8 @@ from nlhtree import NLHNode, NLHTree, NLHLeaf
 
 from xlattice.crypto import collect_pem_rsa_public_key
 from xlattice.lfs import touch
-from xlattice.u import QQQ, UDir, check_using_sha
+from xlattice import HashTypes, check_hashtype
+from xlattice.u import UDir
 from xlattice.util import make_ex_re, parse_timestamp, timestamp, timestamp_now
 
 __all__ = ['__version__', '__version_date__',
@@ -45,8 +46,8 @@ __all__ = ['__version__', '__version_date__',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
            ]
 
-__version__ = '0.8.9'
-__version_date__ = '2016-11-28'
+__version__ = '0.8.10'
+__version_date__ = '2017-01-11'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -108,12 +109,12 @@ def read_rsa_key(path_to_file):
 # PARSER ------------------------------------------------------------
 
 
-class BLIntegrityCheckFailure(BaseException):
+class BLIntegrityCheckFailure(RuntimeError):
     """ Report an integrity check failure parsing the BuildList. """
     pass
 
 
-class BLParseFailed(BaseException):
+class BLParseFailed(RuntimeError):
     """ Report an error parsing the BuildList. """
     pass
 
@@ -304,8 +305,8 @@ class BuildList(object):
         return self._tree
 
     @property
-    def using_sha(self):
-        return self._tree.using_sha
+    def hashtype(self):
+        return self._tree.hashtype
 
     @property
     def when(self):
@@ -437,7 +438,8 @@ class BuildList(object):
     # SERIALIZATION -------------------------------------------------
     @staticmethod
     def create_from_file_system(title, path_to_dir, sk_,
-                                using_sha=QQQ.USING_SHA2, ex_re=None, match_re=None):
+                                hashtype=HashTypes.SHA2,
+                                ex_re=None, match_re=None):
 
         if (not path_to_dir) or (not os.path.isdir(path_to_dir)):
             raise BLError(
@@ -445,11 +447,11 @@ class BuildList(object):
 
         tree = NLHTree.create_from_file_system(path_to_dir,
                                                # accept default deltaIndent
-                                               using_sha=using_sha, ex_re=ex_re)
+                                               hashtype=hashtype, ex_re=ex_re)
         return BuildList(title, sk_, tree)
 
     @staticmethod
-    def parse(string, using_sha):
+    def parse(string, hashtype):
         """
         This relies upon the fact that all fields are separated by
         NEWLINE ('\n').
@@ -460,7 +462,7 @@ class BuildList(object):
         if not isinstance(string, str):
             string = str(string, 'utf-8')
         strings = string.split('\n')
-        return BuildList.parse_from_strings(strings, using_sha)
+        return BuildList.parse_from_strings(strings, hashtype)
 
     @staticmethod
     def _expect_field(strings, ndx):
@@ -475,12 +477,12 @@ class BuildList(object):
         return field, ndx
 
     @staticmethod
-    def parse_from_strings(strings, using_sha):
+    def parse_from_strings(strings, hashtype):
 
-        check_using_sha(using_sha)
+        check_hashtype(hashtype)
 
         # DEBUG
-        # print("parse_from_strings: using_sha = %s" % using_sha)
+        # print("parse_from_strings: hashtype = %s" % hashtype)
         # END
         if strings is None:
             raise BLParseFailed("parse_from_strings: null argument")
@@ -517,7 +519,7 @@ class BuildList(object):
             else:
                 mt_lines.append(line)
         # expect default indents
-        my_tree = NLHTree.create_from_string_array(mt_lines, using_sha)
+        my_tree = NLHTree.create_from_string_array(mt_lines, hashtype)
 
         # expect an empty line
         space, _ = BuildList._expect_field(strings, ndx)
@@ -592,7 +594,7 @@ class BuildList(object):
                  excl=['build'],
                  logging=False,
                  u_path='',
-                 using_sha=QQQ.USING_SHA1):     # NOTE default is SHA1
+                 hashtype=HashTypes.SHA1):     # NOTE default is SHA1
         """
         Create a BuildList for data_dir with the title indicated.
         Files matching the globs in excl will be skipped.  'build'
@@ -625,17 +627,17 @@ class BuildList(object):
         else:
             sk_ = None
         blist = cls.create_from_file_system(
-            title, data_dir, sk_, using_sha, ex_re, match_re=None)
+            title, data_dir, sk_, hashtype, ex_re, match_re=None)
         if signing:
             blist.sign(sk_priv)
 
         new_data = blist.__str__().encode('utf-8')
         # pylint:disable=redefined-variable-type
-        if using_sha == QQQ.USING_SHA1:
+        if hashtype == HashTypes.SHA1:
             sha = hashlib.sha1()
-        elif using_sha == QQQ.USING_SHA2:
+        elif hashtype == HashTypes.SHA2:
             sha = hashlib.sha256()
-        elif using_sha == QQQ.USING_SHA3:
+        elif hashtype == HashTypes.SHA3:
             sha = hashlib.sha3_256()
         sha.update(new_data)
         new_hash = sha.hexdigest()
@@ -643,7 +645,7 @@ class BuildList(object):
 
         if u_path:
 
-            blist.tree.save_to_u_dir(data_dir, u_path, using_sha)
+            blist.tree.save_to_u_dir(data_dir, u_path, hashtype)
 
             # insert this BuildList into U
             # DEBUG
@@ -654,7 +656,7 @@ class BuildList(object):
             # print("list_gen:")
             #print("  uDir:      %s" % u_path)
             #print("  dirStruc:  %s" % UDir.dir_struc_to_name(uDir.dirStruc))
-            #print("  using_sha: %s" % uDir.using_sha)
+            #print("  hashtype:  %s" % uDir.hashtype)
             # END
             (_, hash_back) = u_dir.put_data(new_data, new_hash)
             if hash_back != new_hash:

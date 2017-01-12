@@ -15,7 +15,7 @@ import hashlib
 
 from buildlist import BuildList
 from rnglib import SimpleRNG
-from xlattice import QQQ, u, check_using_sha
+from xlattice import HashTypes, u, check_hashtype
 
 if sys.version_info < (3, 6):
     # pylint:disable=unused-import
@@ -35,9 +35,9 @@ class TestRandomDir(unittest.TestCase):
 
     # actual unit tests #############################################
 
-    def do_test_random_dir(self, using_sha):
+    def do_test_random_dir(self, hashtype):
         """ Test building random directories with specific SHA hash type. """
-        check_using_sha(using_sha)
+        check_hashtype(hashtype)
         depth = 1 + self.rng.nextInt16(3)       # so 1 to 3
         width = 1 + self.rng.nextInt16(16)      # so 1 to 16
 
@@ -57,11 +57,11 @@ class TestRandomDir(unittest.TestCase):
         data = bytearray(max_len)            # that many null bytes
         self.rng.nextBytes(data)            # fill with random data
         # pylint:disable=redefined-variable-type
-        if using_sha == QQQ.USING_SHA1:
+        if hashtype == HashTypes.SHA1:
             sha = hashlib.sha1()
-        elif using_sha == QQQ.USING_SHA2:
+        elif hashtype == HashTypes.SHA2:
             sha = hashlib.sha256()
-        elif using_sha == QQQ.USING_SHA3:
+        elif hashtype == HashTypes.SHA3:
             # pylint:disable=no-member
             sha = hashlib.sha3_256()
         sha.update(data)
@@ -71,18 +71,18 @@ class TestRandomDir(unittest.TestCase):
         with open(path_to_file, 'wb') as file:
             file.write(data)
 
-        if using_sha == QQQ.USING_SHA1:
+        if hashtype == HashTypes.SHA1:
             file_hash = u.file_sha1hex(path_to_file)
-        elif using_sha == QQQ.USING_SHA2:
+        elif hashtype == HashTypes.SHA2:
             file_hash = u.file_sha2hex(path_to_file)
-        elif using_sha == QQQ.USING_SHA3:
+        elif hashtype == HashTypes.SHA3:
             file_hash = u.file_sha3hex(path_to_file)
         self.assertEqual(hash_, file_hash)
 
     def test_random_dir(self):
         """ Test building random directories with supported SHA hash types. """
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2, QQQ.USING_SHA3, ]:
-            self.do_test_random_dir(using)
+        for hashtype in HashTypes:
+            self.do_test_random_dir(hashtype)
 
 if __name__ == '__main__':
     unittest.main()

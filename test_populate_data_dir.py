@@ -10,7 +10,7 @@ from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
 
 from rnglib import SimpleRNG
-from xlattice import QQQ, check_using_sha
+from xlattice import HashTypes, check_hashtype
 from xlattice.u import UDir
 from xlattice.util import timestamp
 from buildlist import BuildList
@@ -37,27 +37,27 @@ class TestPopulateDataDir(unittest.TestCase):
 
     # actual unit tests #############################################
 
-    def do_pop_test(self, using_sha):
-        check_using_sha(using_sha)
+    def do_pop_test(self, hashtype):
+        check_hashtype(hashtype)
         # DEBUG
-        # print("do_pop_test: %s" % using_sha)
+        # print("do_pop_test: %s" % hashtype)
         # EMD
 
         sk_priv = RSA.generate(1024)
         sk_ = sk_priv.publickey()
 
-        if using_sha == QQQ.USING_SHA1:
+        if hashtype == HashTypes.SHA1:
             original_data = os.path.join('example1', 'dataDir')
             original_u = os.path.join('example1', 'uDir')
-        elif using_sha == QQQ.USING_SHA2:
+        elif hashtype == HashTypes.SHA2:
             original_data = os.path.join('example2', 'dataDir')
             original_u = os.path.join('example2', 'uDir')
-        elif using_sha == QQQ.USING_SHA3:
+        elif hashtype == HashTypes.SHA3:
             original_data = os.path.join('example3', 'data_dir')
             original_u = os.path.join('example3', 'uDir')
 
         blist = BuildList.create_from_file_system(
-            'name_of_the_list', original_data, sk_, using_sha)
+            'name_of_the_list', original_data, sk_, hashtype=hashtype)
 
         # should return an empty list: a basic sanity check
         unmatched = blist.check_in_data_dir(original_data)
@@ -86,7 +86,7 @@ class TestPopulateDataDir(unittest.TestCase):
         self.assertEqual(blist.title, 'name_of_the_list')
         self.assertEqual(blist.public_key, sk_)
         self.assertEqual(blist.timestamp, timestamp(0))
-        self.assertEqual(blist.using_sha, using_sha)
+        self.assertEqual(blist.hashtype, hashtype)
 
         self.assertEqual(blist, blist)
         self.assertFalse(blist.verify())   # not signed yet
@@ -100,7 +100,7 @@ class TestPopulateDataDir(unittest.TestCase):
 
         # BL2: we build testDir and the new dataDir and u_dir --------
         string = blist.to_string()
-        bl2 = BuildList.parse(string, using_sha)     # round-tripped build list
+        bl2 = BuildList.parse(string, hashtype)     # round-tripped build list
         # DEBUG
         #print("\nFIRST BUILD LIST:\n%s" % blist)
         #print("\nSECOND BUILD LIST:\n%s" % bl2)
@@ -116,7 +116,7 @@ class TestPopulateDataDir(unittest.TestCase):
         test_path = self.make_unique('tmp')
         u_path = os.path.join(test_path, 'uDir')
         _ = UDir.discover(
-            u_path, using_sha=using_sha)  # creates empty UDir
+            u_path, hashtype=hashtype)  # creates empty UDir
         dvcz_path = os.path.join(test_path, 'dvcz')
         os.mkdir(dvcz_path)
 
@@ -132,18 +132,18 @@ class TestPopulateDataDir(unittest.TestCase):
         blist.populate_data_dir(original_u, data_path)
         self.assertEqual(len(bl2.check_in_data_dir(data_path)), 0)
 
-        bl2.tree.save_to_u_dir(data_path, u_path, using_sha)
+        bl2.tree.save_to_u_dir(data_path, u_path, hashtype)
         self.assertEqual(len(bl2.check_in_u_dir(u_path)), 0)
 
         # BL3:
 
         # this writes the buildlist to dvczPath/lastBuildList:
         blist3 = BuildList.list_gen("title", data_path, dvcz_path,
-                                    u_path=u_path, using_sha=using_sha)
+                                    u_path=u_path, hashtype=hashtype)
         path_to_list = os.path.join(dvcz_path, 'lastBuildList')
         with open(path_to_list, 'r') as file:
             ser4 = file.read()
-        bl4 = BuildList.parse(ser4, using_sha)
+        bl4 = BuildList.parse(ser4, hashtype)
         ser41 = bl4.to_string()
         # self.assertEqual(ser41, ser4) # FAILS: ser41 is signed, ser4 isn't
 
@@ -158,8 +158,8 @@ class TestPopulateDataDir(unittest.TestCase):
         self.assertEqual(bl4.tree, blist.tree)
 
     def test_populate_data_dir(self):
-        for using in [QQQ.USING_SHA1, QQQ.USING_SHA2]:
-            self.do_pop_test(using)
+        for hashtype in [HashTypes.SHA1, HashTypes.SHA2]:
+            self.do_pop_test(hashtype)
 
     def test_name_space(self):
         parser = ArgumentParser(description='oh hello')
