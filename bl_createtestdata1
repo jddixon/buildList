@@ -15,7 +15,7 @@ from nlhtree import NLHTree
 from rnglib import SimpleRNG
 from xlattice import HashTypes
 from xlattice.lfs import touch
-from xlattice.u import UDir
+from xlattice.u import UDir, DirStruc
 from xlattice.util import make_ex_re
 #from xlattice import check_hashtype
 
@@ -87,9 +87,9 @@ def create_core_data_dir(out_path):
     for path in [data1, data11, data2, data31, data4111]:
         if os.path.exists(path):
             continue
-        count = 16 + rng.nextInt16(2048)
+        count = 16 + rng.next_int16(2048)
         data = bytearray(count)
-        rng.nextBytes(data)
+        rng.next_bytes(data)
         with open(path, 'wb') as file:
             file.write(data)
 
@@ -159,8 +159,8 @@ def do_it(args):
 
         # create uDir structured three different ways ---------------
 
-        for dir_struc in [UDir.DIR_FLAT, UDir.DIR16x16, UDir.DIR256x256]:
-            name = UDir.DIR_STRUC_NAMES[dir_struc]
+        for dir_struc in DirStruc:
+            name = dir_struc.name
             struc_path = os.path.join(ndx_path, name)
             os.mkdir(struc_path, 0o755)
 

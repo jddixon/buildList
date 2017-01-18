@@ -29,9 +29,9 @@ class TestPopulateDataDir(unittest.TestCase):
     def make_unique(self, below):
         """ create a unique subdirectory of the directory named """
 
-        dir_path = os.path.join(below, self.rng.nextFileName(8))
+        dir_path = os.path.join(below, self.rng.next_file_name(8))
         while os.path.exists(dir_path):
-            dir_path = os.path.join(below, self.rng.nextFileName(8))
+            dir_path = os.path.join(below, self.rng.next_file_name(8))
         os.makedirs(dir_path, mode=0o755)
         return dir_path
 

@@ -1,5 +1,9 @@
 ~/dev/py/buildList/TODO
 
+2017-01-18
+    * buildlist/__init__.py accept_content_line is largely stubbed
+    * package files need much more pylinting
+
 2017-01-11
     * bl_srcgen has hashtype fixed to SHA1.  Surely this is an error!
 
