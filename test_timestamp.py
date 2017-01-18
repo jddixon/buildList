@@ -29,18 +29,18 @@ class TestTimestamp(unittest.TestCase):
 
     def test_sha1_file(self):
 
-        blk_count = 1 + self.rng.nextInt16(3)     # so 1 to 3
+        blk_count = 1 + self.rng.next_int16(3)     # so 1 to 3
         # last block will usually be only partically populated
         byte_count = BuildList.BLOCK_SIZE * (blk_count - 1) +\
-            self.rng.nextInt16(BuildList.BLOCK_SIZE)
+            self.rng.next_int16(BuildList.BLOCK_SIZE)
 
         data = bytearray(byte_count)     # that many null bytes
-        self.rng.nextBytes(data)             # fill with random data
+        self.rng.next_bytes(data)             # fill with random data
         d_val = hashlib.new('sha1')
         d_val.update(data)
         hash_ = d_val.hexdigest()
 
-        file_name = self.rng.nextFileName(8)
+        file_name = self.rng.next_file_name(8)
         path_to_file = os.path.join('tmp', file_name)
         with open(path_to_file, 'wb') as file:
             file.write(data)

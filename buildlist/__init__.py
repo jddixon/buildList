@@ -27,7 +27,7 @@ from nlhtree import NLHNode, NLHTree, NLHLeaf
 from xlattice.crypto import collect_pem_rsa_public_key
 from xlattice.lfs import touch
 from xlattice import HashTypes, check_hashtype
-from xlattice.u import UDir
+from xlattice.u import DirStruc, UDir
 from xlattice.util import make_ex_re, parse_timestamp, timestamp, timestamp_now
 
 __all__ = ['__version__', '__version_date__',
@@ -43,11 +43,10 @@ __all__ = ['__version__', '__version_date__',
            'expect_title',
            # CLASSES
            'BuildList',
-           'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError',
-           ]
+           'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError', ]
 
-__version__ = '0.8.10'
-__version_date__ = '2017-01-11'
+__version__ = '0.9.0'
+__version_date__ = '2017-01-18'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -157,9 +156,9 @@ def expect_timestamp(file, digest):
     line = expect_list_line(file, "missing timestamp")
     tstamp = parse_timestamp(line)        # can raise ValueError
     # DEBUG
-    #print("TIMESTAMP: %s" % line)
+    #print("TIMESTAMP: %s" % tstamp)
     # END
-    digest.update(line)
+    digest.update(tstamp)
 
 
 def expect_str(file, string):

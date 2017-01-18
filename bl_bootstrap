@@ -63,9 +63,9 @@ def really_do_it(args, hashtype):
     data4111 = os.path.join(sub_dir411, 'data31')
 
     for path in [data1, data11, data2, data31, data4111]:
-        count = 16 + rng.nextInt16(2048)
+        count = 16 + rng.next_int16(2048)
         data = bytearray(count)
-        rng.nextBytes(data)
+        rng.next_bytes(data)
         with open(path, 'wb') as file:
             file.write(data)
 
@@ -111,8 +111,8 @@ def do_it(args):
         if not ok_.startswith('Y'):
             sys.exit(0)
 
-    for using in [HighTypes.SHA1, HighTypes.SHA2, HighTypes.SHA3, ]:
-        really_do_it(args, using)
+    for hashtype in HashTypes:
+        really_do_it(args, hashtype)
 
 
 def main():

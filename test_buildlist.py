@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
-
 # test_build_list.py
 
+""" Test basic buildlist functionality. """
+
 import os
-import sys
 import time
 import unittest
-from Crypto.PublicKey import RSA
-
 from argparse import ArgumentParser
+
+from Crypto.PublicKey import RSA
 
 from rnglib import SimpleRNG
 from xlattice import HashTypes, check_hashtype
@@ -17,16 +17,13 @@ from buildlist import BuildList
 
 
 class TestBuildList(unittest.TestCase):
+    """ Test basic buildlist functionality. """
 
     def setUp(self):
         self.rng = SimpleRNG(time.time())
 
     def tearDown(self):
         pass
-
-    # utility functions #############################################
-
-    # actual unit tests #############################################
 
     def expect_exception(self, path_to_dir):
         # DEBUG
@@ -96,7 +93,7 @@ class TestBuildList(unittest.TestCase):
         # END
 
         bl2 = BuildList.parse(bl_string, hashtype)
-        bl_string2 = bl2.__str__()
+        #bl_string2 = bl2.__str__()
         tree_string2 = bl2.tree.__str__()
         # DEBUG
         # print("ROUNDTRIPPED:\n%s" % bl_string2)

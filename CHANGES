@@ -1,5 +1,10 @@
 ~/dev/py/buildList/CHANGES
 
+v0.9.0
+    2017-01-18
+        * use new rnglib PEP 8 names
+        * use new xlattice.DirStruc
+        * minor bug fixes, pylinting                                SLOC 2145
 v0.8.10
     2017-01-11
         * dropped redundant utility files                           SLOC 2146
@@ -262,6 +267,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 
