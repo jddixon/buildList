@@ -14,6 +14,7 @@ from argparse import ArgumentParser
 from Crypto.PublicKey import RSA
 from rnglib import SimpleRNG
 
+from optionz import dump_options
 from xlattice import HashTypes, check_hashtype
 from xlattice.lfs import touch
 from xlattice.util import make_ex_re
@@ -220,11 +221,7 @@ def main():
     # maybe show options and such -----------------------------------
     if args.verbose or args.just_show:
         print("%s %s" % (app_name, __version_date__))
-
-    if args.verbose or args.just_show:
-        print('ex_dir        = ' + str(args.ex_dir))
-        print('force        = ' + str(args.force))
-        print('verbose      = ' + str(args.verbose))
+        print(dump_options(args))
 
     if args.just_show:
         sys.exit(0)
