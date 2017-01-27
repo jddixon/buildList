@@ -9,8 +9,10 @@ import sys
 
 from argparse import ArgumentParser
 from shutil import rmtree
-from xlattice import check_u_path, HashTypes
+
+from optionz import dump_options
 from buildlist import __version__, __version_date__, BuildList
+from xlattice import check_u_path, HashTypes
 
 
 def make_data_dir(options):
@@ -187,19 +189,7 @@ def main():
     # maybe show options and such -----------------------------------
     if args.verbose or args.just_show:
         print("%s %s" % (args.app_name, __version_date__))
-
-    if args.verbose or args.just_show:
-        print('app_name     = ' + str(args.app_name))
-        print('data_dir     = ' + str(args.data_dir))
-        print('exclusions   = ' + str(args.exclusions))
-        print('force        = ' + str(args.force))
-        print('key_file     = ' + str(args.key_file))
-        print('list_file    = ' + str(args.list_file))
-        print('match_on     = ' + str(args.match_on))
-        print('testing      = ' + str(args.testing))
-        print('u_path       = ' + str(args.u_path))
-        print('verbose      = ' + str(args.verbose))
-        print('verifying    = %s' % (args.key_file != ''))
+        print(dump_options(args))
 
     if args.just_show:
         sys.exit(0)

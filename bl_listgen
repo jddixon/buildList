@@ -12,8 +12,8 @@ import sys
 
 from argparse import ArgumentParser
 
-from xlattice import (check_hashtype, parse_hashtype_etc, fix_hashtype,
-                      show_hashtype_etc)
+from optionz import dump_options
+from xlattice import check_hashtype, parse_hashtype_etc, fix_hashtype
 
 from xlattice.util import get_exclusions, timestamp_now
 from buildlist import(__version__, __version_date__, __file__,
@@ -191,27 +191,7 @@ def show_args(args):
     """ Maybe show options and such. """
     if args.verbose or args.just_show:
         print("%s %s" % (args.app_name, __version_date__))
-
-    if args.verbose or args.just_show:
-        print('data_dir     = ' + str(args.data_dir))
-        print('dvcz_dir     = ' + str(args.dvcz_dir))
-        print('excl         = ' + str(args.excl))
-        print('exclusions   = ' + str(args.exclusions))
-        print('ignore_file  = ' + str(args.ignore_file))
-        print('just_show    = ' + str(args.just_show))
-        print('key_file     = ' + str(args.key_file))
-        print('list_file    = ' + str(args.list_file))
-        print('logging      = ' + str(args.logging))
-        print('timestamp    = ' + str(args.now))
-        print('testing      = ' + str(args.testing))
-        print('title        = ' + str(args.title))
-        print('u_path       = ' + str(args.u_path))
-        show_hashtype_etc(args)
-
-        if args.matchPat and len(args.matchPat) > 0:
-            print("match:")
-            for match in args.matchPat:
-                print("    %s" % match)
+        print(dump_options(args))
 
     if args.just_show:
         sys.exit(0)

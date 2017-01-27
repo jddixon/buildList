@@ -8,8 +8,9 @@ import sys
 
 from argparse import ArgumentParser
 from nlhtree import NLHTree
+from optionz import dump_options
 from xlattice import (check_hashtype, parse_hashtype_etc, fix_hashtype,
-                      show_hashtype_etc, check_u_path)
+                      check_u_path)
 from xlattice.util import get_exclusions, make_ex_re
 
 from buildlist import __version__, __version_date__, BuildList
@@ -20,8 +21,6 @@ def check_build_list(args):
 
     data_dir = args.data_dir  # _without_ trailing slash
     ex_re = make_ex_re(args.excl)
-    list_file = args.list_file
-    # verbose = args.verbose
     u_path = args.u_path
     hashtype = args.hashtype
 
@@ -36,7 +35,7 @@ def check_build_list(args):
 
     # can't use 'r' which converts CRLF to just LF
     try:
-        with open(list_file, 'rb') as file:
+        with open(args.list_file, 'rb') as file:
             data = file.read()
     except:
         (_, last_value, _) = sys.exc_info()
@@ -148,12 +147,7 @@ def main():
     # maybe show options and such -----------------------------------
     if args.verbose or args.just_show:
         print("%s %s" % (app_name, __version_date__))
-
-    if args.verbose or args.just_show:
-        print('data_dir      = ' + str(args.data_dir))
-        print('ignore_file   = ' + str(args.ignore_file))
-        print('list_file     = ' + str(args.list_file))
-        show_hashtype_etc(args)
+        print(dump_options(args))
 
     if args.just_show:
         sys.exit(0)

@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.9.1
+    2017-01-27
+        * adopt optionz:dump_options()                              SLOC 2319
 v0.9.0
     2017-01-18
         * use new rnglib PEP 8 names
@@ -267,6 +270,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 
