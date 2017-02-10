@@ -1,5 +1,18 @@
 ~/dev/py/buildList/TODO
 
+2017-02-09
+    * implement the logic for BuildList.list_gen where using_indir
+    * add SHA3 to hashtypes in test_populate_data_dir.py
+        - this requires a data dir built using SHA3
+    * test_timestamp.py ... doesn't.  It verifies that u.sha1hex()
+        returns the correct value.  
+
+2017-02-04
+    * bl_listgen acquires a new option -I/--using_indir.  Defaults to
+        False.  In either case before posting a file we hash it and 
+        then verify it is not present in UDir at uPpath.  If False, we 
+        write new entries to UDir at u_path.
+
 2017-01-18
     * buildlist/__init__.py accept_content_line is largely stubbed
     * package files need much more pylinting

@@ -1,6 +1,11 @@
 #!/usr/bin/env python3
 # testPopulateDataDir.py
 
+"""
+Test using a BuildList and existing content-keyed store to populate
+a data directory.
+"""
+
 import os
 import time
 import unittest
@@ -17,6 +22,10 @@ from buildlist import BuildList
 
 
 class TestPopulateDataDir(unittest.TestCase):
+    """
+    Test using a BuildList and existing content-keyed store to populate
+    a data directory.
+    """
 
     def setUp(self):
         self.rng = SimpleRNG(time.time())
@@ -38,6 +47,8 @@ class TestPopulateDataDir(unittest.TestCase):
     # actual unit tests #############################################
 
     def do_pop_test(self, hashtype):
+        """ Test populating a data directory for a specific hashtype. """
+
         check_hashtype(hashtype)
         # DEBUG
         # print("do_pop_test: %s" % hashtype)
@@ -158,10 +169,17 @@ class TestPopulateDataDir(unittest.TestCase):
         self.assertEqual(bl4.tree, blist.tree)
 
     def test_populate_data_dir(self):
+        """
+        Test populate_data_dir for the supported hashtypes.
+        """
         for hashtype in [HashTypes.SHA1, HashTypes.SHA2]:
             self.do_pop_test(hashtype)
 
     def test_name_space(self):
+        """
+        Verify that ArgumentParser works as expected, specifically
+        that assignment adds a key to the Namespace.
+        """
         parser = ArgumentParser(description='oh hello')
         args = parser.parse_args()
         args._ = 'trash'

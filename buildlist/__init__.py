@@ -45,8 +45,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError', ]
 
-__version__ = '0.9.1'
-__version_date__ = '2017-01-27'
+__version__ = '0.9.2'
+__version_date__ = '2017-02-09'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -199,8 +199,10 @@ def accept_content_line(file, digest, string, root_path, u_path):
     # print("CONTENT: %s" % line)
     # END
     digest.update(line)
-    b64hash = parts[0]
-    path = parts[1]
+
+    # These values are never used:
+    #b64hash = parts[0]
+    #path = parts[1]
 
     # XXX NO CHECK AGAINST root_path
     # XXX NO CHECK AGAINST u_path
@@ -281,34 +283,46 @@ class BuildList(object):
 
     @property
     def ex_re(self):
+        """
+        Return the exclusion regular expression used to create the BuildList.
+        """
         return self._ex_re
 
     @property
     def public_key(self):
+        """
+        Return the public part of the RSA key associated with the BUildLists.
+        """
         return self._public_key
 
     @property
     def signed(self):
+        """ Return whether the BuildList has been signed. """
         return self._dig_sig is not None
 
     @property
     def timestamp(self):
+        """ Return the timestamp on this BuildList formatted as such. """
         return timestamp(self._when)
 
     @property
     def title(self):
+        """ Return the title of this BuildList. """
         return self._title
 
     @property
     def tree(self):
+        """ Return the NLHTree associated with this BuildList. """
         return self._tree
 
     @property
     def hashtype(self):
+        """ Return the hashtype (SHA1, SHA2, etc) of this BuildList. """
         return self._tree.hashtype
 
     @property
     def when(self):
+        """ Return the timestamp on this BuildList as an int. """
         return self._when
 
     @when.setter
@@ -439,6 +453,7 @@ class BuildList(object):
     def create_from_file_system(title, path_to_dir, sk_,
                                 hashtype=HashTypes.SHA2,
                                 ex_re=None, match_re=None):
+        """ Create a BuildList describing a particular directory. """
 
         if (not path_to_dir) or (not os.path.isdir(path_to_dir)):
             raise BLError(
@@ -477,6 +492,10 @@ class BuildList(object):
 
     @staticmethod
     def parse_from_strings(strings, hashtype):
+        """
+        Parse BuildList serialized as an array of strings, returning
+        the original BuildList.
+        """
 
         check_hashtype(hashtype)
 
@@ -548,6 +567,8 @@ class BuildList(object):
         return '\n'.join(strings)
 
     def to_strings(self):
+        """ Serialize the BuildList as an array of strings. """
+
         strings = []
 
         # public key (with embedded newlines)
@@ -593,12 +614,18 @@ class BuildList(object):
                  excl=['build'],
                  logging=False,
                  u_path='',
-                 hashtype=HashTypes.SHA1):     # NOTE default is SHA1
+                 hashtype=HashTypes.SHA1,     # NOTE default is SHA1
+                 using_indir=False):
         """
         Create a BuildList for data_dir with the title indicated.
+
         Files matching the globs in excl will be skipped.  'build'
-        should always be in the list.  If a private key is specified
-        and signing is True, the BuildList will be digitally signed.
+        should always be in the list.  That is, the `build/` directory and
+        its contents, including any subdirectories, are always excluded.
+
+        If a private key is specified and signing is True, the BuildList
+        will be digitally signed.
+
         If u_path is specified, the files in data_dir will be posted to uDir.
         By default SHA1 hash will be used for the digital
         signature.
@@ -680,6 +707,10 @@ class BuildList(object):
         return blist
 
     def populate_data_dir(self, u_path, data_path):
+        """
+        Given a BuildList and a content-keyed directory at u_path,
+        populate a data directory with the files in the BuildList.
+        """
         # u_path path to U, including directory name
         # data_path, path to data_dir, including directory name (which
         #   must be the same as the name of the tree)

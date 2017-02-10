@@ -72,6 +72,9 @@ def get_args():
     parser.add_argument('-d', '--data_dir', default='.',
                         help='data directory for build list (default=./)')
 
+    parser.add_argument('-I', '--using_indir', action='store_true',
+                        help='write to U_PATH/in/USER_ID')
+
     parser.add_argument('-i', '--ignore_file', default='.dvczignore',
                         help='file containing wildcards (globs) for files to ignore')
 
