@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.9.3
+    2017-02-12
+        * add skeletal test_listgen.py                              SLOC 2208
 v0.9.2
     2017-02-09
         * more pylinting                                            SLOC 2164
@@ -273,6 +276,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 
