@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
-
 # buildlist/testTimestamp.py
+
+""" Ostensibly tests BuildList timestamp.  (Why?) """
 
 import hashlib
 import os
@@ -13,6 +14,7 @@ from buildlist import BuildList
 
 
 class TestTimestamp(unittest.TestCase):
+    """ Ostensibly tests BuildList timestamp.  (Why?) """
 
     def setUp(self):
         self.rng = SimpleRNG(time.time())
@@ -20,22 +22,18 @@ class TestTimestamp(unittest.TestCase):
     def tearDown(self):
         pass
 
-    # utility functions #############################################
-
-    # actual unit tests #############################################
-
-    # Note that in the Go code timestamp is an int64, whereas here it
-    # is a string.
-
     def test_sha1_file(self):
+        """
+        Verify functioning of xlattice.u.file_sha1hex().
+        """
 
         blk_count = 1 + self.rng.next_int16(3)     # so 1 to 3
         # last block will usually be only partically populated
         byte_count = BuildList.BLOCK_SIZE * (blk_count - 1) +\
             self.rng.next_int16(BuildList.BLOCK_SIZE)
 
-        data = bytearray(byte_count)     # that many null bytes
-        self.rng.next_bytes(data)             # fill with random data
+        data = bytearray(byte_count)        # that many null bytes
+        self.rng.next_bytes(data)           # fill with random data
         d_val = hashlib.new('sha1')
         d_val.update(data)
         hash_ = d_val.hexdigest()

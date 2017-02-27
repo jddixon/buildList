@@ -26,9 +26,7 @@ class TestBuildList(unittest.TestCase):
         pass
 
     def expect_exception(self, path_to_dir):
-        # DEBUG
-        # print("ENTERING expect_exception, path = '%s'" % pathToDir)
-        # END
+        """ Verify that exceptions are raised where they should be. """
         try:
             BuildList.create_from_file_system('anything', path_to_dir, None)
             self.fail("accepted '%s' as pathToDir")
@@ -37,24 +35,8 @@ class TestBuildList(unittest.TestCase):
         except Exception as exc2:
             self.fail("unexpected exception %s" % exc2)
 
-#   def do_test_bad_parts(self):
-#       # we object to absolute paths
-#       self.expect_exception('/')
-#       self.expect_exception('/abc')
-
-#       # and we must object to '.' and '..' path segments in the build list
-#       self.expect_exception('.')
-#       self.expect_exception('..')
-#       self.expect_exception('./')
-#       self.expect_exception('..//')
-#       self.expect_exception('./a')
-#       self.expect_exception('../b')
-#       self.expect_exception('a/.')
-#       self.expect_exception('b/..')
-#       self.expect_exception('a/./b')
-#       self.expect_exception('b/../c')
-
     def do_build_test(self, title, hashtype):
+        """ Test buildlist functionality for specific hash type. """
         check_hashtype(hashtype)
         sk_priv = RSA.generate(1024)
         sk_ = sk_priv.publickey()
@@ -103,10 +85,12 @@ class TestBuildList(unittest.TestCase):
         # self.assertEqual(bl, bl2)     # XXX timestamps may not be equal
 
     def test_build_list(self):
+        """ Test buildlist functionality for suppored hash types. """
         for hashtype in HashTypes:
             self.do_build_test('SHA test', hashtype)
 
     def test_namespace(self):
+        """ Verify that assignments to Namespace work as expected. """
         parser = ArgumentParser(description='oh hello')
         args = parser.parse_args()
         args._ = 'trash'

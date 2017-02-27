@@ -9,9 +9,9 @@ cp .dvcz / version tmp / dvcz
 echo "The build list gets written to tmp/dvcz/lastBuildList."
 echo "You may want to add -u tmp/uDir."
 
-. / blListGen - b lastBuildList                \
+. / bl_listgen - b lastBuildList       \
     - D tmp / dvcz                     \
-    - k example / node / skPriv.pem      \
-    - d example / dataDir              \
+    - k example1 / node / skPriv.pem     \
+    - d example1 / dataDir             \
     - L1                             \
     $@

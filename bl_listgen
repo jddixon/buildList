@@ -27,25 +27,31 @@ def doit(options):
 
     Optionally serialize the BuildList, append to a log, and populate
     the content-keyed store using the selected SHA hash type.
+
+    If options.u_path is None, don't save to u_path.
     """
-    data_dir = options.data_dir
-    dvcz_dir = options.dvcz_dir
-    excl = options.excl
-    key_file = options.key_file
-    list_file = options.list_file
-    logging = options.logging
-    title = options.title
-    u_path = options.u_path      # if None, don't save to u_path
-    hashtype = options.hashtype
 
-    blist = BuildList.list_gen(title, data_dir, dvcz_dir, list_file, key_file,
-                               excl, logging, u_path, hashtype)
+    blist = BuildList.list_gen(
+        title=options.title,
+        data_dir=options.data_dir,
+        dvcz_dir=options.dvcz_dir,
+        list_file=options.list_file,
+        key_file=options.key_file,
+        excl=options.excl,
+        logging=options.logging,
+        u_path=options.u_path,
+        hashtype=options.hashtype,
+        using_indir=options.using_indir)
 
-    print("BuildList written to %s" % os.path.join(dvcz_dir, list_file))
+    print(
+        "BuildList written to %s" %
+        os.path.join(
+            options.dvcz_dir,
+            options.list_file))
 
     # confirm that whatever is in the BuildList is now in u_path
-    if u_path:
-        unmatched = blist.tree.check_in_u_dir(u_path)
+    if options.u_path:
+        unmatched = blist.tree.check_in_u_dir(options.u_path)
         if unmatched:
             for unm in unmatched:
                 print("NOT IN UDIR: ", unm)
@@ -71,6 +77,9 @@ def get_args():
 
     parser.add_argument('-d', '--data_dir', default='.',
                         help='data directory for build list (default=./)')
+
+    parser.add_argument('-I', '--using_indir', action='store_true',
+                        help='write to U_PATH/in/USER_ID')
 
     parser.add_argument('-i', '--ignore_file', default='.dvczignore',
                         help='file containing wildcards (globs) for files to ignore')

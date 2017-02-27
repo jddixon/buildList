@@ -11,16 +11,18 @@ as well as the Java version in
 
 ## bl_bootstrap
 
-A utility for use in testing the buildlist package.  It generates a
-directory tree, `example/` by default, in the current directory.  This
+A utility for use in testing the buildlist package.  It generates a trio
+of data directories with base name `example/` by default, in the current
+directory. Each of `example1/`, `example2/`, and `example3/`
 contains a data directory, `dataDir`; a corresponding BuildList,
-`example.bld`; a secret key in `node`, and a matching content key
+`example.bld`; a secret key in `node/skPriv.pem`, and a matching content key
 directory, `uDir`.  The distribution contains an SHA1 example directory
-under `example1/` and an SHA256 directory as `example2/`.
+under `example1/`, an SHA256 directory as `example2/`, and
+an SHA3-256 (Keccak) directory as `example3/`.
 
     usage: bl_bootstrap [-h] [-e EX_DIR] [-f] [-j] [-v]
 
-    generate a sample data tree, write a build list, and create a corresponding
+    generate a sample data tree, write a BuildList, and create a corresponding
     content-keyed store
 
     optional arguments:
@@ -30,6 +32,8 @@ under `example1/` and an SHA256 directory as `example2/`.
       -f, --force           overwrite any existing example/ directory
       -j, --just_show       show options and exit
       -v, --verbose         be chatty
+
+This script is being replaced by `bl_createtestdata1`.
 
 ## bl_check
 
@@ -41,14 +45,14 @@ directory must be present.
     usage: bl_check [-h] [-b LIST_FILE] [-d DATA_DIR] [-i IGNORE_FILE] [-j] [-1]
                     [-2] [-3] [-u U_PATH] [-v]
 
-    verify integrity of build list, optionally agains root dir and u_path"
+    verify integrity of BuildList, optionally agains root dir and u_path
 
     optional arguments:
       -h, --help            show this help message and exit
       -b LIST_FILE, --list_file LIST_FILE
-                            root directory for build list
+                            root directory for BuildList
       -d DATA_DIR, --data_dir DATA_DIR
-                            root directory for build list
+                            root directory for BuildList
       -i IGNORE_FILE, --ignore_file IGNORE_FILE
                             file containing wildcards (globs) for files to ignore
       -j, --just_show       show options and exit
@@ -77,7 +81,7 @@ Replaces `bl_bootstrap`.  Output is to the xl_testData project directory.
 
     usage: bl_createtestdata1 [-h] [-f] [-j] [-o OUT_PATH] [-v]
 
-    generate a sample data tree, write a build list, and create a corresponding
+    generate a sample data tree, write a BuildList, and create a corresponding
     content-keyed store
 
     optional arguments:
@@ -94,28 +98,33 @@ Replaces `bl_bootstrap`.  Output is to the xl_testData project directory.
 Given a source directory specified by `-r`, writes a buildlist to `LISTFILE`.
 
 If the `-u` option is present, `UPATH` is a directory for the storage of files
-by content key; `blListGen` will copy each file in the build list into that
+by content key; `blListGen` will copy each file in the BuildList into that
 directory if the file is not already present.
+
+If `-u` is present **and** -I is also present, data files will be added
+to `U_PATH/in/USER_ID` instead of to the main directory, allowing files
+to be staged rather than added directly to the main store.
 
 It is usually important to skip some files, **not** adding them to the
 buildlist and the backup directory.  Such files are
 specified with the `-X` option.
 
-    usage: bl_listgen [-h] [-b LIST_FILE] [-D DVCZ_DIR] [-d DATA_DIR]
-                       [-i IGNORE_FILE] [-j] [-k KEY_FILE] [-L] [-M MATCHPAT] [-T]
-                       [-t TITLE] [-V] [-1] [-2] [-3] [-u U_PATH] [-v]
-                       [-X EXCLUSIONS]
+    usage: bl_listgen [-h] [-b LIST_FILE] [-D DVCZ_DIR] [-d DATA_DIR] [-I]
+                      [-i IGNORE_FILE] [-j] [-k KEY_FILE] [-L] [-M MATCHPAT] [-T]
+                      [-t TITLE] [-V] [-1] [-2] [-3] [-u U_PATH] [-v]
+                      [-X EXCLUSIONS]
 
-    generate build list for directory, optionally populating u_path
+    generate BuildList for directory, optionally populating u_path
 
     optional arguments:
       -h, --help            show this help message and exit
       -b LIST_FILE, --list_file LIST_FILE
-                            path to build list
+                            path to BuildList
       -D DVCZ_DIR, --dvcz_dir DVCZ_DIR
                             dvcz directory (default=.dvcz)
       -d DATA_DIR, --data_dir DATA_DIR
-                            data directory for build list (default=./)
+                            data directory for BuildList (default=./)
+      -I, --using_indir     write to U_PATH/in/USER_ID
       -i IGNORE_FILE, --ignore_file IGNORE_FILE
                             file containing wildcards (globs) for files to ignore
       -j, --just_show       show options and exit
@@ -126,11 +135,11 @@ specified with the `-X` option.
                             include only files matching this pattern
       -T, --testing         this is a test run
       -t TITLE, --title TITLE
-                            title for build list
+                            title for BuildList
       -V, --showVersion     display version number and exit
-      -1, --using_sha1      using the 160-bit SHA1 hash
-      -2, --using_sha2      using the 256-bit SHA2 (SHA256) hash
-      -3, --using_sha3      using the 256-bit SHA3 (Keccak-256) hash
+      -1, --hashtype1       using the 160-bit SHA1 hash
+      -2, --hashtype2       using the 256-bit SHA2 (SHA256) hash
+      -3, --hashtype3       using the 256-bit SHA3 (Keccak-256) hash
       -u U_PATH, --u_path U_PATH
                             path to uDir
       -v, --verbose         be chatty
@@ -139,7 +148,7 @@ specified with the `-X` option.
 
 ## bl_srcgen
 
-This utility is complementary to `blListGen`: given a build list and
+This utility is complementary to `blListGen`: given a BuildList and
 a backup directory indexed by content key, `blSrcGen` will rebuild the
 source directory.  This can be used, for example, to restore an earlier
 version of a source tree or to switch to another branch.
@@ -147,12 +156,12 @@ version of a source tree or to switch to another branch.
     usage: bl_srcgen [-h] [-b LIST_FILE] [-d DATA_DIR] [-f] [-j] [-k KEY_FILE]
                       [-M MATCH_ON] [-T] [-u U_PATH] [-V] [-v] [-X EXCLUSIONS]
 
-    given a build list and uDir, regenerate the data directory
+    given a BuildList and uDir, regenerate the data directory
 
     optional arguments:
       -h, --help            show this help message and exit
       -b LIST_FILE, --list_file LIST_FILE
-                            where to find the build list
+                            where to find the BuildList
       -d DATA_DIR, --data_dir DATA_DIR
                             where to write the new tree
       -f, --force           do it despite objections
