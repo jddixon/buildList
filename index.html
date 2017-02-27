@@ -24,16 +24,18 @@ as well as the Java version in
 <h2>
 <a id="user-content-bl_bootstrap" class="anchor" href="#bl_bootstrap" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>bl_bootstrap</h2>
 
-<p>A utility for use in testing the buildlist package.  It generates a
-directory tree, <code>example/</code> by default, in the current directory.  This
+<p>A utility for use in testing the buildlist package.  It generates a trio
+of data directories with base name <code>example/</code> by default, in the current
+directory. Each of <code>example1/</code>, <code>example2/</code>, and <code>example3/</code>
 contains a data directory, <code>dataDir</code>; a corresponding BuildList,
-<code>example.bld</code>; a secret key in <code>node</code>, and a matching content key
+<code>example.bld</code>; a secret key in <code>node/skPriv.pem</code>, and a matching content key
 directory, <code>uDir</code>.  The distribution contains an SHA1 example directory
-under <code>example1/</code> and an SHA256 directory as <code>example2/</code>.</p>
+under <code>example1/</code>, an SHA256 directory as <code>example2/</code>, and
+an SHA3-256 (Keccak) directory as <code>example3/</code>.</p>
 
 <pre><code>usage: bl_bootstrap [-h] [-e EX_DIR] [-f] [-j] [-v]
 
-generate a sample data tree, write a build list, and create a corresponding
+generate a sample data tree, write a BuildList, and create a corresponding
 content-keyed store
 
 optional arguments:
@@ -44,6 +46,8 @@ optional arguments:
   -j, --just_show       show options and exit
   -v, --verbose         be chatty
 </code></pre>
+
+<p>This script is being replaced by <code>bl_createtestdata1</code>.</p>
 
 <h2>
 <a id="user-content-bl_check" class="anchor" href="#bl_check" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>bl_check</h2>
@@ -56,14 +60,14 @@ directory must be present.</p>
 <pre><code>usage: bl_check [-h] [-b LIST_FILE] [-d DATA_DIR] [-i IGNORE_FILE] [-j] [-1]
                 [-2] [-3] [-u U_PATH] [-v]
 
-verify integrity of build list, optionally agains root dir and u_path"
+verify integrity of BuildList, optionally agains root dir and u_path
 
 optional arguments:
   -h, --help            show this help message and exit
   -b LIST_FILE, --list_file LIST_FILE
-                        root directory for build list
+                        root directory for BuildList
   -d DATA_DIR, --data_dir DATA_DIR
-                        root directory for build list
+                        root directory for BuildList
   -i IGNORE_FILE, --ignore_file IGNORE_FILE
                         file containing wildcards (globs) for files to ignore
   -j, --just_show       show options and exit
@@ -96,7 +100,7 @@ containing raw data files of random length and then corresponding</p>
 
 <pre><code>usage: bl_createtestdata1 [-h] [-f] [-j] [-o OUT_PATH] [-v]
 
-generate a sample data tree, write a build list, and create a corresponding
+generate a sample data tree, write a BuildList, and create a corresponding
 content-keyed store
 
 optional arguments:
@@ -115,28 +119,33 @@ optional arguments:
 <p>Given a source directory specified by <code>-r</code>, writes a buildlist to <code>LISTFILE</code>.</p>
 
 <p>If the <code>-u</code> option is present, <code>UPATH</code> is a directory for the storage of files
-by content key; <code>blListGen</code> will copy each file in the build list into that
+by content key; <code>blListGen</code> will copy each file in the BuildList into that
 directory if the file is not already present.</p>
+
+<p>If <code>-u</code> is present <strong>and</strong> -I is also present, data files will be added
+to <code>U_PATH/in/USER_ID</code> instead of to the main directory, allowing files
+to be staged rather than added directly to the main store.</p>
 
 <p>It is usually important to skip some files, <strong>not</strong> adding them to the
 buildlist and the backup directory.  Such files are
 specified with the <code>-X</code> option.</p>
 
-<pre><code>usage: bl_listgen [-h] [-b LIST_FILE] [-D DVCZ_DIR] [-d DATA_DIR]
-                   [-i IGNORE_FILE] [-j] [-k KEY_FILE] [-L] [-M MATCHPAT] [-T]
-                   [-t TITLE] [-V] [-1] [-2] [-3] [-u U_PATH] [-v]
-                   [-X EXCLUSIONS]
+<pre><code>usage: bl_listgen [-h] [-b LIST_FILE] [-D DVCZ_DIR] [-d DATA_DIR] [-I]
+                  [-i IGNORE_FILE] [-j] [-k KEY_FILE] [-L] [-M MATCHPAT] [-T]
+                  [-t TITLE] [-V] [-1] [-2] [-3] [-u U_PATH] [-v]
+                  [-X EXCLUSIONS]
 
-generate build list for directory, optionally populating u_path
+generate BuildList for directory, optionally populating u_path
 
 optional arguments:
   -h, --help            show this help message and exit
   -b LIST_FILE, --list_file LIST_FILE
-                        path to build list
+                        path to BuildList
   -D DVCZ_DIR, --dvcz_dir DVCZ_DIR
                         dvcz directory (default=.dvcz)
   -d DATA_DIR, --data_dir DATA_DIR
-                        data directory for build list (default=./)
+                        data directory for BuildList (default=./)
+  -I, --using_indir     write to U_PATH/in/USER_ID
   -i IGNORE_FILE, --ignore_file IGNORE_FILE
                         file containing wildcards (globs) for files to ignore
   -j, --just_show       show options and exit
@@ -147,11 +156,11 @@ optional arguments:
                         include only files matching this pattern
   -T, --testing         this is a test run
   -t TITLE, --title TITLE
-                        title for build list
+                        title for BuildList
   -V, --showVersion     display version number and exit
-  -1, --using_sha1      using the 160-bit SHA1 hash
-  -2, --using_sha2      using the 256-bit SHA2 (SHA256) hash
-  -3, --using_sha3      using the 256-bit SHA3 (Keccak-256) hash
+  -1, --hashtype1       using the 160-bit SHA1 hash
+  -2, --hashtype2       using the 256-bit SHA2 (SHA256) hash
+  -3, --hashtype3       using the 256-bit SHA3 (Keccak-256) hash
   -u U_PATH, --u_path U_PATH
                         path to uDir
   -v, --verbose         be chatty
@@ -162,7 +171,7 @@ optional arguments:
 <h2>
 <a id="user-content-bl_srcgen" class="anchor" href="#bl_srcgen" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>bl_srcgen</h2>
 
-<p>This utility is complementary to <code>blListGen</code>: given a build list and
+<p>This utility is complementary to <code>blListGen</code>: given a BuildList and
 a backup directory indexed by content key, <code>blSrcGen</code> will rebuild the
 source directory.  This can be used, for example, to restore an earlier
 version of a source tree or to switch to another branch.</p>
@@ -170,12 +179,12 @@ version of a source tree or to switch to another branch.</p>
 <pre><code>usage: bl_srcgen [-h] [-b LIST_FILE] [-d DATA_DIR] [-f] [-j] [-k KEY_FILE]
                   [-M MATCH_ON] [-T] [-u U_PATH] [-V] [-v] [-X EXCLUSIONS]
 
-given a build list and uDir, regenerate the data directory
+given a BuildList and uDir, regenerate the data directory
 
 optional arguments:
   -h, --help            show this help message and exit
   -b LIST_FILE, --list_file LIST_FILE
-                        where to find the build list
+                        where to find the BuildList
   -d DATA_DIR, --data_dir DATA_DIR
                         where to write the new tree
   -f, --force           do it despite objections
