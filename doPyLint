@@ -1,4 +1,4 @@
 pylint setup.py buildlist                                               \
-    bl_bootstrap bl_check bl_createtestdata1 bl_listgen bl_srcgen   \
-    test*.py
+    src/bl_bootstrap src/bl_check src/bl_createtestdata1 src/bl_listgen src/bl_srcgen   \
+    tests/test*.py
 

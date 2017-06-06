@@ -37,7 +37,7 @@ def check_build_list(args):
     try:
         with open(args.list_file, 'rb') as file:
             data = file.read()
-    except:
+    except BaseException:
         (_, last_value, _) = sys.exc_info()
         print("can't open list file: %s" % last_value)
         ok_ = False
@@ -47,7 +47,7 @@ def check_build_list(args):
     if ok_:
         try:
             blist = BuildList.parse(text, hashtype)
-        except:
+        except BaseException:
             (_, last_value, _) = sys.exc_info()
             print("Exception: %s" % last_value)
             ok_ = False

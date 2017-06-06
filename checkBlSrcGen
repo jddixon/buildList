@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./bl_src_gen  \
+./bl_srcgen  \
             -b tmp/junk.bld         \
             -f                      \
             -r tmp/dataDir          \

@@ -1,5 +1,11 @@
 ~/dev/py/buildList/TODO
 
+2017-06-02
+    * test_timestamp.py doesn't test that at all; rename or drop.
+
+2017-03-17
+    * BLParseFailed etc should subclass BLError
+
 2017-02-09
     * implement the logic for BuildList.list_gen where using_indir
     * add SHA3 to hashtypes in test_populate_data_dir.py

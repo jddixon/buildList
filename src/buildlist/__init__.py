@@ -45,8 +45,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError', ]
 
-__version__ = '0.9.4'
-__version_date__ = '2017-02-26'
+__version__ = '0.9.5'
+__version_date__ = '2017-06-06'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 

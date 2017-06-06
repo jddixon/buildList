@@ -3,6 +3,8 @@
 dir:ign:cover
 dir:pkg:buildlist
 dir:local:example
+dir:std:src
+dir:std:tests
 
 txt:std:LICENSE-MIT.md
 

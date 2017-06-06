@@ -1,4 +1,4 @@
-# bindex/checkCoverage
+# builtlist/checkCoverage
 
 # see coverage.readthedocs.io/en/latestt/config.html
 #
@@ -10,4 +10,4 @@ nosetests \
     --cover-branches \
     --cover-inclusive  \
     --cover-package=buildlist   \
-    test*.py 
+    tests/test*.py 

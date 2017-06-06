@@ -6,7 +6,7 @@
 import re
 from distutils.core import setup
 __version__ = re.search(r"__version__\s*=\s*'(.*)'",
-                        open('buildlist/__init__.py').read()).group(1)
+                        open('src/buildlist/__init__.py').read()).group(1)
 
 # see http://docs.python.org/distutils/setupscript.html
 
@@ -15,10 +15,10 @@ setup(name='buildlist',
       author='Jim Dixon',
       author_email='jddixon@gmail.com',
       py_modules=[],
-      packages=['buildlist'],
+      packages=['src/buildlist'],
       # following could be in scripts/ subdir
-      scripts=['bl_bootstrap', 'bl_check', 'bl_createtestdata1',
-               'bl_listgen', 'bl_srcgen', ],
+      scripts=['src/bl_bootstrap', 'src/bl_check', 'src/bl_createtestdata1',
+               'src/bl_listgen', 'src/bl_srcgen', ],
       description='digitally signed indented list of content keys',
       url='https://jddixon.github.com/buildlist',
       classifiers=[

@@ -143,7 +143,7 @@ def check_args(parser, args):
             if args.force:
                 try:
                     rmtree(data_dir)
-                except:
+                except BaseException:
                     (_, last_value, _) = sys.exc_info()
 
                     print("tried to delete %s; ignoring %s" % (
@@ -196,6 +196,7 @@ def main():
 
     # do what's required --------------------------------------------
     make_data_dir(args)
+
 
 if __name__ == '__main__':
     main()
