@@ -6,7 +6,7 @@ then
   
   rm -rf build/* 
   
-  pySloc -L py src/bl_bootstrap src/bl_check src/bl_createtestdata1 src/bl_listgen src/bl_srcgen  -X cover -X htmlcov -X dist -v $@
+  pySloc -L py  -X cover -X htmlcov -X dist -v $@ src/buildlist src/bl_check src/bl_createtestdata1 src/bl_listgen src/bl_srcgen tests/test_buildlist.py tests/test_listgen.py tests/test_populate_data_dir.py tests/test_random_dir.py tests/test_timestamp.py setup.py
 else
   echo "DEV_BASE is not defined"
 fi

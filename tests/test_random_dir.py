@@ -84,5 +84,6 @@ class TestRandomDir(unittest.TestCase):
         for hashtype in HashTypes:
             self.do_test_random_dir(hashtype)
 
+
 if __name__ == '__main__':
     unittest.main()

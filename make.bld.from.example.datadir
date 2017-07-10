@@ -2,7 +2,7 @@
 
 cd ~/dev/py/buildlist
 
-./blListGen -1s                         \
+./bl_listgen -1s                         \
             -b dataDir.bld              \
             -k example/node/ckPriv.pem  \
             -r example/dataDir          \

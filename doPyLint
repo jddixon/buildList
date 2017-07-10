@@ -1,4 +1,8 @@
-pylint setup.py buildlist                                               \
-    src/bl_bootstrap src/bl_check src/bl_createtestdata1 src/bl_listgen src/bl_srcgen   \
-    tests/test*.py
+#!/usr/bin/env bash
 
+if [ ! -z "${DEV_BASE// }" ]
+then
+  pylint setup.py src/* tests/*
+else
+  echo "DEV_BASE is not defined"
+fi

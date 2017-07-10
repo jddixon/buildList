@@ -29,11 +29,11 @@ def really_do_it(args, hashtype):
     ex_dir = args.ex_dir + str(hashtype.value)
     # verbose = args.verbose
 
-    data_dir = os.path.join(ex_dir, 'data_dir')
+    data_dir = os.path.join(ex_dir, 'dataDir')
     list_file = os.path.join(ex_dir, 'example.bld')
     node_dir = os.path.join(ex_dir, 'node')
     title = 'sample build list'
-    u_path = os.path.join(ex_dir, 'u_dir')
+    u_path = os.path.join(ex_dir, 'uDir')
 
     u_tmp = os.path.join(u_path, 'tmp')
 
@@ -94,7 +94,7 @@ def really_do_it(args, hashtype):
     # THIS MODULE IS BEING ABANDONED.  NO MORE WORK NEEDED.
     #######################################################
 
-    blist.tree.save_to_u_dir(data_dir, u_path, hashtype=hashtype)
+    blist.tree.save_to_u_dir(data_dir, u_path, using_indir=False)
     unmatched = blist.tree.check_in_u_dir(u_path)    # all leaf nodes present ?
     if unmatched:
         print("check walk on example/ failed")
@@ -126,7 +126,7 @@ def main():
         exampleN/               # where N is 1 or 2 or 3
             node                # was .xlattice
                 skPriv.pem      # PEM serialization
-            data_dir/
+            dataDir/
                 data1
                 subDir1/
                     data11
@@ -139,7 +139,7 @@ def main():
                     subDir41
                         subDir411
                             data4111
-            data_dir.bld
+            dataDir.bld
             uDir/
                 00
                 ...
@@ -152,22 +152,22 @@ def main():
     sd_priv is the RSA private key used to sign the example.bld
     build list.
 
-    The information under exampleN/data_dir is a small directory tree.
+    The information under exampleN/dataDir is a small directory tree.
     The data* are data files containing quasi-random data.  Both the
     file length and the contents are random.  data12 is an empty file.
     Subdirectory subDir2 is an empty subdirectory.
 
-    data_dir.bld is a build list for data_dir.  The build list contains
+    dataDir.bld is a build list for dataDir.  The build list contains
     the public part of the RSA key used to sign the list, its title,
     and a UTC timestamp, the time at which the list was signed.  The
-    body of the list is an indented list of the files under data_dir/,
+    body of the list is an indented list of the files under dataDir/,
     with a line for each file, each line containing the SHA content
     hash of the document and its title.  The build list ends with a
     digital signature over the earlier part of the document.  In this
     example, the RSA private key used in signing the document in
     contained in node/sd_priv.
 
-    uDir/ contains the same set of files as under data_dir/, but
+    uDir/ contains the same set of files as under dataDir/, but
     instead of being organized by name it is organized by content
     key, by the SHA1 hash of the file.
 
