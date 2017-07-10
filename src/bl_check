@@ -1,0 +1,160 @@
+#!/usr/bin/python3
+# ~/dev/py/buildlist/bl_check
+
+""" Verify the integrity of a BuildList. """
+
+import os
+import sys
+
+from argparse import ArgumentParser
+from nlhtree import NLHTree
+from optionz import dump_options
+from xlattice import (check_hashtype, parse_hashtype_etc, fix_hashtype,
+                      check_u_path)
+from xlattice.util import get_exclusions, make_ex_re
+
+from buildlist import __version__, __version_date__, BuildList
+
+
+def check_build_list(args):
+    """ Verify the integrity of a BuildList. """
+
+    data_dir = args.data_dir  # _without_ trailing slash
+    ex_re = make_ex_re(args.excl)
+    u_path = args.u_path
+    hashtype = args.hashtype
+
+    if data_dir and data_dir[-1] == '/':      # trailing slash
+        data_dir = data_dir[:-1]
+    if u_path and u_path[-1] == '/':          # trailing slash
+        u_path = u_path[:-1]
+
+    blist = None
+    data = None
+    ok_ = True
+
+    # can't use 'r' which converts CRLF to just LF
+    try:
+        with open(args.list_file, 'rb') as file:
+            data = file.read()
+    except BaseException:
+        (_, last_value, _) = sys.exc_info()
+        print("can't open list file: %s" % last_value)
+        ok_ = False
+    text = data.decode('utf-8')
+    if text[-1] == '\n':
+        text = text[0:-1]
+    if ok_:
+        try:
+            blist = BuildList.parse(text, hashtype)
+        except BaseException:
+            (_, last_value, _) = sys.exc_info()
+            print("Exception: %s" % last_value)
+            ok_ = False
+
+    if ok_:
+        if blist.signed:
+            ok_ = blist.verify()
+            if not ok_:
+                print("digital signature verification fails")
+
+    if ok_:
+        hashtype = blist.hashtype
+        # assume ex_re can be ignored
+        my_tree = NLHTree.create_from_file_system(data_dir, hashtype, ex_re)
+        ok_ = my_tree == blist.tree
+        if not ok_:
+            print("BuildList's NLHTree doesn't match %s" % data_dir)
+            print("NLHTree for %s:\n%s" % (data_dir, my_tree))
+            print("NLHTree for BuildList:\n%s" % blist.tree)
+
+    if ok_ and u_path:
+        unmatched = blist.tree.check_in_u_dir(u_path)
+        if unmatched:
+            print("BuildList, data_dir, and u_path are inconsistent")
+            for unm in unmatched:
+                print("  %s is in the tree but not found in u_path" % unm)
+
+    if ok_:
+        print("ok")
+
+
+def main():
+    """
+    Expect a command like
+        bl_check [options]
+
+    """
+
+    # parse the command line ----------------------------------------
+
+    desc = 'verify integrity of BuildList, optionally against root dir and u_path'
+    parser = ArgumentParser(description=desc)
+
+    parser.add_argument('-b', '--list_file',
+                        help='root directory for BuildList')
+
+    parser.add_argument('-d', '--data_dir',
+                        help='root directory for BuildList')
+
+    parser.add_argument('-i', '--ignore_file', default='.gitignore',
+                        help='file containing wildcards (globs) for files to ignore')
+
+    parser.add_argument('-j', '--just_show', action='store_true',
+                        help='show options and exit')
+
+    # -1,-2,-3, hashtype, -v/--verbose
+    parse_hashtype_etc(parser)
+
+    args = parser.parse_args()
+
+    # fixups --------------------------------------------------------
+
+    fix_hashtype(args)
+
+    args.cur_dir = os.getcwd()
+    if os.path.exists(args.ignore_file):
+        args.excl = get_exclusions(args.cur_dir)
+    else:
+        print("WARNING: ignore file '%s' NOT FOUND" % args.ignore_file)
+        args.excl = []
+    if not 'build' in args.excl:
+        args.excl.append('build')
+
+    # sanity checks -------------------------------------------------
+    check_hashtype(args.hashtype)
+    if not args.just_show:
+        if not args.list_file or not os.path.isfile(args.list_file):
+            print("list file %s does not exist" % args.list_file)
+            parser.print_usage()
+            sys.exit(1)
+
+        if (not args.data_dir) or (args.data_dir == ''):
+            print("no root directory specified")
+            parser.print_usage()
+            sys.exit(1)
+
+        if not os.path.isdir(args.data_dir):
+            print("root directory %s does not exist" % args.data_dir)
+            parser.print_usage()
+            sys.exit(1)
+
+        check_u_path(parser, args, must_exist=True)
+
+    # complete setup ------------------------------------------------
+    app_name = 'bl_check %s' % __version__
+
+    # maybe show options and such -----------------------------------
+    if args.verbose or args.just_show:
+        print("%s %s" % (app_name, __version_date__))
+        print(dump_options(args))
+
+    if args.just_show:
+        sys.exit(0)
+
+    # do what's required --------------------------------------------
+    check_build_list(args)
+
+
+if __name__ == '__main__':
+    main()

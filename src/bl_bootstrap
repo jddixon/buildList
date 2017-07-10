@@ -1,0 +1,234 @@
+#!/usr/bin/python3
+# ~/dev/py/buildlist/bl_bootstrap
+
+"""
+Initializes test directories example{1,2,3} which are being replaced by
+the xl_testData project.
+
+"""
+import os
+import shutil
+import sys
+
+from argparse import ArgumentParser
+from Crypto.PublicKey import RSA
+from rnglib import SimpleRNG
+
+from optionz import dump_options
+from xlattice import HashTypes, check_hashtype
+from xlattice.lfs import touch
+from xlattice.util import make_ex_re
+
+from buildlist import __version__, __version_date__, BuildList
+
+
+def really_do_it(args, hashtype):
+    """ Build test data directory for specific SHA hash type. """
+
+    check_hashtype(hashtype)
+    ex_dir = args.ex_dir + str(hashtype.value)
+    # verbose = args.verbose
+
+    data_dir = os.path.join(ex_dir, 'dataDir')
+    list_file = os.path.join(ex_dir, 'example.bld')
+    node_dir = os.path.join(ex_dir, 'node')
+    title = 'sample build list'
+    u_path = os.path.join(ex_dir, 'uDir')
+
+    u_tmp = os.path.join(u_path, 'tmp')
+
+    if os.path.exists(ex_dir):
+        print("deleting existing directory %s" % ex_dir)
+        shutil.rmtree(ex_dir)
+
+    sub_dir1 = os.path.join(data_dir, 'subDir1')
+    sub_dir2 = os.path.join(data_dir, 'subDir2')
+    sub_dir3 = os.path.join(data_dir, 'subDir3')
+    sub_dir4 = os.path.join(data_dir, 'subDir4')
+    sub_dir41 = os.path.join(sub_dir4, 'subDir41')
+    sub_dir411 = os.path.join(sub_dir41, 'subDir411')
+
+    for dir_name in [data_dir, node_dir, u_path, u_tmp]:
+        os.makedirs(dir_name, mode=0o755)
+    for dir_name in [sub_dir1, sub_dir2, sub_dir3, sub_dir4]:
+        os.makedirs(dir_name, mode=0o755)
+    os.makedirs(sub_dir41, mode=0o755)
+    os.makedirs(sub_dir411, mode=0o755)
+
+    # files to be populaed with random data
+    rng = SimpleRNG()
+    data1 = os.path.join(data_dir, 'data1')
+    data11 = os.path.join(sub_dir1, 'data11')
+    data2 = os.path.join(data_dir, 'data2')
+    data31 = os.path.join(sub_dir3, 'data31')
+    data4111 = os.path.join(sub_dir411, 'data31')
+
+    for path in [data1, data11, data2, data31, data4111]:
+        count = 16 + rng.next_int16(2048)
+        data = bytearray(count)
+        rng.next_bytes(data)
+        with open(path, 'wb') as file:
+            file.write(data)
+
+    # empty file(s)
+    data12 = os.path.join(sub_dir1, 'data12')
+    for path in [data12]:
+        touch(path)
+
+    # should be >= 2048, but this is just testing
+    sd_priv = RSA.generate(1024)
+    path_to_key = os.path.join(node_dir, "sd_priv.pem")
+    with open(path_to_key, 'wb') as file:
+        file.write(sd_priv.exportKey('PEM'))
+    sk_ = sd_priv.publickey()
+
+    ex_re = make_ex_re(['build', ])
+    blist = BuildList.create_from_file_system(title, data_dir, sk_, hashtype,
+                                              ex_re, match_re=None)
+    blist.sign(sd_priv)
+    bl_ser = blist.__str__()
+    with open(list_file, 'w') as file:
+        file.write(bl_ser)
+
+    #######################################################
+    # THIS MODULE IS BEING ABANDONED.  NO MORE WORK NEEDED.
+    #######################################################
+
+    blist.tree.save_to_u_dir(data_dir, u_path, using_indir=False)
+    unmatched = blist.tree.check_in_u_dir(u_path)    # all leaf nodes present ?
+    if unmatched:
+        print("check walk on example/ failed")
+        for unm in unmatched:
+            print("  %s is not in uDir" % unm)
+
+
+def do_it(args):
+    """ Execute command line options. """
+    ex_dir = args.ex_dir
+    print("This will destroy %s1, %s2, and %s2" % (ex_dir, ex_dir, ex_dir))
+    ok_ = input("OK to proceed? (Y/n)")
+    if ok_:
+        ok_ = ok_.capitalize()
+        if not ok_.startswith('Y'):
+            sys.exit(0)
+
+    for hashtype in HashTypes:
+        really_do_it(args, hashtype)
+
+
+def main():
+    """
+    Expect a command like
+        bl_bootstrap [options]
+
+    This program creates three directory tree like
+
+        exampleN/               # where N is 1 or 2 or 3
+            node                # was .xlattice
+                skPriv.pem      # PEM serialization
+            dataDir/
+                data1
+                subDir1/
+                    data11
+                    data12      # empty
+                data2
+                subDir2/
+                subDir3/
+                    data31
+                subDir4/
+                    subDir41
+                        subDir411
+                            data4111
+            dataDir.bld
+            uDir/
+                00
+                ...
+                ff
+                tmp/
+
+    The example1 directory uses SHA1; example2 uses SHA2 aka SHA-256,
+    and example3 uses SHA3, aka SHA3-256 aka KECCAK-256.
+
+    sd_priv is the RSA private key used to sign the example.bld
+    build list.
+
+    The information under exampleN/dataDir is a small directory tree.
+    The data* are data files containing quasi-random data.  Both the
+    file length and the contents are random.  data12 is an empty file.
+    Subdirectory subDir2 is an empty subdirectory.
+
+    dataDir.bld is a build list for dataDir.  The build list contains
+    the public part of the RSA key used to sign the list, its title,
+    and a UTC timestamp, the time at which the list was signed.  The
+    body of the list is an indented list of the files under dataDir/,
+    with a line for each file, each line containing the SHA content
+    hash of the document and its title.  The build list ends with a
+    digital signature over the earlier part of the document.  In this
+    example, the RSA private key used in signing the document in
+    contained in node/sd_priv.
+
+    uDir/ contains the same set of files as under dataDir/, but
+    instead of being organized by name it is organized by content
+    key, by the SHA1 hash of the file.
+
+    The data under exampleN/ is sufficient to verify the correctness of
+    the build list and the 1-to-1 relationship between the files under
+    exampleN/datadir/ and those under exampleN/uDir/
+
+    """
+    # parse the command line ----------------------------------------
+
+    desc = 'generate sample data tree, write build list, create content-keyed store'
+
+    parser = ArgumentParser(description=desc)
+
+    parser.add_argument('-e', '--ex_dir', default='example',
+                        help='example directory, defaults to example/')
+
+    parser.add_argument('-f', '--force', action='store_true',
+                        help='overwrite any existing example/ directory')
+
+    parser.add_argument('-j', '--just_show', action='store_true',
+                        help='show options and exit')
+
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='be chatty')
+
+    args = parser.parse_args()
+
+    # sanity chesks -------------------------------------------------
+    if args.ex_dir[0] == '/':
+        print("example dir must not be absolute path")
+        parser.print_usage()
+        sys.exit(1)
+    if args.ex_dir[0] == '.':
+        print("example dir name must not begin with dot ('.')")
+        parser.print_usage()
+        sys.exit(1)
+
+    if (not args.force) and os.path.exists(args.ex_dir):
+        print(
+            "example directory %s exists but force (-f) not specified" %
+            args.ex_dir)
+        parser.print_usage()
+        sys.exit(1)
+
+    # fixups --------------------------------------------------------
+
+    # complete setup ------------------------------------------------
+    app_name = 'bl_bootstrap %s' % __version__
+
+    # maybe show options and such -----------------------------------
+    if args.verbose or args.just_show:
+        print("%s %s" % (app_name, __version_date__))
+        print(dump_options(args))
+
+    if args.just_show:
+        sys.exit(0)
+
+    # do what's required --------------------------------------------
+    do_it(args)
+
+
+if __name__ == '__main__':
+    main()

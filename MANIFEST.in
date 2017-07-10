@@ -1,13 +1,14 @@
-# see http://docs.python.org/distutils/sourcedist.html
+include CHANGES LICENSE* MANIFEST.in README* TODO
+include bkp2U countem doPyLint installit pylintrc styleit test.all
+include check* make.bld.from.example.datadir sampleRun
+include doListGen doSrcGen
 
-include netDistrib.conf
-include CHANGES MANIFEST.in README TODO
-include check* countem make.example.bld sampleRun
-include bl_bootstrap bl_check bl_list_gen bl_src_gen
-recursive-include buildlist *.py
-recursive-include example *
+include setup.py
+recursive-include src *
+recursive-include tests *
+recursive-include example1 *
+recursive-include example2 *
+recursive-include example3 *
 recursive-include ghpDoc *
-global-exclude junk* .*swp 
+global-exclude junk* .*swp  *.bak
 prune   .svn
-
-

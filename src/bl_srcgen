@@ -1,0 +1,202 @@
+#!/usr/bin/python3
+#
+# ~/dev/py/buildlist/bl_srcgen
+
+""" Given a BuildList and a content-keyed store uDir, create data directory. """
+
+import os
+import sys
+
+from argparse import ArgumentParser
+from shutil import rmtree
+
+from optionz import dump_options
+from buildlist import __version__, __version_date__, BuildList
+from xlattice import check_u_path, HashTypes
+
+
+def make_data_dir(options):
+    """
+    Given a BuildList and a content-keyed store uDir, create data directory.
+    """
+
+    data_path = options.data_path
+    key_file = options.key_file
+    list_file = options.list_file
+    # testing = options.testing
+    u_path = options.u_path
+    # verbose = options.verbose
+
+    verifying = key_file != ''                  # XXX UNUSED
+
+    if data_path and data_path[-1] == '/':      # trailing slash
+        data_path = data_path[:-1]
+    if u_path and u_path[-1] == '/':            # trailing slash
+        u_path = u_path[:-1]
+
+    with open(list_file, 'r') as file:
+        data = file.read()
+    blist = BuildList.parse(data, hashtype=HashTypes.SHA1)  # XXX THINK
+
+    blist.populate_data_dir(u_path, data_path)
+
+
+def get_args():
+    """ Parse the command line, returning parser and arg list. """
+
+    # program defaults ----------------------------------------------
+
+    app_name = 'bl_srcgen %s' % __version__
+    key_path = os.path.join(os.environ['DVCZ_PATH_TO_KEYS'], 'skPriv.pem')
+    u_path = os.environ['DVCZ_UDIR']
+
+    # parse the command line ----------------------------------------
+
+    desc = 'Given a build list and uDir, regenerate the data directory.'
+    parser = ArgumentParser(description=desc)
+
+    parser.add_argument('-b', '--list_file',
+                        help='where to find the  build list')
+
+    parser.add_argument('-d', '--data_dir',
+                        help='where to write the new tree')
+
+    parser.add_argument('-f', '--force', action='store_true',
+                        help='do it despite objections')
+
+    parser.add_argument('-j', '--just_show', action='store_true',
+                        help='show options and exit')
+
+    parser.add_argument('-k', '--key_file', default=key_path,
+                        help='path to RSA key for verifying dig sig')
+
+    # NOT CURRENTLY SUPPORTED (may never be)
+    parser.add_argument('-M', '--match_on', action='append',
+                        help='include only files matching this pattern')
+
+    parser.add_argument('-T', '--testing', action='store_true',
+                        help='this is a test run')
+
+    parser.add_argument('-u', '--u_path', default=u_path,
+                        help='path to uDir (relative to tmp/ if testing)')
+
+    parser.add_argument('-V', '--show_version', action='store_true',
+                        help='display version number and exit')
+
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='be chatty')
+
+    parser.add_argument(
+        '-X', '--exclusions', action='append',
+        help='do not include files/directories matching this pattern')
+
+    args = parser.parse_args()
+    args.app_name = app_name
+    if args.show_version:
+        print(args.app_name)
+        sys.exit(0)
+
+    return parser, args
+
+
+def check_args(parser, args):
+    """ Check argument list, making corrections or exiting as appropriate. """
+
+    # fixups --------------------------------------------------------
+    if args.testing and args.data_dir:
+        if args.data_dir[0] == '/':
+            args.data_dir = args.data_dir[1:]
+        args.data_dir = os.path.join('tmp', args.data_dir)
+
+    if args.testing and args.u_path:
+        if args.u_path[0] == '/':
+            args.u_path = args.u_path[1:]
+        args.u_path = os.path.join('tmp', args.u_path)
+
+    # sanity checks -------------------------------------------------
+    check_u_path(parser, args, must_exist=True)
+
+    def give_up(msg):
+        """ Display message, print usage, and exit. """
+        print(msg)
+        parser.print_usage()
+        sys.exit(1)
+
+    if not args.just_show:
+
+        # data_dir -----------------------------------------
+        data_dir = args.data_dir
+
+        if data_dir is None or data_dir == '':
+            give_up("you must specify a data directory")
+
+        if data_dir[0] == '/':
+            give_up("data_dir may not be an absolute path")
+
+        if data_dir.find('..') != -1:
+            give_up("path to data directory may not contain '..'")
+
+        if os.path.exists(data_dir):
+            if not os.path.isdir(data_dir):
+                give_up("data_dir %s exists and is not a directory" % data_dir)
+
+            if args.force:
+                try:
+                    rmtree(data_dir)
+                except BaseException:
+                    (_, last_value, _) = sys.exc_info()
+
+                    print("tried to delete %s; ignoring %s" % (
+                        data_dir, last_value))
+            else:
+                give_up(
+                    "data directory '%s' already exists; add -f to continue" %
+                    data_dir)
+
+        # u_path --------------------------------------------
+        if not args.u_path:
+            give_up("you must specify u_path")
+        elif os.path.exists(args.u_path) and not os.path.isdir(args.u_path):
+            give_up("u_path %s is not a directory" % args.u_path)
+
+        if not os.path.exists(args.u_path):
+            # XXX could/should check path
+            os.mkdir(args.u_path, 0o755)
+
+        # list_file ----------------------------------------
+        if not args.list_file or args.list_file == '':
+            give_up('no build list file specified')
+
+        if args.testing:
+            if args.list_file[0] == '/':
+                args.list_file = args.list_file[1:]
+            args.list_file = os.path.join('tmp', args.list_file)
+
+        if not os.path.isfile(args.list_file):
+            give_up("list file %s does not exist" % args.list_file)
+
+
+def main():
+    """
+    Parse the command line, check arguments, carry out the requested actions.
+    """
+
+    parser, args = get_args()
+    check_args(parser, args)
+
+    # complete setup ------------------------------------------------
+
+    # maybe show options and such -----------------------------------
+    if args.verbose or args.just_show:
+        print("%s %s" % (args.app_name, __version_date__))
+        print(dump_options(args))
+
+    if args.just_show:
+        sys.exit(0)
+
+    # do what's required --------------------------------------------
+    make_data_dir(args)
+
+
+if __name__ == '__main__':
+    main()

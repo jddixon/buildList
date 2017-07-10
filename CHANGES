@@ -1,5 +1,11 @@
 ~/dev/py/buildList/CHANGES
 
+v0.9.6
+    2017-07-10
+        * rewrite setup.py, MANIFEST.in; other minor edits          SLOC 2477
+v0.9.5
+    2017-06-06
+        * restructure for pylint                                    SLOC 2520
 v0.9.4
     2017-02-26
         * update and improve docs                                   SLOC 2692
@@ -279,6 +285,8 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
+
 
 
 

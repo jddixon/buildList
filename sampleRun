@@ -2,4 +2,4 @@
 
 cd ~/dev/py/buildlist
 
-./bl_list_gen -1s -k example/node/skPriv.pem -r example/dataDir 
+./bl_listgen -1s -k example/node/skPriv.pem -r example/dataDir 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./bl_check  \
+src/bl_check  \
             -2                          \
             -b example2/example.bld      \
             -d example2/dataDir          \

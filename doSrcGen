@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. / blSrcGen  - b example / example.bld      \
+. / bl_srcgen - b example / example.bld      \
     - u example / uDir             \
     - k example / node / skPriv.pem  \
     - d test / dataDir             \
