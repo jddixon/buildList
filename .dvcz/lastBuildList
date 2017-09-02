@@ -7,8 +7,8 @@ Giaje1YAJPNVBt3dlOA5lhBp4GpSYBskJ9UR2Zyt3lgAGK3dEwxYETLMh9VWEV8i
 k2lyCIE/V/CDb9eVDYQgYSJYrnQ/JAPST7NbcY8aI+/0l7QVBhLBpmOCvmS6ofvz
 /QIDAQAB
 -----END PUBLIC KEY-----
-buildlist v0.9.6
-2017-07-10 19:50:31
+buildlist v0.9.7
+2017-09-02 21:56:14
 # BEGIN CONTENT #
 buildlist
  -
@@ -17,19 +17,19 @@ buildlist
    cache
     lastfailed bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f
  .dvcz
-  builds f2c9704fff3d5b2bcd6d9f901d70762c7a517b19
+  builds e4dbf1e91aa32ab8d7c7fa55402f95b57a63ea9d
   copyright 4d8d885e40d66a840aa68d7d17b7007f41270444
-  lastBuildList 544329bf0e3d018ad709f7843de0d45bc2d932a8
+  lastBuildList 32dfdf9fc9c0cb27906fc620d30e96fb06422620
   license 5977a55c75bb4612004451a56b0b4c22d9d3311d
-  projCfg 75bf659313f6c69b17287e33e86862662e760d99
+  projCfg 1030f0b81cf780a10c515c011339ee7c32a674d4
   projCfg.local 2c8caf28b64c12ac367c23e6a597784940840d4a
-  version 7acb91bd3b33d84c74af16af5003d8102a83dbad
- .gitignore 5185a3cb0539828e50edfc25d60c80ae291197fa
- CHANGES cf05f63f4299c084d7d40b55a475b5b7eebfa4dd
+  version 66fa286ad4512429d640e7c679ea4d8ec0ba2309
+ .gitignore c8129c7133b7a7755cefd3dfc62a9af7bc306aa0
+ CHANGES 6e55c63afb8a7ac0515a85e7c599b604c2064d52
  LICENSE-MIT.md dbe8833d7e1124b4e47613ba1e39a66ccc03dd80
- MANIFEST.in d022a228ee960897d80794d5d9edcdeb25ad339f
+ MANIFEST.in ee87ecf6928c0c4c69376734eba9cf532ce748b1
  README.md 2ff0785ebb5a0a1230d31a053f02c69043817b8b
- TODO 414d303d9df21194577c9ae2a67565eadeee96fb
+ TODO e5732ae54c2e359b677a2e25ff8d199a6611c994
  bkp2U a9b8b07a1323873a1e4c6c2ba61458690d770386
  checkBlSrcGen b88c44a34d84e3b08873b2c2bec56b544f04b87a
  checkCoverage 83fe8f5710920e3607ce18a3ea2fff262e209a60
@@ -37,7 +37,7 @@ buildlist
  checkExample2 9f00492d13b884f124959f41a589df14870bc77c
  checkExample3 ea8bb78e5e5f9e456f12e5891786f076415cc1db
  checkTestData dbdbf40b1e5d48db8973b2d56a1498c02071a7d0
- countem 370f0dac6c1d6c6963b660f6aa300023386f92dc
+ countem 148e48e0b43ff9f0000d9ca8d30299f7207e493e
  doListGen a4d307068b6466a4098d9cebdf98309626594b26
  doPyLint 31321ad99eb3b9ac0928a68c29a8b5b88c9472fb
  doSrcGen db8e3e7d8ce3f37378a3db3786eb185f66b7f449
@@ -134,8 +134,9 @@ buildlist
  installit 710bd42056e79654ee2bf4a1b88beeea257c0b68
  make.bld.from.example.datadir 72d1094f0b3e5b6c63652e314af4c2bc6e00bd61
  pylintrc dd234fda24a547a9071f1e4608a3c1f3b7de9aa0
+ requirements.txt 5bee36d22d260ee1e36270029a79ccf9289fd94c
  sampleRun 702757fa8f32dbd57e139661d53f7838f6792a41
- setup.py e8d286ab1a9a2483f57fc237a9bfdbb8c4a11d86
+ setup.py 403f72b36f3103b8667221cac79a91268d817513
  src
   bl_bootstrap 4bd2d27a6f47f385b06c4e2cc133d4fd60e4a971
   bl_check 25025560c1cbd5107ca1aa402459ea68fca179c1
@@ -143,15 +144,17 @@ buildlist
   bl_listgen 896627a879270f3f427189bc9c38dd5cc5268039
   bl_srcgen 91e897a1b209f77edd88af6c17596d4b9aad27ff
   buildlist
-   __init__.py 3c5972c205a3585276c362c5e3193684f9b4e68e
+   __init__.py 87573e86e5930b589e5c40467d89d643be66c27d
  styleit 4c8f77e032d5cd353d1d348502d0254c9f84461d
  test.all 41b5c0e1846b2724593c3596711f8757b3872176
+ test_requirements.txt b1d886535da0309771ee244131350c9ecb16882b
  tests
-  test_buildlist.py 3fa7ac1ed9bcbed487b0126c0b8f9e7b302b3873
-  test_listgen.py 2dbbec75a8bc2e0a4f3b18f3a0885b1cb4fe815e
-  test_populate_data_dir.py dc9b406a7ae58e0117debc0b804a036fd0f9974c
-  test_random_dir.py 5ccec974ce45dae727a09d92b012fea808bb63af
+  test_buildlist.py 813cb72b55fe49136b81af76478054ec426a3fa0
+  test_listgen.py 6bfd0623b46d1ea5be3a0f967644a6357e033191
+  test_populate_data_dir.py 9841d81164e8b6362dc186ddb340318c1764e1cb
+  test_random_dir.py fd34c7b048fd73d40d07020d1060af7bfbd54046
   test_timestamp.py da27031ce76477fbddda1094e67ec37e7b628b79
+ tox.ini 73efe1f5caeaab9099cf75ba23a93ffb22446bec
 # END CONTENT #
 
-ef1ZoawfzWiS4A9hRWuvtr1uy0m+lLKvnkzu/agtOqLataz1OVjmJchz8+oGxfaFauEZID5ZGtKSqH7cksb/L5mnj1H8tDCjKxDY2zgdaW6Llou284IAPkVxlYr7hDA2T+kSvQTKE5GwKXgDgJX4yp1d0lCv/9HRFThwiuw+ZSjypEMcn/XQbrmxDF9bAxnnEpZwDdj+x+NYvumFAl+UpkKOdpiHS+r5IWjgpRA/ymrZQtHdFQeOaI3aJOrIhBMp5ytS2fpztPnP/fC5dkUUdk30PFJBf9lM92vUMm1vlu1tGjS0BjMMGkLMT/LcwI/CYIg9py9H8EvdF84HlH/3pg==
+PdCGuwY3CqcVJYaKbIRtjXf75OxUAEhEzWz0KWJ01v/DYiOTIrnb0mtEkAFDoqA4iOVdWVZfCgasUami5pxwcHoLZgkc3+cSEe0xyoe1CLEMkfYuvgfGoCN2/lqlVRE9l0xUKyLdaYZG9lP7qGhp1UQ/gfuDKBsv3cV/3v3uO/I2dQ1kEwSM2+1swl0atFccli1wgW8OaUgnM/wcGUwLP/HwfD+8TR2eLFFLMZmik3Qh6YMNq5AhAudeEO3gkY6hFBFl71/Tk6KJ22+0JEoe1YPLPRRE8h/Z4lq254Y3hjkq4Wd6UbpCepsEoEvDBjda8Q4U75pDnMwRqXK/gj6Ypw==

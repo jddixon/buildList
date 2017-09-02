@@ -1,18 +1,19 @@
 ~/dev/py/buildList/TODO
 
+2017-09-02
+    * need to rm -rf tmp/* before test.all and/or tox
+    * inexplicable 404 linking https://github.com/jddixon/xl_testData
+
 2017-06-02
     * test_timestamp.py doesn't test that at all; rename or drop.
-
 2017-03-17
     * BLParseFailed etc should subclass BLError
-
 2017-02-09
     * implement the logic for BuildList.list_gen where using_indir
     * add SHA3 to hashtypes in test_populate_data_dir.py
         - this requires a data dir built using SHA3
     * test_timestamp.py ... doesn't.  It verifies that u.sha1hex()
         returns the correct value.  
-
 2017-02-04
     * bl_listgen acquires a new option -I/--using_indir.  Defaults to
         False.  In either case before posting a file we hash it and 

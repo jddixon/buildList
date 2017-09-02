@@ -73,7 +73,7 @@ class TestPopulateDataDir(unittest.TestCase):
         # should return an empty list: a basic sanity check
         unmatched = blist.check_in_data_dir(original_data)
         # DEBUG
-        #print("UNMATCHED IN DATA DIR: ", unmatched)
+        # print("UNMATCHED IN DATA DIR: ", unmatched)
         # if len(unmatched) > 0:
         #   print("BL:\n%s" % blist.__str__())
         #   print("in the buildlist, but not in uData:")
@@ -85,7 +85,7 @@ class TestPopulateDataDir(unittest.TestCase):
         # should return an empty list: a basic sanity check
         unmatched = blist.check_in_u_dir(original_u)
         # DEBUG
-        #print("UNMATCHED IN U DIR: ", unmatched)
+        # print("UNMATCHED IN U DIR: ", unmatched)
         if len(unmatched) > 0:
             print("BL:\n%s" % blist.__str__())
             print("in the buildlist, but not in u_dir:")
@@ -113,8 +113,8 @@ class TestPopulateDataDir(unittest.TestCase):
         string = blist.to_string()
         bl2 = BuildList.parse(string, hashtype)     # round-tripped build list
         # DEBUG
-        #print("\nFIRST BUILD LIST:\n%s" % blist)
-        #print("\nSECOND BUILD LIST:\n%s" % bl2)
+        # print("\nFIRST BUILD LIST:\n%s" % blist)
+        # print("\nSECOND BUILD LIST:\n%s" % bl2)
         # END
 
         # string2 = bl2.__str__()
@@ -126,7 +126,7 @@ class TestPopulateDataDir(unittest.TestCase):
         # create empty test directories -------------------
         test_path = self.make_unique('tmp')
         u_path = os.path.join(test_path, 'uDir')
-        _ = UDir.discover(
+        UDir.discover(
             u_path, hashtype=hashtype)  # creates empty UDir
         dvcz_path = os.path.join(test_path, 'dvcz')
         os.mkdir(dvcz_path)
@@ -139,7 +139,7 @@ class TestPopulateDataDir(unittest.TestCase):
         # END
 
         # populate the new dataDir and then the new u_dir --
-        #bl2.populateDataDir(originalU, data_path)
+        # bl2.populateDataDir(originalU, data_path)
         blist.populate_data_dir(original_u, data_path)
         self.assertEqual(len(bl2.check_in_data_dir(data_path)), 0)
 
@@ -155,12 +155,13 @@ class TestPopulateDataDir(unittest.TestCase):
         with open(path_to_list, 'r') as file:
             ser4 = file.read()
         bl4 = BuildList.parse(ser4, hashtype)
-        ser41 = bl4.to_string()
+        # ser41 = bl4.to_string()
+        bl4.to_string()
         # self.assertEqual(ser41, ser4) # FAILS: ser41 is signed, ser4 isn't
 
         # DEBUG
-        #print("recovered from disk:\n%s" % ser4)
-        #print("\nserialized from BuildList:\n%s" % ser41)
+        # print("recovered from disk:\n%s" % ser4)
+        # print("\nserialized from BuildList:\n%s" % ser41)
         # END
 
         self.assertEqual(blist.tree, blist.tree)    # check __eq__
