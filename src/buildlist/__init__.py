@@ -4,9 +4,7 @@
 
 import base64
 import binascii
-import calendar
 import shutil
-import sys
 import time
 
 import os
@@ -16,19 +14,17 @@ except ImportError:
     from scandir import scandir
 
 import hashlib
-import sha3         # XXX should be conditional
 
 from Crypto.PublicKey import RSA
-from Crypto.Hash import SHA, SHA256
+from Crypto.Hash import SHA  # , SHA256
 from Crypto.Signature import PKCS1_PSS
 
-from nlhtree import NLHNode, NLHTree, NLHLeaf
+from nlhtree import NLHTree
 
 from xlattice.crypto import collect_pem_rsa_public_key
-from xlattice.lfs import touch
 from xlattice import HashTypes, check_hashtype
-from xlattice.u import DirStruc, UDir
-from xlattice.util import make_ex_re, parse_timestamp, timestamp, timestamp_now
+from xlattice.u import UDir
+from xlattice.util import make_ex_re, parse_timestamp, timestamp
 
 __all__ = ['__version__', '__version_date__',
            # FUNCTIONS
@@ -45,8 +41,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError', ]
 
-__version__ = '0.9.6'
-__version_date__ = '2017-07-10'
+__version__ = '0.9.7'
+__version_date__ = '2017-09-02'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -156,7 +152,7 @@ def expect_timestamp(file, digest):
     line = expect_list_line(file, "missing timestamp")
     tstamp = parse_timestamp(line)        # can raise ValueError
     # DEBUG
-    #print("TIMESTAMP: %s" % tstamp)
+    # print("TIMESTAMP: %s" % tstamp)
     # END
     digest.update(tstamp)
 
@@ -201,8 +197,8 @@ def accept_content_line(file, digest, string, root_path, u_path):
     digest.update(line)
 
     # These values are never used:
-    #b64hash = parts[0]
-    #path = parts[1]
+    # b64hash = parts[0]
+    # path = parts[1]
 
     # XXX NO CHECK AGAINST root_path
     # XXX NO CHECK AGAINST u_path
@@ -443,8 +439,8 @@ class BuildList(object):
             return other.dig_sig is None
         else:
             # DEBUG
-            #           print("COMPARING DIG SIGS:\nDIG SIG A:\n%s" % self.dig_sig)
-            #           print("DIG SIG B:\n%s" % other.dig_sig)
+            # print("COMPARING DIG SIGS:\nDIG SIG A:\n%s" % self.dig_sig)
+            # print("DIG SIG B:\n%s" % other.dig_sig)
             # END
             return self.dig_sig == other.dig_sig
 
@@ -675,14 +671,15 @@ class BuildList(object):
 
             # insert this BuildList into U
             # DEBUG
-            # print("writing BuildList with hash %s into %s" % (new_hash, u_path))
+            # print("writing BuildList with hash %s into %s" %
+            #       (new_hash, u_path))
             # END
             u_dir = UDir.discover(u_path)
             # DEBUG
             # print("list_gen:")
-            #print("  uDir:      %s" % u_path)
-            #print("  dirStruc:  %s" % UDir.dir_struc_to_name(uDir.dirStruc))
-            #print("  hashtype:  %s" % uDir.hashtype)
+            # print("  uDir:      %s" % u_path)
+            # print("  dirStruc:  %s" % UDir.dir_struc_to_name(uDir.dirStruc))
+            # print("  hashtype:  %s" % uDir.hashtype)
             # END
             (_, hash_back) = u_dir.put_data(new_data, new_hash)
             if hash_back != new_hash:

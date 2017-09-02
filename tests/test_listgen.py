@@ -6,14 +6,14 @@
 import os
 import time
 import unittest
-from argparse import ArgumentParser
+# from argparse import ArgumentParser
 
-from Crypto.PublicKey import RSA
+# from Crypto.PublicKey import RSA
 
 from rnglib import SimpleRNG
 from xlattice import HashTypes
-from xlattice.u import UDir, DirStruc
-from xlattice.util import timestamp
+from xlattice.u import DirStruc  # , UDirf    # NOT YET USED
+# from xlattice.util import timestamp
 from buildlist import BuildList
 
 # We expect this script to be run in $DEV_BASE/py/buildlist
@@ -41,7 +41,8 @@ class TestBuildList(unittest.TestCase):
         # -- RESTRUCTURE and just do this once for each hashtype -- in
         #    other words, this should be in a higher level function, one
         #    which runs a test for each dirstruc
-        blist = BuildList.list_gen(
+        # blist = BuildList.list_gen(   # NOT YET USED
+        BuildList.list_gen(
             title=title,
             data_dir=DATA_DIR,
             # dvcz_dir=         # .dvcz

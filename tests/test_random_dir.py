@@ -20,6 +20,7 @@ from xlattice import HashTypes, u, check_hashtype
 if sys.version_info < (3, 6):
     # pylint:disable=unused-import
     import sha3         # monkey-patches hashlib
+    assert sha3         # suppress warning
 
 
 class TestRandomDir(unittest.TestCase):

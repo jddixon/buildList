@@ -2,8 +2,8 @@
 project:buildlist
 package:buildlist
 mainlang:py
-version:0.9.5
-versionDate:2017-06-06
+version:0.9.6
+versionDate:2017-07-10
 :?dirs?:
 dir:std:ghpDoc
 dir:std:dist
@@ -33,6 +33,9 @@ code:std:pylintrc
 code:std:.coveragerc
 code:std:check.summary
 code:std:MANIFEST.in
+code:std:tox.ini
+code:std:requirements.txt
+code:std:test_requirements.txt
 txt:std:LICENSE-MIT.md
 txt:std:CHANGES
 txt:std:README.md
@@ -52,6 +55,7 @@ bash:local:sampleRun
 bash:local:checkExample1
 bash:local:checkExample3
 bash:local:checkTestData
+py:std:setup.cfg
 py:std:setup.py
 py:local:bl_bootstrap
 py:local:doListGen

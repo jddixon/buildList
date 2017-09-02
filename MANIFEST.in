@@ -1,14 +1,15 @@
-include CHANGES LICENSE* MANIFEST.in README* TODO
-include bkp2U countem doPyLint installit pylintrc styleit test.all
-include check* make.bld.from.example.datadir sampleRun
-include doListGen doSrcGen
+# see http://docs.python.org/distutils/sourcedist.html
 
-include setup.py
+include CHANGES LICENSE* MANIFEST.in README* TODO
+include bkp2U checkCoverage countem doPyLint installit pylintrc styleit test.all
+include tox.ini requirements.txt test_requirements.txt
+include setup.py setup.cfg
+include .gitignore .gitignore.local
 recursive-include src *
 recursive-include tests *
-recursive-include example1 *
-recursive-include example2 *
-recursive-include example3 *
 recursive-include ghpDoc *
-global-exclude junk* .*swp  *.bak
+recursive-include .dvcz *
+recursive-exclude * __pycache__
+recursive-exclude * *.py[co]
+global-exclude junk* .*swp *.bak .cache .coveragerc
 prune   .svn
