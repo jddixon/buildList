@@ -1,2 +1,3 @@
 # buildlist/test_requirements.txt
+pysha3
 

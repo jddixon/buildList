@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.9.8
+    2017-09-11
+        * corrections to tox.ini, *requirements.txt                 SLOC 2673
 v0.9.7
     2017-09-02
         * pep8 etc; add tox.ini, *requirements.txt; minor cfg edits sLOC 2631
@@ -288,6 +291,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 
