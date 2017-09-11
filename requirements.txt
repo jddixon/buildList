@@ -1,4 +1,4 @@
 # buildlist/requirements.txt
-pycrypto
-pysha3
-
+pycrypt
+scandir
+setuptools
