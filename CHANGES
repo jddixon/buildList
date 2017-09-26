@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.9.9
+    2017-09-26
+        * add projConfig.toml, correct setup.py                     SLOC 2748
 v0.9.8
     2017-09-11
         * corrections to tox.ini, *requirements.txt                 SLOC 2673
@@ -291,6 +294,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 
