@@ -1,38 +1,29 @@
-# projConfig.toml for buildlist
-
 [meta]
-    version= '0.1.0'
+version = "0.1.0"
 
 [project]
-    name = 'buildlist'             # external name = distribution name
-    package = 'buildlist'             # internal name
-    main_lang = 'py'
-    version = '0.9.9'
-    version_date = '2017-09-26'
-    author = 'Jim Dixon'
-    author_email = 'jdd@gmail.com'
-    description='digitally signed indented list of content keys'
-    copyright = '2014-2017'
-    dev_status = 'beta'
-    license = 'mit'
-    relpath = 'py/buildlist'
-    state = 'shared'
-    url = 'https://jddixon.github.io/buildlist'
+name = "buildlist"
+package = "buildlist"
+main_lang = "py"
+version = "0.9.10"
+version_date = "2017-11-27"
+author = "Jim Dixon"
+author_email = "jdd@gmail.com"
+description = "digitally signed indented list of content keys"
+copyright = "2014-2017"
+dev_status = "beta"
+license = "mit"
+relpath = "py/buildlist"
+state = "shared"
+url = "https://jddixon.github.io/buildlist"
 
 [py]
-    packages = ['buildlist']
-    package_dir = ['src']
-    test_dir = 'tests'
-    py_modules = []
-    scripts=['src/bl_check', 'src/bl_createtestdata1', 'src/bl_listgen',
-             'src/bl_srcgen']
-    ext_modules = []
-
-    # sdReq output
-    distshare = ['merkletree','nlhtree_py','optionz','rnglib','xlattice_py']
-    requirements=['pycrypt','scandir','setuptools']
-    test_requirements=['pysha3']
-
-    # trove stuff is TBD
-
-
+packages = [ "buildlist",]
+package_dir = [ "src",]
+test_dir = "tests"
+py_modules = []
+scripts = [ "src/bl_check", "src/bl_createtestdata1", "src/bl_listgen", "src/bl_srcgen",]
+ext_modules = []
+distshare = [ "merkletree", "nlhtree_py", "optionz", "rnglib", "xlattice_py",]
+requirements = [ "pycrypt", "scandir", "setuptools",]
+test_requirements = [ "pysha3",]

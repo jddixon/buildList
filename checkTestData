@@ -9,53 +9,53 @@
 # https://github.com/jddixon/xl_testData.
 
 # Wipe and rewrite tmp/testData.
-./bl_createtestdata1 -Tf
+src/bl_createtestdata1 -Tf
 
 # Test the 9 combinations (3 SHA hash types, 3 ways of structuring directories.
 
-./bl_check -1 \
+src/bl_check -1 \
     -d tmp/testData/dataDir \
     -b tmp/testData/derived/sha1/example.bld \
     -u tmp/testData/derived/sha1/DIR_FLAT/uDir
 
-./bl_check -1 \
+src/bl_check -1 \
     -d tmp/testData/dataDir \
     -b tmp/testData/derived/sha1/example.bld \
     -u tmp/testData/derived/sha1/DIR16x16/uDir
 
-./bl_check -1 \
+src/bl_check -1 \
     -d tmp/testData/dataDir \
     -b tmp/testData/derived/sha1/example.bld \
     -u tmp/testData/derived/sha1/DIR256x256/uDir
 
 
-./bl_check -2 \
+src/bl_check -2 \
     -d tmp/testData/dataDir \
     -b tmp/testData/derived/sha2/example.bld \
     -u tmp/testData/derived/sha2/DIR_FLAT/uDir
 
-./bl_check -2 \
+src/bl_check -2 \
     -d tmp/testData/dataDir \
     -b tmp/testData/derived/sha2/example.bld \
     -u tmp/testData/derived/sha2/DIR16x16/uDir
 
-./bl_check -2 \
+src/bl_check -2 \
     -d tmp/testData/dataDir \
     -b tmp/testData/derived/sha2/example.bld \
     -u tmp/testData/derived/sha2/DIR256x256/uDir
 
 
-./bl_check -3 \
+src/bl_check -3 \
     -d tmp/testData/dataDir \
     -b tmp/testData/derived/sha3/example.bld \
     -u tmp/testData/derived/sha3/DIR_FLAT/uDir
 
-./bl_check -3 \
+src/bl_check -3 \
     -d tmp/testData/dataDir \
     -b tmp/testData/derived/sha3/example.bld \
     -u tmp/testData/derived/sha3/DIR16x16/uDir
 
-./bl_check -3 \
+src/bl_check -3 \
     -d tmp/testData/dataDir \
     -b tmp/testData/derived/sha3/example.bld \
     -u tmp/testData/derived/sha3/DIR256x256/uDir
