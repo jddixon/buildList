@@ -6,7 +6,13 @@ then
   
   rm -rf build/* 
   
-  pySloc -L py  -X cover -X htmlcov -X dist -v $@ src/buildlist src/bl_check src/bl_createtestdata1 src/bl_listgen src/bl_srcgen tox.ini requirements.txt test_requirements.txt tests/test_buildlist.py tests/test_listgen.py tests/test_populate_data_dir.py tests/test_random_dir.py tests/test_timestamp.py setup.py
+  pySloc -L py  -X cover -X htmlcov -X dist -v $@ .dvcz/* src/* tests/* \
+      check* do* \
+      bkp2U countem installit styleit test.all \
+      tox.ini requirements.txt test_requirements.txt \
+      pylintrc \
+      ghpDoc/css  \
+      setup.py MANIFEST.in .gitignore*
 else
   echo "DEV_BASE is not defined"
 fi

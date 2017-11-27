@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.9.10
+    2017-11-27
+        * fixed checkTestData and countem scripts                   SLOC 3006
 v0.9.9
     2017-09-26
         * add projConfig.toml, correct setup.py                     SLOC 2748
@@ -294,6 +297,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 
