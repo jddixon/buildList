@@ -28,6 +28,7 @@ def make_data_dir(options):
     # verbose = options.verbose
 
     verifying = key_file != ''                  # XXX UNUSED
+    _ = verifying                               # SUPPRESSS WARNING
 
     if data_path and data_path[-1] == '/':      # trailing slash
         data_path = data_path[:-1]

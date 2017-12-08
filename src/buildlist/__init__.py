@@ -41,8 +41,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError', ]
 
-__version__ = '0.9.10'
-__version_date__ = '2017-11-27'
+__version__ = '0.9.11'
+__version_date__ = '2017-12-08'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -262,10 +262,9 @@ class BuildList(object):
         Take care: we store the binary value but this returns it
         base64-encoded.
         """
-        if self._dig_sig is None:
+        if not self._dig_sig:
             return None
-        else:
-            return base64.b64encode(self._dig_sig).decode('utf-8')
+        return base64.b64encode(self._dig_sig).decode('utf-8')
 
     @dig_sig.setter
     def dig_sig(self, value):
@@ -366,6 +365,7 @@ class BuildList(object):
 
         # Verify that the public key (sk) is the public part of sk_priv,
         # the private RSA key.
+        # pylint: disable=protected-access
         if (not sk_priv) or (not isinstance(sk_priv, RSA._RSAobj)):
             raise BLError("sk_priv is nil or not a valid RSA key")
         if sk_priv.publickey() != self._public_key:
@@ -405,44 +405,21 @@ class BuildList(object):
 
     # EQUALITY ------------------------------------------------------
     def __eq__(self, other):
-        # DEBUG
-        # print("entering BuildList.__eq__")
-        # END
-        if (not other) or (not isinstance(other, BuildList)):
-            # DEBUG
-            # if not other:
-            #    print("other is None")
-            # else:
-            #    print("other is %s" % type(other))
-            # END
+        if (not other) or (not isinstance(other, BuildList)) or \
+                self.title != other.title or \
+                self.public_key != other.public_key:
             return False
-        if self.title != other.title:
-            # DEBUG
-            # print("my title is '%s' but other's is '%s'" % (
-            #    self.title, other.title))
-            # END
-            return False
-        if self.public_key != other.public_key:
-            return False
-        if not self.tree == other.tree:
-            # DEBUG
-            # print("NLHTrees differ")
-            # END
-            return False
-        if self._when != other.when:
-            print(
-                "  my when = %f, other when = %f" %
-                (self._when, other.when))
+        if self.tree != other.tree or \
+                self._when != other.when:
             return False
 
         if self._dig_sig is None:
             return other.dig_sig is None
-        else:
-            # DEBUG
-            # print("COMPARING DIG SIGS:\nDIG SIG A:\n%s" % self.dig_sig)
-            # print("DIG SIG B:\n%s" % other.dig_sig)
-            # END
-            return self.dig_sig == other.dig_sig
+        # DEBUG
+        # print("COMPARING DIG SIGS:\nDIG SIG A:\n%s" % self.dig_sig)
+        # print("DIG SIG B:\n%s" % other.dig_sig)
+        # END
+        return self.dig_sig == other.dig_sig
 
     # SERIALIZATION -------------------------------------------------
     @staticmethod
@@ -451,6 +428,7 @@ class BuildList(object):
                                 ex_re=None, match_re=None):
         """ Create a BuildList describing a particular directory. """
 
+        _ = match_re            # UNUSED, SUPPRESS WARNING
         if (not path_to_dir) or (not os.path.isdir(path_to_dir)):
             raise BLError(
                 "%s does not exist or is not a directory" % path_to_dir)
@@ -630,6 +608,7 @@ class BuildList(object):
         the first line of .dvcz/version.  If that exists, we append
         a space and then the version number to the title.
         """
+        _ = using_indir     # USUSED: SUPPRESS WARNING
         version = '0.0.0'
         path_to_version = os.path.join(dvcz_dir, 'version')
         if os.path.exists(path_to_version):
@@ -654,12 +633,12 @@ class BuildList(object):
             blist.sign(sk_priv)
 
         new_data = blist.__str__().encode('utf-8')
-        # pylint:disable=redefined-variable-type
         if hashtype == HashTypes.SHA1:
             sha = hashlib.sha1()
         elif hashtype == HashTypes.SHA2:
             sha = hashlib.sha256()
         elif hashtype == HashTypes.SHA3:
+            # pylint: disable=maybe-no-member
             sha = hashlib.sha3_256()
         sha.update(new_data)
         new_hash = sha.hexdigest()

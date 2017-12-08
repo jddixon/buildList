@@ -57,7 +57,6 @@ class TestRandomDir(unittest.TestCase):
 
         data = bytearray(max_len)            # that many null bytes
         self.rng.next_bytes(data)            # fill with random data
-        # pylint:disable=redefined-variable-type
         if hashtype == HashTypes.SHA1:
             sha = hashlib.sha1()
         elif hashtype == HashTypes.SHA2:
