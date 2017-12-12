@@ -54,8 +54,10 @@ class TestBuildList(unittest.TestCase):
         )
 
         # THE SAME BUILDLIST IS USED FOR EACH OF THE THREE DIRSTRUCS
+        # UNFINISHED
 
         # Compare the BuildList with
+        # UNFINISHED
 
     def test_build_list(self):
         """ Test listgen functionality for suppored hash types. """

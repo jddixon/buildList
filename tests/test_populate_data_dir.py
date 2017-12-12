@@ -86,7 +86,7 @@ class TestPopulateDataDir(unittest.TestCase):
         unmatched = blist.check_in_u_dir(original_u)
         # DEBUG
         # print("UNMATCHED IN U DIR: ", unmatched)
-        if len(unmatched) > 0:
+        if unmatched:
             print("BL:\n%s" % blist.__str__())
             print("in the buildlist, but not in u_dir:")
             for unm in unmatched:

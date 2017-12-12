@@ -22,6 +22,10 @@ from xlattice.util import make_ex_re
 from buildlist import __version__, __version_date__, BuildList
 
 
+#######################################################
+# THIS MODULE IS BEING ABANDONED.  NO MORE WORK NEEDED.
+#######################################################
+
 def really_do_it(args, hashtype):
     """ Build test data directory for specific SHA hash type. """
 
@@ -89,10 +93,6 @@ def really_do_it(args, hashtype):
     bl_ser = blist.__str__()
     with open(list_file, 'w') as file:
         file.write(bl_ser)
-
-    #######################################################
-    # THIS MODULE IS BEING ABANDONED.  NO MORE WORK NEEDED.
-    #######################################################
 
     blist.tree.save_to_u_dir(data_dir, u_path, using_indir=False)
     unmatched = blist.tree.check_in_u_dir(u_path)    # all leaf nodes present ?

@@ -30,10 +30,10 @@ class TestBuildList(unittest.TestCase):
         try:
             BuildList.create_from_file_system('anything', path_to_dir, None)
             self.fail("accepted '%s' as pathToDir")
-        except RuntimeError as exc:
+        except RuntimeError:
             pass
-        except Exception as exc2:
-            self.fail("unexpected exception %s" % exc2)
+        except Exception as exc:
+            self.fail("unexpected exception %s" % exc)
 
     def do_build_test(self, title, hashtype):
         """ Test buildlist functionality for specific hash type. """
