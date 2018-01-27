@@ -113,7 +113,8 @@ def do_it(args):
         shutil.rmtree(derived_path)
     os.mkdir(derived_path, 0o755)
 
-    for hashtype in [HashTypes.SHA1, HashTypes.SHA2, HashTypes.SHA3]:
+    for hashtype in [HashTypes.SHA1, HashTypes.SHA2,
+                     HashTypes.SHA3, HashTypes.BLAKE2B]:
         ndx = int(hashtype)
         ndx_path = os.path.join(derived_path, 'sha' + str(ndx))
         os.makedirs(ndx_path, mode=0o755)

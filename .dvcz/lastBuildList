@@ -8,22 +8,26 @@ k2lyCIE/V/CDb9eVDYQgYSJYrnQ/JAPST7NbcY8aI+/0l7QVBhLBpmOCvmS6ofvz
 /QIDAQAB
 -----END PUBLIC KEY-----
 buildlist
-2017-12-08 20:29:27
+2018-01-27 23:57:18
 # BEGIN CONTENT #
 buildlist
  -
+ .cache
+  v
+   cache
+    lastfailed bf21a9e8fbc5a3846fb05b4fa0859e0917b2202f
  .dvcz
-  builds ee8f3987acf0c9efa71e3bbebee3ee6515882a46
-  lastBuildList 42de7741caa681b081cad7e0a590e8d09f2d1d1c
+  builds 7e57a6095d26608c7be41756cb9ca6a7d46f80ee
+  lastBuildList 7db14ed858ae2ea39a05939e83e3d747883e9c9e
   projCfg 1030f0b81cf780a10c515c011339ee7c32a674d4
   projCfg.local 2c8caf28b64c12ac367c23e6a597784940840d4a
-  projConfig.toml fc0f36eb38a6089c4ab603900ec84d0d3b2c3b8b
+  projConfig.toml 47ee984b0996949a43f3d23f9983be4a95fc188f
  .gitignore c8129c7133b7a7755cefd3dfc62a9af7bc306aa0
- CHANGES a9688cd589ff9a4d43ecccb098abe7ca9f2ca6e7
+ CHANGES 2e3cc8f327a2dce96409430bab760965c44a3263
  LICENSE-MIT.md dbe8833d7e1124b4e47613ba1e39a66ccc03dd80
  MANIFEST.in ee87ecf6928c0c4c69376734eba9cf532ce748b1
  README.md 2ff0785ebb5a0a1230d31a053f02c69043817b8b
- TODO e5732ae54c2e359b677a2e25ff8d199a6611c994
+ TODO 0d3648a39def4f31b193ed345777ed008494e5db
  bkp2U a9b8b07a1323873a1e4c6c2ba61458690d770386
  checkBlSrcGen b88c44a34d84e3b08873b2c2bec56b544f04b87a
  checkCoverage 83fe8f5710920e3607ce18a3ea2fff262e209a60
@@ -110,6 +114,32 @@ buildlist
    d0941515061723d2028b06feef8477c954f6b6755e8b3b86f71d7b91128f82ca 7b785f8b7b5c29ad5bd39749195b9c52adcdf8de
    df7acd696bd4bae375284fc4c6217f6c41c8b98ddc8d6c0ae483660e9037aa71 46440af2253c6c02e2a3f4e60986534e3b69eb57
    in
+ example4
+  dataDir
+   data1 738366f1f0360b31ba9967d6e62fd613cf749295
+   data2 43a8995e70ba91495c935f13185d939a63f07890
+   subDir1
+    data11 d8242a969280bc0c1136c821fc57e2b0676b7526
+    data12 da39a3ee5e6b4b0d3255bfef95601890afd80709
+   subDir2
+   subDir3
+    data31 7b785f8b7b5c29ad5bd39749195b9c52adcdf8de
+   subDir4
+    subDir41
+     subDir411
+      data31 46440af2253c6c02e2a3f4e60986534e3b69eb57
+  example.bld 115394cdb6255e61a2cebf581c7a608fa8a117a7
+  node
+   sd_priv.pem 23e449d7162dbb623957a87f9748f2e7d8c029a7
+  uDir
+   0e5751c026e543b2e8ab2eb06099daa1d1e5df47778f7787faab45cdf12fe3a8 da39a3ee5e6b4b0d3255bfef95601890afd80709
+   0fa9238e6778eb7b0eef7fc183d21375b7c8a25b89b01e123f65699fd659fcc2 46440af2253c6c02e2a3f4e60986534e3b69eb57
+   5212af5e4649221e87a69b86959c3234ec9bb7696b44e6884db29ecb935ad7a6 738366f1f0360b31ba9967d6e62fd613cf749295
+   6b9f0705ac57cd0cc9ac6503e8c30c550022b0e1924942ec87dcd2a109a750d4 d8242a969280bc0c1136c821fc57e2b0676b7526
+   bb72f15f56d7b12086e9d88f6368db7c6e7e65aaa2a94199bad655734c252c0b 43a8995e70ba91495c935f13185d939a63f07890
+   bc32fcd05545d02108d5118134ec2b9a0244c9da5a2252a1ed81a70db8435808 115394cdb6255e61a2cebf581c7a608fa8a117a7
+   faa939b7fa3ad32bfa8f7302811ebb7993188f0ccb0fe39dabafc71888d9692f 7b785f8b7b5c29ad5bd39749195b9c52adcdf8de
+   in
  ghpDoc
   css
    LICENSE.html5-boilerplate.md ded771b3245b190da0e81c76de5a80d41392c0a6
@@ -130,25 +160,25 @@ buildlist
  pylintrc dd234fda24a547a9071f1e4608a3c1f3b7de9aa0
  requirements.txt 619c45873f0fcf1c86182bac3840bd00f2efd35e
  sampleRun 702757fa8f32dbd57e139661d53f7838f6792a41
- setup.py 99ce9860db04ede7723b98edc459edbb7ff9bd5d
+ setup.py 88ce918b81dbe2ba6b17d31b5f1ace3417d6ae0d
  src
   bl_bootstrap 13ef821877fa2bd5d7accb14b5d9de7a304baa83
   bl_check 25025560c1cbd5107ca1aa402459ea68fca179c1
-  bl_createtestdata1 5b7b9ee78b5a0505b2fb59de3eadb858d572f17f
+  bl_createtestdata1 3aea18f74c2070cd02ce61eebf50a4b41be7fd11
   bl_listgen 896627a879270f3f427189bc9c38dd5cc5268039
   bl_srcgen 138fa029f6c430065c386ce51dac99cc7f3a0ef4
   buildlist
-   __init__.py 5ea1e4324fa66acc8d98bf0eef31ede3835de34a
+   __init__.py dad92ee09790c4972f09fb921f0c2f91a15fd1b5
  styleit 4c8f77e032d5cd353d1d348502d0254c9f84461d
  test.all 41b5c0e1846b2724593c3596711f8757b3872176
  test_requirements.txt 12765e1136cfbfa768904d446d5790708c1fca1e
  tests
-  test_buildlist.py c9453099de32c7e3e4c27fb7b9c0c21ed43fa85f
+  test_buildlist.py 0e49cf5ba198607ad1ac1b347dcb8ed5c0178367
   test_listgen.py 1c3436a5978a563d8865e0efb615cec8d6e57e68
   test_populate_data_dir.py df72c53e0a7315c76ac7750fbed33884553680f8
-  test_random_dir.py 8280be8c7a8761e9e362368e41bdcad6d4eb8353
+  test_random_dir.py 53bcfe8a70ff22f51275c2ea8ac9aad78ce7c3c2
   test_timestamp.py da27031ce76477fbddda1094e67ec37e7b628b79
  tox.ini 8f3482317cd7639ace07fd9ce075bfd976050944
 # END CONTENT #
 
-JSKErQQERfMiO0jKgZGj+Z8kts3v1/XR/qW3AUlicilYDJxV8A/X2icAzAKn8d7VH7cS3ywUBkZGn/5RupEBU2yOiAjbbOpnKGYZLVl/qsk4IzMOHDmZm6vV/LwLzzSEfdyNre/bWtVEdd80+7H7WwqQQJvTohvqE0TAl+3x7nldIavZUvgp3jOBwKBVTmUoK5a58p0jTd7johf+FDSUeOoEG0GHqMY9QDFCQJrW53IFcqqHqAJmqNaJZ/cS6T0rJnJapIAv4XFLsgjhOC1kOgrMRGFgWX3zEdRNB3Mwe6UGUE6Ll1euOdBMK605IwqHYhQ5ME0vyvKuqmUK1Od3uA==
+exuEqXzkekpqViyEbYZE5+nEGSBwq5yPdDYNBQyRkMtNmPyiGYv+IpeXse9Z/mbH6YhCBNqWmKlAhYBxGHnPQ0bnXqUEih4fT+pQDXVzuMFPPWES4ZtvIiZTg/1sDx7yp9ZJLMSJA+7IXoQlRzegauCN/ysuSBjLdQrRkhDjrXKaJMlOsLv8n+t5S11/yvNaInkDb6gTprzqAR3+zQno/dyxmXVSp7i/5NBP5ofd1OklYywRNxCR8vqF9njpHmqyTw0D0UlFpg/1ZF5EGC51jRFjg7qrSiiZ7A4Vm94is6Bu+bES8hvNyie1z9TMeryMbM0J54tzKgNS+IB4xST9aA==
