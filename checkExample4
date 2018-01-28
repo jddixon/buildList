@@ -1,0 +1,8 @@
+#!/bin/bash
+
+src/bl_check  \
+            -B                           \
+            -b example4/example.bld      \
+            -d example4/dataDir          \
+            -u example4/uDir             \
+            $@

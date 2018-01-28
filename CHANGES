@@ -1,5 +1,9 @@
 ~/dev/py/buildList/CHANGES
 
+v0.10.1
+    2018-01-28
+        * add checkExample4
+        * add blake2b stuff to bl_createtestdata1, xl_testData      SLOC 3286
 v0.10.0
     2018-01-27
         * add blake2b support and tests                             SLOC 3248
@@ -303,6 +307,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 
