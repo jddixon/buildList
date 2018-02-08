@@ -41,8 +41,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError', ]
 
-__version__ = '0.9.11'
-__version_date__ = '2017-12-08'
+__version__ = '0.10.1'
+__version_date__ = '2018-01-28'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -640,6 +640,10 @@ class BuildList(object):
         elif hashtype == HashTypes.SHA3:
             # pylint: disable=maybe-no-member
             sha = hashlib.sha3_256()
+        elif hashtype == HashTypes.BLAKE2B:
+            sha = hashlib.blake2b(digest_size=32)
+        else:
+            raise NotImplementedError
         sha.update(new_data)
         new_hash = sha.hexdigest()
         path_to_listing = os.path.join(dvcz_dir, list_file)

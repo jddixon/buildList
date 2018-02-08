@@ -12,7 +12,7 @@ if exists('README.md'):
         LONG_DESC = file.read()
 
 setup(name='buildlist',
-      version='0.9.11',
+      version='0.10.1',
       author='Jim Dixon',
       author_email='jddixon@gmail.com',
       long_description=LONG_DESC,

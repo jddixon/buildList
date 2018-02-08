@@ -47,6 +47,10 @@ class TestBuildList(unittest.TestCase):
             path_to_data = os.path.join('example2', 'dataDir')
         elif hashtype == HashTypes.SHA3:
             path_to_data = os.path.join('example3', 'dataDir')
+        elif hashtype == HashTypes.BLAKE2B:
+            path_to_data = os.path.join('example4', 'dataDir')
+        else:
+            raise NotImplementedError
         blist = BuildList.create_from_file_system(
             'a trial list', path_to_data, sk_, hashtype=hashtype)
 

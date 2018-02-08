@@ -113,9 +113,15 @@ def do_it(args):
         shutil.rmtree(derived_path)
     os.mkdir(derived_path, 0o755)
 
-    for hashtype in [HashTypes.SHA1, HashTypes.SHA2, HashTypes.SHA3]:
+    for hashtype in [HashTypes.SHA1, HashTypes.SHA2,
+                     HashTypes.SHA3, HashTypes.BLAKE2B]:
         ndx = int(hashtype)
-        ndx_path = os.path.join(derived_path, 'sha' + str(ndx))
+        if ndx < 4:
+            ndx_path = os.path.join(derived_path, 'sha' + str(ndx))
+        elif ndx == 4:
+            ndx_path = os.path.join(derived_path, 'blake2b')
+        else:
+            raise RuntimeError("unsupported hashtype %d" % ndx)
         os.makedirs(ndx_path, mode=0o755)
 
         # create and serialize the NLHTree --------------------------
@@ -197,12 +203,12 @@ def main():
                                 subDir411
                                     data4111
                     derived/
-                        sha{1,2,3}/         # three subdirectories
-                            example.nlh     # serialization of NLHTree
-                            example.bld     # serialized BuildList
-                            buildlist.hex   # BuildList.hash()
-                            example.merkle  # serialized
-                            merkle.hex      # returned by merkleize -x
+                        {sha{1,2,3},blake2b}/   # four subdirectories
+                            example.nlh         # serialization of NLHTree
+                            example.bld         # serialized BuildList
+                            buildlist.hex       # BuildList.hash()
+                            example.merkle      # serialized
+                            merkle.hex          # returned by merkleize -x
                             DIR{_FLAT,16x16,256x256}/
                                 uDir/
                                     ...
@@ -229,7 +235,9 @@ def main():
     contained in node/sk_priv.
 
     The notation `{1,2,3}` is an abbreviation for "each of the sequence
-    of string values 1, 2, and 3, taken in turn."
+    of string values 1, 2, and 3, taken in turn."  The more elaborate
+    '{sha{1,2,3},blake2b}' similarly means "each of sha1, sha2, sha3,
+    blake2b, taken in turn".
 
     Each of derived/sha{1,2,3}/DIR{*}/uDir/ includes the set of files
     as dataDir/, but instead of being organized by name the files are

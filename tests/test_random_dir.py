@@ -64,6 +64,10 @@ class TestRandomDir(unittest.TestCase):
         elif hashtype == HashTypes.SHA3:
             # pylint:disable=no-member
             sha = hashlib.sha3_256()
+        elif hashtype == HashTypes.BLAKE2B:
+            sha = hashlib.blake2b(digest_size=32)
+        else:
+            raise NotImplementedError
         sha.update(data)
         hash_ = sha.hexdigest()
         file_name = self.rng.next_file_name(8)
@@ -77,6 +81,10 @@ class TestRandomDir(unittest.TestCase):
             file_hash = u.file_sha2hex(path_to_file)
         elif hashtype == HashTypes.SHA3:
             file_hash = u.file_sha3hex(path_to_file)
+        elif hashtype == HashTypes.BLAKE2B:
+            file_hash = u.file_blake2b_hex(path_to_file)
+        else:
+            raise NotImplementedError
         self.assertEqual(hash_, file_hash)
 
     def test_random_dir(self):

@@ -1,5 +1,9 @@
 ~/dev/py/buildList/TODO
 
+2018-01-27
+    * document blake2b support
+    * add blake2b options to bl_{check,createtestdata1,srcgen}
+    * drop bl_bootstrap
 2017-09-02
     * need to rm -rf tmp/* before test.all and/or tox
     * inexplicable 404 linking https://github.com/jddixon/xl_testData

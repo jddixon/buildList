@@ -61,3 +61,19 @@ src/bl_check -3 \
     -u tmp/testData/derived/sha3/DIR256x256/uDir
 
 
+src/bl_check -B \
+    -d tmp/testData/dataDir \
+    -b tmp/testData/derived/blake2b/example.bld \
+    -u tmp/testData/derived/blake2b/DIR_FLAT/uDir
+
+src/bl_check -B \
+    -d tmp/testData/dataDir \
+    -b tmp/testData/derived/blake2b/example.bld \
+    -u tmp/testData/derived/blake2b/DIR16x16/uDir
+
+src/bl_check -B \
+    -d tmp/testData/dataDir \
+    -b tmp/testData/derived/blake2b/example.bld \
+    -u tmp/testData/derived/blake2b/DIR256x256/uDir
+
+
