@@ -12,8 +12,7 @@ import unittest
 
 from rnglib import SimpleRNG
 from xlattice import HashTypes
-from xlattice.u import DirStruc  # , UDirf    # NOT YET USED
-# from xlattice.util import timestamp
+from xlu import DirStruc  # , UDirf    # NOT YET USED
 from buildlist import BuildList
 
 # We expect this script to be run in $DEV_BASE/py/buildlist

@@ -15,7 +15,8 @@ import hashlib
 
 from buildlist import BuildList
 from rnglib import SimpleRNG
-from xlattice import HashTypes, u, check_hashtype
+from xlattice import HashTypes, check_hashtype
+from xlu import file_sha1hex, file_sha2hex, file_sha3hex, file_blake2b_hex
 
 if sys.version_info < (3, 6):
     # pylint:disable=unused-import
@@ -76,13 +77,13 @@ class TestRandomDir(unittest.TestCase):
             file.write(data)
 
         if hashtype == HashTypes.SHA1:
-            file_hash = u.file_sha1hex(path_to_file)
+            file_hash = file_sha1hex(path_to_file)
         elif hashtype == HashTypes.SHA2:
-            file_hash = u.file_sha2hex(path_to_file)
+            file_hash = file_sha2hex(path_to_file)
         elif hashtype == HashTypes.SHA3:
-            file_hash = u.file_sha3hex(path_to_file)
+            file_hash = file_sha3hex(path_to_file)
         elif hashtype == HashTypes.BLAKE2B:
-            file_hash = u.file_blake2b_hex(path_to_file)
+            file_hash = file_blake2b_hex(path_to_file)
         else:
             raise NotImplementedError
         self.assertEqual(hash_, file_hash)

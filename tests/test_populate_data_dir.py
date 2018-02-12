@@ -16,7 +16,7 @@ from Crypto.PublicKey import RSA
 
 from rnglib import SimpleRNG
 from xlattice import HashTypes, check_hashtype
-from xlattice.u import UDir
+from xlu import UDir
 from xlattice.util import timestamp
 from buildlist import BuildList
 
