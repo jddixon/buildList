@@ -9,7 +9,7 @@ import time
 import unittest
 
 from rnglib import SimpleRNG
-from xlattice import u
+from xlu import file_sha1hex
 from buildlist import BuildList
 
 
@@ -24,7 +24,7 @@ class TestTimestamp(unittest.TestCase):
 
     def test_sha1_file(self):
         """
-        Verify functioning of xlattice.u.file_sha1hex().
+        Verify functioning of xlu.file_sha1hex().
         """
 
         blk_count = 1 + self.rng.next_int16(3)     # so 1 to 3
@@ -43,7 +43,7 @@ class TestTimestamp(unittest.TestCase):
         with open(path_to_file, 'wb') as file:
             file.write(data)
 
-        file_hash = u.file_sha1hex(path_to_file)
+        file_hash = file_sha1hex(path_to_file)
 
         self.assertEqual(hash_, file_hash)
 
