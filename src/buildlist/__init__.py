@@ -23,7 +23,7 @@ from nlhtree import NLHTree
 
 from xlattice.crypto import collect_pem_rsa_public_key
 from xlattice import HashTypes, check_hashtype
-from xlattice.u import UDir
+from xlu import UDir
 from xlattice.util import make_ex_re, parse_timestamp, timestamp
 
 __all__ = ['__version__', '__version_date__',
@@ -41,8 +41,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError', ]
 
-__version__ = '0.10.2'
-__version_date__ = '2018-02-12'
+__version__ = '0.10.3'
+__version_date__ = '2018-02-13'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
