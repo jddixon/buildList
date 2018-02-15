@@ -16,7 +16,7 @@ from rnglib import SimpleRNG
 from xlattice import HashTypes
 from xlattice.lfs import touch
 from xlattice.u import UDir, DirStruc
-from xlattice.util import make_ex_re
+from xlutil import make_ex_re
 #from xlattice import check_hashtype
 
 DEFAULT_OUT_DIR = '../../dat/xl_testData/treeData/binExample_1'
