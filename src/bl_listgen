@@ -15,7 +15,7 @@ from argparse import ArgumentParser
 from optionz import dump_options
 from xlattice import check_hashtype, parse_hashtype_etc, fix_hashtype
 
-from xlattice.util import get_exclusions, timestamp_now
+from xlutil import get_exclusions, timestamp_now
 from buildlist import(__version__, __version_date__, __file__,
                       BuildList,
                       check_dirs_in_path, generate_rsa_key, rm_f_dir_contents)

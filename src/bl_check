@@ -11,7 +11,7 @@ from nlhtree import NLHTree
 from optionz import dump_options
 from xlattice import (check_hashtype, parse_hashtype_etc, fix_hashtype,
                       check_u_path)
-from xlattice.util import get_exclusions, make_ex_re
+from xlutil import get_exclusions, make_ex_re
 
 from buildlist import __version__, __version_date__, BuildList
 
