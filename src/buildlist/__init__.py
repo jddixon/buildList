@@ -21,7 +21,7 @@ from Crypto.Signature import PKCS1_PSS
 
 from nlhtree import NLHTree
 
-from xlattice.crypto import collect_pem_rsa_public_key
+from xlcrypto import collect_pem_rsa_public_key
 from xlattice import HashTypes, check_hashtype
 from xlu import UDir
 from xlutil import make_ex_re, parse_timestamp, timestamp
@@ -41,8 +41,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError', ]
 
-__version__ = '0.10.4'
-__version_date__ = '2018-02-15'
+__version__ = '0.10.5'
+__version_date__ = '2018-02-16'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
