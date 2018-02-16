@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.10.5
+    2018-02-16
+        * clean up more imports                                     SLOC 3399
 v0.10.4
     2018-02-15
         * xlattice.util imports become xlutil imports               SLOC 3374
@@ -316,6 +319,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 

@@ -15,7 +15,7 @@ from nlhtree import NLHTree
 from rnglib import SimpleRNG
 from xlattice import HashTypes
 from xlattice.lfs import touch
-from xlattice.u import UDir, DirStruc
+from xlu import UDir, DirStruc
 from xlutil import make_ex_re
 #from xlattice import check_hashtype
 
