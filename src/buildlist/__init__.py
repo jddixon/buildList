@@ -19,6 +19,8 @@ from Crypto.PublicKey import RSA
 from Crypto.Hash import SHA  # , SHA256
 from Crypto.Signature import PKCS1_PSS
 
+from toml import load
+
 from nlhtree import NLHTree
 
 from xlcrypto import collect_pem_rsa_public_key
@@ -41,8 +43,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError', ]
 
-__version__ = '0.10.6'
-__version_date__ = '2018-03-05'
+__version__ = '0.10.7'
+__version_date__ = '2018-03-13'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -610,14 +612,19 @@ class BuildList(object):
         """
         _ = using_indir     # USUSED: SUPPRESS WARNING
         version = '0.0.0'
-        path_to_version = os.path.join(dvcz_dir, 'version')
-        if os.path.exists(path_to_version):
-            with open(path_to_version, 'r') as file:
-                version = file.readline().strip()
-                title = title + ' v' + version
-                # DEBUG
-                # print("title with version is '%s'" % title)
-                # END
+#       path_to_version = os.path.join(dvcz_dir, 'version')
+#       if os.path.exists(path_to_version):
+#           with open(path_to_version, 'r') as file:
+#               version = file.readline().strip()
+        path_to_cfg = os.path.join(dvcz_dir, 'projConfig.toml')
+        if os.path.exists(path_to_cfg):
+            with open(path_to_cfg, 'r') as file:
+                pmap = load(path_to_cfg)
+                version = pmap['project']['version']
+            title = title + ' v' + version
+            # DEBUG
+            # print("title with version is '%s'" % title)
+            # END
 
         ex_re = make_ex_re(excl)
         signing = key_file != ''

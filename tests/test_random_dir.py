@@ -73,6 +73,10 @@ class TestRandomDir(unittest.TestCase):
         hash_ = sha.hexdigest()
         file_name = self.rng.next_file_name(8)
         path_to_file = os.path.join('tmp', file_name)
+        while os.path.exists(path_to_file):
+            file_name = self.rng.next_file_name(8)
+            path_to_file = os.path.join('tmp', file_name)
+
         with open(path_to_file, 'wb') as file:
             file.write(data)
 

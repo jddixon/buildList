@@ -6,16 +6,16 @@
 from os.path import exists
 from setuptools import setup
 
-LONG_DESC = None
+long_desc = None
 if exists('README.md'):
     with open('README.md', 'r') as file:
-        LONG_DESC = file.read()
+        long_desc = file.read()
 
 setup(name='buildlist',
-      version='0.10.6',
+      version='0.10.7',
       author='Jim Dixon',
       author_email='jddixon@gmail.com',
-      long_description=LONG_DESC,
+      long_description=long_desc,
       packages=['buildlist'],
       package_dir={'': 'src'},
       py_modules=[],
@@ -23,6 +23,7 @@ setup(name='buildlist',
       zip_safe=False,
       scripts=['src/bl_check', 'src/bl_createtestdata1', 'src/bl_listgen',
                'src/bl_srcgen'],
+      ext_modules=[],
       description='digitally signed indented list of content keys',
       url='https://jddixon.github.io/buildlist',
       classifiers=[
@@ -30,7 +31,10 @@ setup(name='buildlist',
           'Intended Audience :: Developers',
           'License :: OSI Approved :: MIT License',
           'Natural Language :: English',
+          'Programming Language :: Python',
+          'Programming Language :: Python 2',
           'Programming Language :: Python 2.7',
+          'Programming Language :: Python 3',
           'Programming Language :: Python 3.5',
           'Programming Language :: Python 3.6',
           'Programming Language :: Python 3.7',
