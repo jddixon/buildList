@@ -2,3 +2,5 @@
 pycrypt
 scandir
 setuptools
+sharedev
+toml

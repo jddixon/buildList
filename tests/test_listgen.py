@@ -36,15 +36,21 @@ class TestBuildList(unittest.TestCase):
         Test buildlist functionality for specific hash type and DirStruc.
         """
 
+        # MAJOR ERROR: This code logs to .dvcz/buildlist, the actual
+        # project log!  Fix is:
+        dvcz_dir = os.path.join('tmp', self.rng.next_file_name(8))
+        while os.path.exists(dvcz_dir):
+            dvcz_dir = os.path.join('tmp', self.rng.next_file_name(8))
+        os.mkdir(dvcz_dir, 0o744)
+
         # create the BuildList from what's in DATA_DIR
         # -- RESTRUCTURE and just do this once for each hashtype -- in
         #    other words, this should be in a higher level function, one
         #    which runs a test for each dirstruc
-        # blist = BuildList.list_gen(   # NOT YET USED
         BuildList.list_gen(
             title=title,
             data_dir=DATA_DIR,
-            # dvcz_dir=         # .dvcz
+            dvcz_dir=dvcz_dir,  # THE FIX
             # list_file=        # lastBuildList
             logging=True,
             u_path=os.path.join('tmp', str(hashtype.value), dirstruc.name),
@@ -62,7 +68,7 @@ class TestBuildList(unittest.TestCase):
         """ Test listgen functionality for suppored hash types. """
 
         # DEBUG
-        print("DATA_DIR is '%s'" % DATA_DIR)
+        # print("DATA_DIR is '%s'" % DATA_DIR)
         # END
         self.assertTrue(os.path.exists(DATA_DIR))
         self.assertTrue(os.path.exists(RSA_FILE))
