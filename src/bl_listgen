@@ -208,7 +208,7 @@ def show_args(args):
 
 def main():
     """
-    Collect comamnd line options and execute the command if required.
+    Collect command line options and execute the command if required.
     """
 
     parser, args = get_args()

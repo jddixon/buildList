@@ -43,8 +43,8 @@ __all__ = ['__version__', '__version_date__',
            'BuildList',
            'BLIntegrityCheckFailure', 'BLParseFailed', 'BLError', ]
 
-__version__ = '0.10.7'
-__version_date__ = '2018-03-13'
+__version__ = '0.10.8'
+__version_date__ = '2018-03-16'
 
 # UTILITY FUNCTIONS -------------------------------------------------
 
@@ -610,6 +610,9 @@ class BuildList(object):
         the first line of .dvcz/version.  If that exists, we append
         a space and then the version number to the title.
         """
+        # DEBUG
+        # print("DEBUG: ENTERING list_gen")
+        # END
         _ = using_indir     # USUSED: SUPPRESS WARNING
         version = '0.0.0'
 #       path_to_version = os.path.join(dvcz_dir, 'version')

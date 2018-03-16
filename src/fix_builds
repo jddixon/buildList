@@ -1,0 +1,243 @@
+#!/usr/bin/python3
+
+# ~/dev/py/sharedev/fix_builds
+
+import datetime
+import os
+import re
+import subprocess
+import sys
+import time
+from argparse import ArgumentParser
+
+from sharedev import __version__, __version_date__
+from sharedev.loc import (getLangForProject, getProjDefaults,
+                          getProjectNames, projDirFromName, )
+BIG_U = os.path.join('/var', 'app', 'sharedev', 'U')
+TIMESTAMP_PAT = "(\d\d\d\d\-\d\d\-\d\d) \d\d:\d\d:\d\d v(\d+\.\d+\.\d+(\.\d+)?) (.*$)"
+TIMESTAMP_RE = re.compile(TIMESTAMP_PAT)
+CHG_V_PAT = "^v(\d+\.\d+.\d+(\.\d+)?)"
+CHG_V_RE = re.compile(CHG_V_PAT)
+CHG_DATE_PAT = "^ *(\d\d\d\d-\d\d-\d\d)"
+CHG_DATE_RE = re.compile(CHG_DATE_PAT)
+
+
+def make_map(path_to_changes):
+    cmap = {}
+    my_version = ''
+    dupes = False
+
+    with open(path_to_changes, "r") as f:
+        text = f.read()
+    lines = text.split('\n')[0:-1]
+
+    # DEBUG
+    # print("  read %d CHANGES lines" % len(lines))
+    # END
+
+    for ndx, line in enumerate(lines):
+        if my_version:
+            m = CHG_DATE_RE.match(line)
+            if m:
+                my_date = m.group(1)
+                if my_date in cmap.keys():
+                    print("  DUPES: multiple CHANGES entries for %s" %
+                          my_date)
+                    dupes = True
+
+                cmap[my_date] = my_version
+            my_version = ''
+        else:
+            m = CHG_V_RE.match(line)
+            if m:
+                my_version = m.group(1)
+
+    return cmap, dupes
+
+
+def hash_in_U(h):
+    path_to = os.path.join(BIG_U, h[0:2], h[2:4], h)
+    return os.path.exists(path_to)
+
+
+def fix_project(options, project):
+    lang = getLangForProject(project)
+    proj_dir = projDirFromName(project)
+    os.chdir(proj_dir)
+
+    # DEBUG
+    print('%-20s %-5s %s' % (project, lang, proj_dir))
+    # END
+
+    path_to_builds = os.path.join('.dvcz', 'builds')
+    path_to_tmp = os.path.join('.dvcz', 'builds.tmp')
+    path_to_bak = os.path.join('.dvcz', 'builds.bak')
+    path_to_changes = 'CHANGES'
+    anomalous = False
+
+    if not os.path.exists(path_to_builds):
+        print("  file not found: ", path_to_builds)
+        return
+
+    if os.path.exists(path_to_tmp):
+        print('  removing ', path_to_tmp)
+        os.unlink(path_to_tmp)
+
+    if not os.path.exists(path_to_changes):
+        print("file not found: ", path_to_changes)
+        return
+
+    c, dupes = make_map(path_to_changes)
+    if dupes:
+        print("  CHANGE MAP:")
+        for d in c.keys():
+            print("    %s --> %s" % (d, c[d]))
+
+    out_lines = []
+    last_v = ''
+    with open(path_to_builds, "r+") as in_file:
+        line = in_file.readline()
+        while line:
+            file_exists = False
+            m = TIMESTAMP_RE.match(line)
+            if m:
+                t = m.group(1)      # timestamp
+                v = m.group(2)      # version
+                h = m.group(4)      # hash
+                if len(h) == 64:
+                    line = line[0:-1] + " HASH_64\n"
+                elif hash_in_U(h):
+                    file_exists = True
+                    if v == "0.0.0":
+                        v = c[t[0:10]]  # extract the date from timestamp
+                        print("  FIXUP: 0.0.0 on %s mapped to %s" % (t, v))
+                else:
+                    line = line[0:-1] + " NOT_FOUND\n"
+            else:
+                line = line[0:-1] + " INVALID\n"
+                print("  INVALID LINE: ", line)
+                anomalous = True
+            if file_exists:
+                if v == last_v:
+                    # line = line[0:-1] + " DUPE\n"
+                    pass
+                last_v = v
+                out_lines.append(line)
+            line = in_file.readline()
+
+    # DEBUG
+    print("  There are %d output lines" % len(out_lines))
+    # END
+    text = ''.join(out_lines)
+    with open(path_to_tmp, "w+") as out_file:
+        out_file.write(text)
+
+    if not anomalous:
+        os.rename(path_to_builds, path_to_bak)
+        os.rename(path_to_tmp, path_to_builds)
+
+    print("  DONE")
+
+
+def fixProjects(options):
+    projects = options.projects
+
+    for project in projects:
+        fix_project(options, project)
+
+
+def main():
+
+    # parse the command line ----------------------------------------
+    desc = ('Repair .dvcz/builds, using CHANGES to determine the version '
+            'number when it is set to 0.0.0.  During the program run a '
+            '.dvcz/builds.tmp is used to collect output.  Normallly the '
+            'original is then renamed .dvcz/builds.bak.  Sometimes if an '
+            'odd error occurs the original builds file will be left unaffected '
+            'and the intermediate file saved as *.tmp.'
+            )
+    parser = ArgumentParser(description=desc)
+
+    parser.add_argument('-a', '--allProjects', action='store_true',
+                        help='get status of all projects')
+
+    parser.add_argument('-j', '--justShow', action='store_true',
+                        help='show options and exit')
+
+    parser.add_argument('-L', '--mainLang', type=str,
+                        help='set main language for project(s)')
+
+    parser.add_argument('-T', '--testing', action='store_true',
+                        help='this is a test run')
+
+    parser.add_argument('-v', '--verbose', action='store_true',
+                        help='be chatty')
+
+    parser.add_argument('projects', nargs='*',
+                        help='any number of valid project names')
+
+    args = parser.parse_args()
+
+    # fixups ----------- ---------------------------------------------
+    if args.allProjects:
+        if len(args.projects) > 0:
+            print("all projects selected, so ignoring names provided")
+        args.projects = getProjectNames()
+
+    # if no specific projects have been chosen, assume the project
+    # corresponding to the current directory is selected.
+    if len(args.projects) == 0:
+        lang, project, projDir = getProjDefaults(os.getcwd())
+        if project:
+            args.projects = [project]
+
+    # sanity checks -------------------------------------------------
+    # if a language filter has been set, drop any non-matching projects
+    if args.mainLang:
+        p = []
+        for project in args.projects:
+            lang = getLangForProject(project)
+            if lang == args.mainLang:
+                p.append(project)
+        args.projects = p
+
+    if not (args.testing or args.justShow):
+        for project in args.projects:
+            # we require that this be the name of an existing project
+            projDir = projDirFromName(project)
+            if projDir == '':
+                print("'%s' is not a ghplib project" % project)
+                sys.exit(1)
+
+    # complete setup ------------------------------------------------
+    appName = 'fix_builds %s' % __version__
+
+    # maybe show options and such -----------------------------------
+    if args.verbose or args.justShow:
+        print("%s %s" % (appName, __version_date__))
+
+    if args.verbose or args.justShow:
+        print('allProjects        = ' + str(args.allProjects))
+        print('mainLang           = ' + str(args.mainLang))
+        print('testing            = ' + str(args.testing))
+        print('verbose            = ' + str(args.verbose))
+
+        if len(args.projects) > 0:
+            print('projects:')
+            for project in args.projects:
+                print("  %s" % project)
+
+    # do what's required --------------------------------------------
+    if not args.justShow:
+        fixProjects(args)
+
+    # gitMgr = GitMgr()           # acquire lock
+    # try:
+    #    fixProjects(args)
+    # except:
+    #    pass
+    # gitMgr.close()              # release lock
+
+
+if __name__ == '__main__':
+    main()

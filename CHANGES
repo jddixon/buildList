@@ -1,5 +1,8 @@
 ~/dev/py/buildList/CHANGES
 
+v0.10.8
+    2018-03-16
+        * added fix_build to fix .dvcz/builds                       SLOC 3731
 v0.10.7
     2018-03-13
         * fix bug in BuildList.list_gen (version always 0.0.0)      SLOC 3592
@@ -325,6 +328,7 @@ v0.4.1
 0.1.0
     2014-09-29
         * initial commit                                            SLOC   24
+
 
 
 
