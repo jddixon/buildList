@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# ~/dev/py/sharedev/fix_builds
+# ~/dev/py/buildlist/src/fix_builds
 
 import datetime
 import os
@@ -10,13 +10,13 @@ import sys
 import time
 from argparse import ArgumentParser
 
-from sharedev import __version__, __version_date__
-from sharedev.loc import (getLangForProject, getProjDefaults,
-                          getProjectNames, projDirFromName, )
+from buildlist import __version__, __version_date__
+from projlocator import (get_lang_for_project, get_proj_defaults,
+                         get_proj_names, proj_dir_from_name, )
 BIG_U = os.path.join('/var', 'app', 'sharedev', 'U')
-TIMESTAMP_PAT = "(\d\d\d\d\-\d\d\-\d\d) \d\d:\d\d:\d\d v(\d+\.\d+\.\d+(\.\d+)?) (.*$)"
+TIMESTAMP_PAT = "(\d\d\d\d\-\d\d\-\d\d \d\d:\d\d:\d\d) v(\d+\.\d+\.\d+(\.\d+)?) (.*$)"
 TIMESTAMP_RE = re.compile(TIMESTAMP_PAT)
-CHG_V_PAT = "^v(\d+\.\d+.\d+(\.\d+)?)"
+CHG_V_PAT = "^v?(\d+\.\d+.\d+(\.\d+)?) *$"
 CHG_V_RE = re.compile(CHG_V_PAT)
 CHG_DATE_PAT = "^ *(\d\d\d\d-\d\d-\d\d)"
 CHG_DATE_RE = re.compile(CHG_DATE_PAT)
@@ -61,8 +61,8 @@ def hash_in_U(h):
 
 
 def fix_project(options, project):
-    lang = getLangForProject(project)
-    proj_dir = projDirFromName(project)
+    lang = get_lang_for_project(project)
+    proj_dir = proj_dir_from_name(project)
     os.chdir(proj_dir)
 
     # DEBUG
@@ -111,6 +111,7 @@ def fix_project(options, project):
                     if v == "0.0.0":
                         v = c[t[0:10]]  # extract the date from timestamp
                         print("  FIXUP: 0.0.0 on %s mapped to %s" % (t, v))
+                        line = t + ' v' + v + ' ' + h + '\n'
                 else:
                     line = line[0:-1] + " NOT_FOUND\n"
             else:
@@ -182,12 +183,12 @@ def main():
     if args.allProjects:
         if len(args.projects) > 0:
             print("all projects selected, so ignoring names provided")
-        args.projects = getProjectNames()
+        args.projects = get_proj_names()
 
     # if no specific projects have been chosen, assume the project
     # corresponding to the current directory is selected.
     if len(args.projects) == 0:
-        lang, project, projDir = getProjDefaults(os.getcwd())
+        lang, project, projDir = get_proj_defaults(os.getcwd())
         if project:
             args.projects = [project]
 
@@ -196,7 +197,7 @@ def main():
     if args.mainLang:
         p = []
         for project in args.projects:
-            lang = getLangForProject(project)
+            lang = get_lang_for_project(project)
             if lang == args.mainLang:
                 p.append(project)
         args.projects = p
@@ -204,7 +205,7 @@ def main():
     if not (args.testing or args.justShow):
         for project in args.projects:
             # we require that this be the name of an existing project
-            projDir = projDirFromName(project)
+            projDir = proj_dir_from_name(project)
             if projDir == '':
                 print("'%s' is not a ghplib project" % project)
                 sys.exit(1)
